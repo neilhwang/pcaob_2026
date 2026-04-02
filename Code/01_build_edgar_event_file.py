@@ -150,7 +150,7 @@ def fetch_efts_year(year: int) -> list[str]:
 
         # Diagnostic: show raw _id format on first successful call
         if first_call and hits:
-            log.debug("EFTS _id sample (year %d): %s", year, [h["_id"] for h in hits[:3]])
+            log.info("EFTS _id sample (year %d): %s", year, [h["_id"] for h in hits[:3]])
             first_call = False
 
         if not hits:
@@ -232,11 +232,13 @@ def build_quarterly_index() -> pd.DataFrame:
 
     index = pd.concat(frames, ignore_index=True)
 
-    # Derive accession number (no dashes) from filename
-    # filename format: edgar/data/{cik}/{acc-nodash}-index.htm
+    # Derive accession number (no dashes) from filename.
+    # Filename format: edgar/data/{cik}/{acc-with-dashes}-index.htm
+    # Accession pattern: XXXXXXXXXX-YY-ZZZZZZ (10-2-6 digits with dashes)
     index["acc_nodash"] = (
         index["filename"]
-        .str.extract(r"(\d{18})", expand=False)   # 18-digit accession
+        .str.extract(r"(\d{10}-\d{2}-\d{6})", expand=False)
+        .str.replace("-", "", regex=False)
         .fillna("")
     )
     log.info("Total 8-K rows in quarterly index: %d", len(index))
@@ -247,18 +249,14 @@ def build_quarterly_index() -> pd.DataFrame:
 
 def normalize_acc(raw: str) -> str:
     """
-    Normalize an accession number to 18-digit no-dash form regardless of
-    the input format EFTS returns. Handles:
-      - '0001234567-23-000001'       (dashes)
-      - '000123456723000001'          (no dashes, 18 digits)
-      - 'edgar/data/123/000...txt'   (path — extract 18-digit substring)
+    Normalize an accession number to 18-digit no-dash form.
+    EFTS _id format is '{accession-with-dashes}:{document-filename}',
+    e.g. '0001214659-10-002151:ex99_1.htm' → '000121465910002151'
     """
-    # Strip dashes first
-    s = raw.replace("-", "")
-    # If it's a path, pull out the first 18-digit run
-    import re as _re
-    m = _re.search(r"\d{18}", s)
-    return m.group(0) if m else s
+    # Take only the part before the colon (strips document filename)
+    acc = raw.split(":")[0]
+    # Remove dashes to get 18-digit nodash form
+    return acc.replace("-", "")
 
 
 def intersect_with_index(
