@@ -1,0 +1,157 @@
+%% empirical_design_draft.tex
+%% Standalone draft — not yet integrated into main paper.
+%% Flag to Neil: variable definitions should be cross-checked against
+%% final constructed values in scripts 01–04 before merging.
+
+\section{Empirical Design}
+\label{sec:design}
+
+\subsection{Sample Construction}
+
+\textbf{Auditor change events.} We identify auditor changes using Form 8-K
+filings disclosing a change in the registrant's certifying accountant (Item
+4.01). Item 4.01 disclosures are mandatory within four business days of the
+change and must include the name of the departing accountant, whether the
+departure was a dismissal or resignation, and whether any disagreements arose
+over accounting or disclosure matters. We obtain these filings from SEC EDGAR
+for the period 2000 to 2023, yielding an initial sample of approximately
+[PLACEHOLDER: N] events.
+
+We retain only original 8-K filings (not 8-K/A amendments) and require the
+filing to be matched to a CRSP PERMNO via the CRSP-Compustat linking table.
+We further require at least 100 non-missing trading days in the estimation
+window (see below). The final sample consists of [PLACEHOLDER: N] auditor
+change events for [PLACEHOLDER: N] unique firms.
+
+\textbf{Exclusions.} Following standard practice in the auditor change
+literature \citep{defond2014}, we exclude financial firms (SIC 6000--6999)
+and utilities (SIC 4900--4999), whose audit relationships are subject to
+additional regulatory constraints. We also exclude the first year of EDGAR
+electronic filing coverage for each firm to avoid systematic filing quality
+differences in early years.
+
+\subsection{Dependent Variables}
+
+\textbf{Absolute cumulative abnormal return ($|CAR|$).} We estimate a
+market model for each firm using daily returns over the estimation window
+$[-252, -46]$ trading days relative to the event date, regressing firm
+returns on the CRSP value-weighted market return. The market model
+parameters $\hat{\alpha}$ and $\hat{\beta}$ are then used to compute
+abnormal returns over the $[-1, +1]$ event window:
+\begin{equation}
+    AR_{i,t} = R_{i,t} - (\hat{\alpha}_i + \hat{\beta}_i \cdot R_{m,t}),
+    \quad t \in \{-1, 0, +1\}.
+\end{equation}
+The cumulative abnormal return is $CAR_i = \sum_{t=-1}^{+1} AR_{i,t}$, and
+the primary dependent variable is $|CAR_i|$. We include delisting returns
+following \citet{beaver2007} to mitigate survivorship bias.
+
+\textbf{Abnormal trading volume ($AbVol$).} For each firm, we estimate mean
+log-volume over the estimation window $[-252, -46]$ relative to the event
+date. Abnormal volume in the event window is the mean of
+$[\log(\text{Vol}_{i,t} + 1) - \overline{\log(\text{Vol}_i)}]$ over
+$t \in \{-1, 0, +1\}$.
+
+\subsection{Political Polarization Measure}
+
+We measure political polarization using the \citet{esteban1994} index applied
+to U.S. House of Representatives election returns from the MIT Election Lab.
+For congressional district $d$ in election year $e$, let $s_{D,d,e}$ and
+$s_{R,d,e}$ denote the Democratic and Republican shares of the two-party vote.
+The district-level polarization index is:
+\begin{equation}
+    \label{eq:er}
+    P^{ER}_{d,e} = s_{D,d,e} \cdot s_{R,d,e}
+    \cdot \left(s_{D,d,e}^\alpha + s_{R,d,e}^\alpha\right),
+    \quad \alpha = 1,
+\end{equation}
+which simplifies to $s_{D,d,e} \cdot s_{R,d,e}$ when $\alpha = 1$ (since
+$s_D + s_R = 1$ on the two-party vote share). This measure is maximized at
+0.25 when the two parties split the vote equally, and decreases as the vote
+becomes more one-sided. We aggregate to the state level by weighting each
+district by its share of total state two-party votes:
+\begin{equation}
+    P^{ER}_{s,e} = \sum_{d \in s}
+    \frac{\text{TwoPartyVotes}_{d,e}}{\text{TwoPartyVotes}_{s,e}}
+    \cdot P^{ER}_{d,e}.
+\end{equation}
+Since House elections occur biennially, we forward-fill each election-year
+measure to the subsequent odd year, giving an annual state-by-year panel.
+We match firms to their headquarters state using the Compustat \texttt{state}
+variable and merge on filing year. We standardize $P^{ER}_{s,t}$ to have
+mean zero and unit variance to facilitate coefficient interpretation.
+
+The ER measure has a natural behavioral microfoundation: it captures the
+degree to which the population is divided into internally homogeneous,
+mutually alienated camps \citep{esteban1994}. States closer to a 50-50
+partisan split have higher ER scores, reflecting greater polarization between
+two equally sized ideological groups — precisely the configuration expected to
+generate the most disagreement in posterior beliefs.
+
+\subsection{Empirical Specification}
+
+Our main specification is:
+\begin{equation}
+    \label{eq:main}
+    Y_{i,t} = \alpha + \beta_1\,\textit{Event}_{i,t}
+    + \beta_2\,\textit{Pol}_{s(i),t}
+    + \beta_3\,(\textit{Event}_{i,t} \times \textit{Pol}_{s(i),t})
+    + \gamma' X_{i,t} + \delta_i + \tau_t + \varepsilon_{i,t},
+\end{equation}
+where $Y_{i,t}$ is either $|CAR_{i,t}|$ or $AbVol_{i,t}$;
+$\textit{Event}_{i,t}$ is an indicator equal to one in the event window;
+$\textit{Pol}_{s(i),t}$ is the standardized ER polarization measure for firm
+$i$'s headquarters state $s(i)$ in year $t$; $X_{i,t}$ is a vector of
+firm-level controls (size, leverage, ROA, book-to-market, loss indicator,
+sales growth); and $\delta_i$ and $\tau_t$ are firm and year fixed effects.
+Standard errors are clustered at the firm level.
+
+The coefficient of interest is $\beta_3$, the interaction of the event
+indicator with polarization. A positive and significant $\beta_3$ indicates
+that polarization amplifies the market reaction to auditor change disclosures,
+consistent with Hypothesis~\ref{h1}.
+
+\subsection{Identification}
+
+The key identification challenge is that polarization may be correlated with
+other state-level economic or institutional conditions that independently
+affect market reactions. We address this in several ways.
+
+First, firm fixed effects absorb all time-invariant firm-level confounders,
+including stable characteristics such as industry membership, auditor
+relationships, and listing exchange. Year fixed effects control for aggregate
+market conditions that affect all firms in a given year.
+
+Second, the interaction design provides an additional layer of identification:
+$\beta_3$ identifies the \textit{differential} effect of polarization on
+event-window returns relative to non-event windows, within the same firm
+over time. A confound would need to predict not only higher returns in
+polarized states but specifically higher returns \textit{around auditor change
+events} in polarized states.
+
+Third, we exploit time-series variation in polarization within states. The ER
+measure changes from election cycle to election cycle as vote shares shift. A
+firm headquartered in a state that becomes more polarized over time experiences
+stronger market reactions to subsequent auditor changes. This within-state
+variation is unlikely to be driven by firm-level reporting decisions.
+
+\subsection{Controls}
+
+We include the following firm-year controls in $X_{i,t}$:
+\begin{itemize}
+    \item \textit{Size}: natural log of total assets; larger firms have more
+          analyst coverage and potentially less information asymmetry.
+    \item \textit{Leverage}: total debt divided by total assets; more
+          levered firms face greater financial distress risk, which may
+          independently affect reactions to audit signals.
+    \item \textit{ROA}: net income divided by total assets; controls for
+          underlying firm profitability.
+    \item \textit{Book-to-market}: book equity divided by market equity;
+          controls for value vs.\ growth characteristics.
+    \item \textit{Loss}: indicator equal to one if net income is negative;
+          loss firms are more likely to switch auditors for distress-related
+          reasons.
+    \item \textit{Sales growth}: year-over-year revenue growth; controls
+          for firm lifecycle and organic change in audit complexity.
+\end{itemize}
+All continuous controls are winsorized at the 1st and 99th percentiles.

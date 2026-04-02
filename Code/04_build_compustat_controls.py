@@ -33,7 +33,7 @@ import numpy as np
 import pandas as pd
 
 OUT_FILE = Path(__file__).resolve().parent.parent / "Data/Processed/compustat_controls.parquet"
-WRDS_USERNAME = ""   # leave blank to be prompted
+WRDS_USERNAME = "nhwang"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -54,28 +54,30 @@ def connect_wrds():
 def pull_compustat(conn) -> pd.DataFrame:
     log.info("Pulling Compustat annual fundamentals ...")
     df = conn.raw_sql("""
-        SELECT gvkey, cik, datadate, fyear,
-               at, dltt, dlc, ni, ceq, prcc_f, csho,
-               sale, act, lct,
-               state, sic, fic
-        FROM comp.funda
-        WHERE indfmt  = 'INDL'
-          AND datafmt  = 'STD'
-          AND popsrc   = 'D'
-          AND consol   = 'C'
-          AND fyear BETWEEN 1999 AND 2023
-          AND fic = 'USA'
+        SELECT f.gvkey, f.cik, f.datadate, f.fyear,
+               f.at, f.dltt, f.dlc, f.ni, f.ceq, f.prcc_f, f.csho,
+               f.sale, f.act, f.lct, f.sich AS sic, f.fic,
+               c.state
+        FROM comp.funda f
+        LEFT JOIN comp.company c ON f.gvkey = c.gvkey
+        WHERE f.indfmt  = 'INDL'
+          AND f.datafmt  = 'STD'
+          AND f.popsrc   = 'D'
+          AND f.consol   = 'C'
+          AND f.fyear BETWEEN 1999 AND 2023
+          AND f.fic = 'USA'
     """)
     log.info("Raw Compustat rows: %d", len(df))
     return df
 
 
 def clean_and_construct(df: pd.DataFrame) -> pd.DataFrame:
-    # Coerce numeric columns
+    # Coerce numeric columns to plain float64 (removes pandas nullable dtype
+    # which causes ambiguous NA boolean errors in np.where comparisons)
     num_cols = ["at", "dltt", "dlc", "ni", "ceq", "prcc_f", "csho",
                 "sale", "act", "lct"]
     for c in num_cols:
-        df[c] = pd.to_numeric(df[c], errors="coerce")
+        df[c] = pd.to_numeric(df[c], errors="coerce").astype(float)
 
     # Drop financials and utilities
     df["sic"] = pd.to_numeric(df["sic"], errors="coerce")
@@ -92,7 +94,7 @@ def clean_and_construct(df: pd.DataFrame) -> pd.DataFrame:
     df["size"]     = np.log(df["at"])
     df["leverage"] = (df["dltt"].fillna(0) + df["dlc"].fillna(0)) / df["at"]
     df["roa"]      = df["ni"] / df["at"]
-    df["loss"]     = (df["ni"] < 0).astype(int)
+    df["loss"]     = (df["ni"].fillna(0) < 0).astype(int)
     mktcap         = df["prcc_f"] * df["csho"]
     df["btm"]      = np.where(mktcap > 0, df["ceq"] / mktcap, np.nan)
     df["current_ratio"] = np.where(

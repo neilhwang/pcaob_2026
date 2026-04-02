@@ -1,0 +1,95 @@
+%% hypotheses_draft.tex
+%% Standalone draft — not yet integrated into main paper.
+%% Connects theory section predictions to testable hypotheses.
+
+\section{Hypothesis Development}
+\label{sec:hypotheses}
+
+The theoretical framework in Section~\ref{sec:theory} generates three empirical
+predictions linking political polarization to market reactions around auditor
+change events. We formalize these as testable hypotheses below.
+
+\subsection{Polarization and Market Disagreement}
+
+When investors hold heterogeneous priors about auditor credibility, an identical
+audit signal generates dispersed posterior beliefs. The cross-sectional dispersion
+of posteriors determines both the magnitude of price movements and the volume of
+trade \citep{kandel1995, harris1993}. Political polarization, by increasing the
+dispersion of priors across ideological groups, amplifies these effects.
+
+Our primary proxy for disagreement is \textit{absolute} cumulative abnormal
+returns ($|CAR|$). Larger absolute returns around an event reflect a wider range
+of investor valuations of the signal, consistent with greater belief
+heterogeneity. Abnormal trading volume provides a complementary measure: under
+heterogeneous beliefs, investors with sufficiently different valuations from the
+market price find it optimal to trade \citep{harris1993}.
+
+\begin{hyp}
+    \label{h1}
+    Investor reactions to auditor change disclosures are more extreme in
+    politically polarized environments. Specifically, both the absolute
+    cumulative abnormal return ($|CAR|$) and abnormal trading volume around
+    auditor change events are increasing in political polarization.
+\end{hyp}
+
+Hypothesis~\ref{h1} tests whether the cross-sectional and time-series variation
+in polarization — measured at the firm's headquarters state — predicts the
+intensity of market reactions. A positive coefficient on the interaction of the
+event indicator with the polarization measure, in specifications with firm and
+year fixed effects, would be consistent with this prediction.
+
+\subsection{Direction of the Price Reaction}
+
+Hypothesis~\ref{h1} makes a prediction about the \textit{magnitude} of the
+market reaction, not its direction. The direction depends on investors'
+net assessment of the signal. However, our framework has an additional
+implication for the \textit{signed} CAR. Polarization does not change the
+average prior across investors; it increases the spread around the mean. If the
+average prior is negative (investors interpret auditor changes as bad news on
+average), polarization amplifies the negative reaction. If the average prior is
+positive (e.g., for Big-4 upgrades), polarization amplifies the positive
+reaction. We therefore expect:
+
+\begin{hyp}
+    \label{h2}
+    Political polarization amplifies the signed CAR in the direction of
+    the consensus view of the signal. For negative-signal events (e.g.,
+    dismissals, downward quality changes), polarization increases the
+    magnitude of negative abnormal returns. For positive-signal events
+    (e.g., Big-4 upgrades), polarization increases the magnitude of
+    positive abnormal returns.
+\end{hyp}
+
+Hypothesis~\ref{h2} requires splitting the sample by the likely direction of the
+market signal, using the auditor change type (dismissal vs.\ resignation;
+Big-4-to-non-Big-4 vs.\ non-Big-4-to-Big-4) as a proxy.
+
+\subsection{Signal Ambiguity as a Moderator}
+
+The model predicts that polarization effects are stronger when signals are more
+ambiguous, i.e., when the likelihood function $P(s|\theta)$ is less precise.
+Less precise signals leave more room for prior beliefs to determine posteriors,
+amplifying the role of polarization. We proxy for signal ambiguity using
+characteristics of the auditor change:
+
+\begin{itemize}
+    \item \textit{High ambiguity:} auditor changes with no disclosed reason,
+          switches between auditors of similar size (non-Big-4 to non-Big-4 or
+          Big-4 to Big-4), and changes that occur outside of fiscal year-end.
+    \item \textit{Low ambiguity:} auditor changes accompanied by disclosed
+          disagreements (Item 4.01 requires disclosure of any disagreements),
+          Big-4 departures with no replacement, and changes coinciding with
+          restatements or SEC investigations.
+\end{itemize}
+
+\begin{hyp}
+    \label{h3}
+    The effect of political polarization on absolute returns and trading volume
+    is stronger for auditor changes that carry more ambiguous signals. The
+    interaction of polarization with the event indicator is larger in magnitude
+    for high-ambiguity events than for low-ambiguity events.
+\end{hyp}
+
+Hypothesis~\ref{h3} is tested by including a triple interaction of the event
+indicator, polarization, and a signal-ambiguity indicator. A positive and
+significant triple interaction coefficient supports the mechanism.

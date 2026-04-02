@@ -85,7 +85,7 @@ def load_raw(path: Path) -> pd.DataFrame:
             "?persistentId=doi:10.7910/DVN/IG0UN2\n"
             "and save to Data/Raw/mit_house_elections.tab"
         )
-    df = pd.read_csv(path, sep="\t", low_memory=False)
+    df = pd.read_csv(path, sep=",", low_memory=False)
     log.info("Loaded raw data: %d rows, %d cols", len(df), df.shape[1])
     log.info("Columns: %s", list(df.columns))
     return df

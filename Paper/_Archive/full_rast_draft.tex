@@ -1,0 +1,67 @@
+
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{natbib}
+
+\title{Political Polarization and the Interpretation of Auditor Signals}
+\author{Neil}
+\date{}
+
+\begin{document}
+\maketitle
+\onehalfspacing
+
+\section{Introduction}
+This paper examines how political polarization affects investor interpretation of auditor-related information. We propose that polarization alters belief updating, generating disagreement and heterogeneous price responses.
+
+\section{Theory}
+
+Consider investors receiving a signal $s$ about firm quality $\theta$. Investors differ in priors $\pi_i$.
+
+\begin{equation}
+P_i(\theta|s) = \frac{P(s|\theta)\pi_i}{P(s)}
+\end{equation}
+
+Polarization increases dispersion in $\pi_i$, leading to:
+
+\begin{itemize}
+\item Increased trading volume
+\item Higher absolute returns
+\end{itemize}
+
+Ambiguous signals reduce likelihood precision, amplifying prior-driven disagreement.
+
+\subsection{Equilibrium Implications}
+
+Following \citet{harris1993}, heterogeneous beliefs generate trade. Prices reflect weighted beliefs:
+
+\begin{equation}
+P = \sum_i w_i E_i[\theta|s]
+\end{equation}
+
+Greater dispersion increases volatility and disagreement metrics.
+
+\section{Empirical Predictions}
+
+\begin{itemize}
+\item Polarization $\uparrow$ $\Rightarrow$ $|CAR| \uparrow$
+\item Polarization $\uparrow$ $\Rightarrow$ Volume $\uparrow$
+\item Stronger effects for ambiguous audit signals
+\end{itemize}
+
+\section{Empirical Design}
+
+We test:
+\begin{equation}
+CAR = \beta_1 Event + \beta_2 Polarization + \beta_3 Event \times Polarization + FE + \epsilon
+\end{equation}
+
+\section{Conclusion}
+Polarization alters interpretation, not information content, of audit signals.
+
+\bibliographystyle{apalike}
+\bibliography{references}
+
+\end{document}

@@ -44,7 +44,7 @@ EST_WINDOW_START = -252   # trading days before event (estimation window start)
 EST_WINDOW_END   = -46    # trading days before event (estimation window end)
 EVENT_WINDOW     = [-1, 0, 1]   # event window in trading days
 MIN_EST_DAYS     = 100    # minimum non-missing days in estimation window
-WRDS_USERNAME    = ""     # leave blank to be prompted, or set here
+WRDS_USERNAME    = "nhwang"
 
 EVENT_FILE = Path(__file__).resolve().parent.parent / "Data/Processed/auditor_changes_raw.parquet"
 OUT_FILE   = Path(__file__).resolve().parent.parent / "Data/Processed/crsp_event_window.parquet"
