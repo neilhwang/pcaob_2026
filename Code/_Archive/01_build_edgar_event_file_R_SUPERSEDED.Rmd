@@ -1,0 +1,483 @@
+---
+title: "01 — Build EDGAR Auditor Change Event File"
+author: "Neil"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Overview
+
+This script builds the auditor change event file from SEC EDGAR Form 8-K filings.
+
+**Input:**  SEC EDGAR (downloaded via HTTP — no local raw file)
+**Output:** `Data/Processed/auditor_changes_raw.parquet`
+
+**Logic:**
+1. Download EDGAR quarterly index files (2000–2023) and filter for 8-K filings.
+2. Use EDGAR full-text search API (EFTS) to pre-filter filings that contain "Item 4.01"
+   text, reducing the download set from ~800K filings to ~15K–25K.
+3. For each candidate filing, download the primary document and extract the Item 4.01
+   section via regex.
+4. Parse the extracted text to capture: auditor out (departing), auditor in (incoming),
+   reason code (dismissal vs. resignation), and whether disagreements were disclosed.
+5. Write a clean parquet file to Data/Processed/.
+
+**Notes on EDGAR rate limits:**
+SEC limits automated requests to 10 requests/second. This script enforces a 0.15-second
+delay between requests. For the full 2000–2023 run (~20K filings), expect ~45 min runtime.
+Run in a non-interactive session (e.g., Rscript -e "rmarkdown::render(...)").
+
+```{r setup, message=FALSE, warning=FALSE}
+library(httr2)
+library(dplyr)
+library(readr)
+library(stringr)
+library(arrow)
+library(lubridate)
+library(purrr)
+
+# ── User-configurable parameters ──────────────────────────────────────────────
+START_YEAR   <- 2000L
+END_YEAR     <- 2023L
+OUT_FILE     <- here::here("Data/Processed/auditor_changes_raw.parquet")
+LOG_FILE     <- here::here("Data/Processed/01_edgar_parse_log.csv")
+REQUEST_DELAY <- 0.15   # seconds between EDGAR requests (stay under 10 req/sec)
+USER_AGENT   <- "Research project — contact: neilh@example.com"  # SEC requires this
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Helper: polite GET with retry
+edgar_get <- function(url, n_retry = 3, ...) {
+  for (i in seq_len(n_retry)) {
+    Sys.sleep(REQUEST_DELAY)
+    resp <- tryCatch(
+      request(url) |>
+        req_headers(`User-Agent` = USER_AGENT) |>
+        req_timeout(30) |>
+        req_perform(),
+      error = function(e) NULL
+    )
+    if (!is.null(resp) && resp_status(resp) == 200) return(resp)
+    Sys.sleep(2^i)  # exponential back-off on failure
+  }
+  NULL  # return NULL if all retries fail
+}
+```
+
+---
+
+## Step 1: Build the 8-K filing index via EDGAR quarterly indexes
+
+EDGAR publishes a `company.gz` (or `full-index/company.idx`) file each quarter listing
+every filing. We filter for form type `8-K` and `8-K/A`.
+
+```{r build-index}
+# Construct list of quarterly index URLs
+quarters <- expand.grid(
+  year    = START_YEAR:END_YEAR,
+  quarter = 1:4
+) |>
+  arrange(year, quarter) |>
+  mutate(
+    url = sprintf(
+      "https://www.sec.gov/Archives/edgar/full-index/%d/QTR%d/company.idx",
+      year, quarter
+    )
+  )
+
+# Download and parse each quarterly index — keep only 8-K rows
+parse_quarter_index <- function(url) {
+  resp <- edgar_get(url)
+  if (is.null(resp)) {
+    message("Failed: ", url)
+    return(NULL)
+  }
+  raw <- resp_body_string(resp)
+  lines <- str_split_1(raw, "\n")
+  # The company.idx format: Company Name | Form Type | CIK | Date Filed | Filename
+  # Header lines start with "Company" or dashes; data lines are fixed-width
+  data_lines <- lines[nchar(lines) > 50 & !str_detect(lines, "^Company|^-")]
+  if (length(data_lines) == 0) return(NULL)
+
+  # Parse fixed-width: columns break at positions used by SEC
+  # Format: col1=0-62 (company), col2=62-74 (form type), col3=74-86 (CIK),
+  #         col4=86-98 (date filed), col5=98+ (filename)
+  df <- tibble(raw = data_lines) |>
+    mutate(
+      company_name = str_trim(str_sub(raw, 1,  62)),
+      form_type    = str_trim(str_sub(raw, 63, 74)),
+      cik          = str_trim(str_sub(raw, 75, 86)),
+      date_filed   = str_trim(str_sub(raw, 87, 98)),
+      filename     = str_trim(str_sub(raw, 99, nchar(raw)))
+    ) |>
+    select(-raw) |>
+    filter(form_type %in% c("8-K", "8-K/A"))
+
+  df
+}
+
+message("Downloading quarterly indexes: ", nrow(quarters), " quarters")
+index_list <- map(quarters$url, parse_quarter_index, .progress = TRUE)
+index_8k   <- bind_rows(compact(index_list))
+
+message("Total 8-K filings in index: ", nrow(index_8k))
+```
+
+---
+
+## Step 2: Pre-filter for Item 4.01 using EDGAR EFTS
+
+The EDGAR full-text search system (EFTS) lets us query for filings whose full text
+contains a specific string. We query for `"4.01"` among 8-K form types to identify
+filings that are likely auditor change disclosures before downloading their text.
+
+This reduces the download set from ~800K filings to ~20K.
+
+```{r efts-prefilter}
+# EFTS returns JSON with filing accession numbers. Paginate through results.
+fetch_efts_page <- function(start_dt, end_dt, from = 0, size = 200) {
+  url <- sprintf(
+    paste0(
+      "https://efts.sec.gov/LATEST/search-index?",
+      "q=%%224.01%%22&forms=8-K,8-K%%2FA",
+      "&dateRange=custom&startdt=%s&enddt=%s",
+      "&from=%d&hits.hits._source.period_of_report=true&hits.hits.total=true"
+    ),
+    start_dt, end_dt, from
+  )
+  resp <- edgar_get(url)
+  if (is.null(resp)) return(NULL)
+  jsonlite::fromJSON(resp_body_string(resp), simplifyVector = FALSE)
+}
+
+# Fetch all EFTS results year by year (EFTS caps at 10K results per query window)
+collect_efts_accessions <- function(year) {
+  start_dt <- sprintf("%d-01-01", year)
+  end_dt   <- sprintf("%d-12-31", year)
+
+  # First call to get total count
+  first <- fetch_efts_page(start_dt, end_dt, from = 0, size = 1)
+  if (is.null(first)) return(character(0))
+  total <- first$hits$total$value %||% 0
+  if (total == 0) return(character(0))
+
+  from_vals <- seq(0, min(total - 1, 9800), by = 200)
+  accessions <- character(0)
+
+  for (from in from_vals) {
+    page <- fetch_efts_page(start_dt, end_dt, from = from, size = 200)
+    if (is.null(page$hits$hits)) next
+    hits <- page$hits$hits
+    acc  <- vapply(hits, function(h) h$`_id`, character(1))
+    accessions <- c(accessions, acc)
+  }
+  unique(accessions)
+}
+
+message("Running EFTS pre-filter by year...")
+efts_by_year <- map(START_YEAR:END_YEAR, collect_efts_accessions, .progress = TRUE)
+names(efts_by_year) <- as.character(START_YEAR:END_YEAR)
+efts_accessions <- unlist(efts_by_year, use.names = FALSE)
+
+message("EFTS pre-filter: ", length(efts_accessions), " candidate filings with '4.01'")
+
+# Convert accession numbers to the filename format used in the quarterly index
+# Accession format: XXXXXXXXXX-YY-ZZZZZZ  → CIK/XXXXXXXXXX-YY-ZZZZZZ.txt
+# In the index, filename looks like: edgar/data/{CIK}/{acc-nodash}.txt
+# Normalise accessions from EFTS (may be with or without dashes)
+efts_acc_nodash <- str_remove_all(efts_accessions, "-")
+```
+
+---
+
+## Step 3: Intersect EFTS candidates with the index
+
+```{r intersect}
+# Add accession number (no dashes) to the index table for joining
+index_8k <- index_8k |>
+  mutate(
+    acc_nodash = str_remove_all(
+      basename(tools::file_path_sans_ext(filename)), "-"
+    )
+  )
+
+# Some EFTS accession numbers include dashes; derive nodash version
+candidates <- index_8k |>
+  filter(acc_nodash %in% efts_acc_nodash)
+
+message("Candidates after intersection: ", nrow(candidates))
+```
+
+---
+
+## Step 4: Download and parse Item 4.01 text for each candidate filing
+
+```{r parse-filings, message=FALSE}
+# Build full document URL from the index filename
+# Index filename format: "edgar/data/{cik}/{accession-nodash}-index.htm"
+# Full text submission file:  edgar/data/{cik}/{accession-nodash}.txt
+# But the most reliable approach is to read the filing index page and find
+# the primary document link.
+
+# Extract accession number with dashes (needed in URLs)
+acc_with_dashes <- function(acc_nodash) {
+  # Format: XXXXXXXXXX-YY-ZZZZZZ (10-2-6)
+  paste0(
+    str_sub(acc_nodash, 1, 10), "-",
+    str_sub(acc_nodash, 11, 12), "-",
+    str_sub(acc_nodash, 13, 18)
+  )
+}
+
+# Get the filing index page and return the URL of the primary document
+get_primary_doc_url <- function(cik, acc_nodash) {
+  acc_dashes <- acc_with_dashes(acc_nodash)
+  index_url  <- sprintf(
+    "https://www.sec.gov/Archives/edgar/data/%s/%s/%s-index.htm",
+    cik, acc_nodash, acc_dashes
+  )
+  resp <- edgar_get(index_url)
+  if (is.null(resp)) return(NA_character_)
+
+  html_text <- resp_body_string(resp)
+  # Look for the primary document link (usually the .htm or .txt 8-K body)
+  # The index table lists document type "8-K" or "8-K/A" in the Description column
+  # Regex: find href in a table row that contains "8-K" form type
+  links <- str_match_all(
+    html_text,
+    '<a href="(/Archives/edgar/data/[^"]+\\.(?:htm|txt))"[^>]*>[^<]*</a>'
+  )[[1]]
+
+  if (nrow(links) == 0) return(NA_character_)
+  # Return first match — typically the primary document
+  paste0("https://www.sec.gov", links[1, 2])
+}
+
+# Extract the Item 4.01 section from 8-K full text
+# Returns a list: list(item401_text, auditor_out, auditor_in, reason, disagreements)
+extract_item401 <- function(text) {
+  if (is.na(text) || nchar(text) == 0) return(NULL)
+
+  # Remove HTML tags if present
+  clean <- str_replace_all(text, "<[^>]+>", " ")
+  clean <- str_replace_all(clean, "&nbsp;", " ")
+  clean <- str_replace_all(clean, "&#[0-9]+;", " ")
+  clean <- str_squish(clean)
+
+  # Find Item 4.01 section — look for "Item 4.01" or "ITEM 4.01"
+  # Section ends at next "Item X.XX" header or end of document
+  pattern_start <- regex("Item\\s+4\\.01", ignore_case = TRUE)
+  pattern_end   <- regex("Item\\s+[0-9]+\\.[0-9]+", ignore_case = TRUE)
+
+  start_pos <- str_locate(clean, pattern_start)
+  if (is.na(start_pos[1])) return(NULL)  # No Item 4.01 found
+
+  # Find next item after this one
+  after_start <- str_sub(clean, start_pos[1] + 10L)
+  end_match   <- str_locate(after_start, pattern_end)
+
+  if (!is.na(end_match[1]) && end_match[1] > 5) {
+    item_text <- str_sub(after_start, 1, end_match[1] - 1L)
+  } else {
+    # No subsequent item found — take up to 3000 chars
+    item_text <- str_sub(after_start, 1, 3000L)
+  }
+  item_text <- str_squish(item_text)
+  if (nchar(item_text) < 20) return(NULL)
+
+  # ── Parse auditor names ────────────────────────────────────────────────────
+  # Departing auditor: usually mentioned as "dismissed", "resigned", "replaced",
+  # "former independent registered public accounting firm", or simply named first.
+  # Common patterns:
+  #   "dismissed [Auditor Name]"
+  #   "[Auditor Name] has been dismissed"
+  #   "[Auditor Name] resigned"
+  #   "formerly served as ... [Auditor Name]"
+  #   "engagement of [New Auditor]"
+
+  # We use a set of known audit firm names as anchors
+  big4      <- c("Deloitte", "PricewaterhouseCoopers", "PwC", "Ernst & Young",
+                 "EY", "KPMG", "Grant Thornton", "BDO", "RSM", "McGladrey",
+                 "Moss Adams", "Dixon Hughes", "Crowe", "Eide Bailly")
+  firm_pat  <- paste(big4, collapse = "|")
+
+  # Dismissal vs resignation
+  reason <- case_when(
+    str_detect(item_text, regex("dismiss|terminat|replac", ignore_case = TRUE)) ~ "dismissal",
+    str_detect(item_text, regex("resign|declin|withdrew", ignore_case = TRUE))  ~ "resignation",
+    TRUE ~ "unclassified"
+  )
+
+  # Disagreements disclosed?
+  disagreements <- str_detect(
+    item_text,
+    regex("disagreement|disagree", ignore_case = TRUE)
+  )
+
+  # Auditor out: firm named in context of departure
+  out_match <- str_match(
+    item_text,
+    regex(
+      paste0("(", firm_pat, ")[^.]{0,200}(dismiss|terminat|replac|resign|former|previous)"),
+      ignore_case = TRUE
+    )
+  )
+  auditor_out <- if (!is.na(out_match[1, 2])) str_trim(out_match[1, 2]) else NA_character_
+
+  # Auditor in: firm named in context of engagement/appointment
+  in_match <- str_match(
+    item_text,
+    regex(
+      paste0("(engag|appoint|retain|select|hired)[^.]{0,100}(", firm_pat, ")"),
+      ignore_case = TRUE
+    )
+  )
+  auditor_in <- if (!is.na(in_match[1, 3])) str_trim(in_match[1, 3]) else NA_character_
+
+  list(
+    item401_text  = item_text,
+    auditor_out   = auditor_out,
+    auditor_in    = auditor_in,
+    reason        = reason,
+    disagreements = disagreements
+  )
+}
+
+# Main parsing loop
+parse_one_filing <- function(row) {
+  cik        <- row$cik
+  acc_nodash <- row$acc_nodash
+  date_filed <- row$date_filed
+  company    <- row$company_name
+
+  # Get primary document URL
+  doc_url <- get_primary_doc_url(cik, acc_nodash)
+  if (is.na(doc_url)) {
+    return(tibble(
+      cik = cik, acc_nodash = acc_nodash, date_filed = date_filed,
+      company_name = company, parse_status = "no_doc_url",
+      item401_text = NA, auditor_out = NA, auditor_in = NA,
+      reason = NA, disagreements = NA
+    ))
+  }
+
+  # Download primary document
+  resp <- edgar_get(doc_url)
+  if (is.null(resp)) {
+    return(tibble(
+      cik = cik, acc_nodash = acc_nodash, date_filed = date_filed,
+      company_name = company, parse_status = "download_failed",
+      item401_text = NA, auditor_out = NA, auditor_in = NA,
+      reason = NA, disagreements = NA
+    ))
+  }
+
+  doc_text <- resp_body_string(resp)
+  result   <- extract_item401(doc_text)
+
+  if (is.null(result)) {
+    return(tibble(
+      cik = cik, acc_nodash = acc_nodash, date_filed = date_filed,
+      company_name = company, parse_status = "no_item401_found",
+      item401_text = NA, auditor_out = NA, auditor_in = NA,
+      reason = NA, disagreements = NA
+    ))
+  }
+
+  tibble(
+    cik           = cik,
+    acc_nodash    = acc_nodash,
+    date_filed    = date_filed,
+    company_name  = company,
+    parse_status  = "ok",
+    item401_text  = result$item401_text,
+    auditor_out   = result$auditor_out,
+    auditor_in    = result$auditor_in,
+    reason        = result$reason,
+    disagreements = result$disagreements
+  )
+}
+
+# ── Run the parser ─────────────────────────────────────────────────────────────
+# Split candidates into rows for iteration
+candidate_rows <- candidates |>
+  select(cik, acc_nodash, date_filed, company_name) |>
+  mutate(row_id = row_number())
+
+message("Parsing ", nrow(candidate_rows), " candidate filings...")
+results_list <- map(
+  seq_len(nrow(candidate_rows)),
+  function(i) {
+    if (i %% 500 == 0) message("  Processed: ", i, " / ", nrow(candidate_rows))
+    parse_one_filing(candidate_rows[i, ])
+  },
+  .progress = FALSE  # manual progress above
+)
+
+parsed <- bind_rows(results_list)
+message("Parse complete. Status breakdown:")
+print(table(parsed$parse_status))
+```
+
+---
+
+## Step 5: Clean and write output
+
+```{r clean-output}
+# Keep only successfully parsed rows with confirmed Item 4.01 content
+auditor_changes <- parsed |>
+  filter(parse_status == "ok") |>
+  mutate(
+    date_filed  = ymd(date_filed),
+    filing_year = year(date_filed),
+    # Classify Big 4 involvement
+    out_big4 = str_detect(
+      auditor_out,
+      regex("Deloitte|PricewaterhouseCoopers|PwC|Ernst & Young|EY|KPMG",
+            ignore_case = TRUE)
+    ),
+    in_big4  = str_detect(
+      auditor_in,
+      regex("Deloitte|PricewaterhouseCoopers|PwC|Ernst & Young|EY|KPMG",
+            ignore_case = TRUE)
+    ),
+    # Direction of change
+    quality_direction = case_when(
+      out_big4 & !in_big4 ~ "Big4_to_nonBig4",
+      !out_big4 & in_big4 ~ "nonBig4_to_Big4",
+      out_big4 & in_big4  ~ "Big4_to_Big4",
+      TRUE                 ~ "nonBig4_to_nonBig4"
+    )
+  ) |>
+  arrange(date_filed)
+
+# Write full parse log (including failures) for diagnostic review
+write_csv(parsed, LOG_FILE)
+message("Parse log written to: ", LOG_FILE)
+
+# Write clean event file
+write_parquet(auditor_changes, OUT_FILE)
+message("Auditor change event file written to: ", OUT_FILE)
+message("Rows: ", nrow(auditor_changes))
+message("Date range: ", min(auditor_changes$date_filed), " — ",
+        max(auditor_changes$date_filed))
+
+# Quick summary
+auditor_changes |>
+  count(filing_year, quality_direction) |>
+  tidyr::pivot_wider(names_from = quality_direction, values_from = n, values_fill = 0L) |>
+  print(n = 30)
+```
+
+---
+
+## Session notes
+
+- **Next script** (02): Merge event file with CRSP returns and volume to compute CARs
+  and abnormal volume around the `[-1, +1]` window.
+- **Known limitations of this parser:**
+  - Auditor name extraction relies on a list of ~15 large firm names. Smaller regional
+    firms will show `NA` for `auditor_out`/`auditor_in` — these rows are still useful for
+    volume/CAR analysis; the auditor-name fields are used only for subgroup tests.
+  - The regex-based section extractor may fail on unusual 8-K HTML formatting (e.g.,
+    heavily nested tables). Such cases are logged as `no_item401_found`.
+  - EDGAR amended filings (`8-K/A`) are included; review whether to drop them in 02.

@@ -1,0 +1,127 @@
+
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{natbib}
+
+\title{Political Polarization and the Interpretation of Auditor Signals}
+\author{Neil}
+\date{}
+
+\begin{document}
+
+\maketitle
+\onehalfspacing
+
+\section{Introduction}
+
+This paper studies whether political polarization affects how investors interpret auditor-related information. While prior research documents that audit reports and auditor-related events convey information to capital markets, it remains unclear whether this information is interpreted uniformly across investors. 
+
+We propose that political polarization introduces systematic heterogeneity in interpretation. Identical audit signals may generate different beliefs depending on investor ideology, trust in institutions, and prior expectations. This mechanism can affect both price reactions and trading behavior.
+
+\section{Related Literature}
+
+\subsection{Audit and Capital Markets}
+
+Prior literature shows that audit reports contain information relevant to investors. Early work includes \citet{firth1978} and \citet{dodd1984}, while more recent surveys include \citet{defond2014} and \citet{francis2004}. Studies on expanded audit reporting (e.g., critical audit matters) provide mixed evidence on incremental informativeness.
+
+\subsection{Political Economy of Auditing}
+
+Research documents that political connections influence audit outcomes \citep{chan2006}. However, this literature focuses on auditor behavior rather than investor interpretation.
+
+\subsection{Political Polarization in Finance}
+
+Recent work shows that political polarization affects financial decision-making \citep{kempf2024}. Investors exhibit partisan behavior, and political beliefs influence asset allocation and trading.
+
+\subsection{Disagreement and Information Processing}
+
+Theoretical work shows that heterogeneous beliefs can lead to trading and volatility \citep{kandel1995}. Polarization can amplify disagreement in response to public signals.
+
+\section{Hypotheses}
+
+\textbf{H1:} Investor reactions to auditor-related events are more extreme in more polarized environments.
+
+\textbf{H2:} Polarization increases disagreement, reflected in trading volume and absolute returns.
+
+\textbf{H3:} Effects are stronger for more ambiguous or credibility-sensitive audit signals.
+
+\section{Data and Empirical Design}
+
+\subsection{Audit Events}
+
+We focus on auditor changes disclosed in Form 8-K (Item 4.01).
+
+\subsection{Market Data}
+
+We obtain stock returns and trading volume from CRSP.
+
+\subsection{Firm Data}
+
+Firm characteristics are obtained from Compustat.
+
+\subsection{Ownership Data}
+
+Institutional ownership data are obtained from 13F filings.
+
+\subsection{Political Data}
+
+Political polarization is measured using county-level election data.
+
+\section{Empirical Specification}
+
+\begin{equation}
+CAR_{i,t} = \alpha + \beta_1 AuditorChange_{i,t} + \beta_2 Polarization_{i,t} + \beta_3 (AuditorChange \times Polarization) + Controls + FE + \varepsilon_{i,t}
+\end{equation}
+
+\section{Contribution}
+
+This paper contributes to the auditing literature by showing that investor interpretation of audit signals depends on political polarization. It also contributes to the broader literature on disagreement and information processing in financial markets.
+
+\section{Conclusion}
+
+Understanding how political polarization affects investor interpretation of audit signals has implications for audit reporting, market efficiency, and regulation.
+
+\bibliographystyle{apalike}
+
+\begin{thebibliography}{}
+
+\bibitem[Firth(1978)]{firth1978}
+Firth, M. (1978).
+Qualified audit reports: Their impact on investment decisions.
+\textit{The Accounting Review}.
+
+\bibitem[Dodd et al.(1984)]{dodd1984}
+Dodd, P., Dopuch, N., Holthausen, R., \& Leftwich, R. (1984).
+Qualified audit opinions and stock prices.
+\textit{Journal of Accounting and Economics}.
+
+\bibitem[DeFond \& Zhang(2014)]{defond2014}
+DeFond, M., \& Zhang, J. (2014).
+A review of archival auditing research.
+\textit{Journal of Accounting and Economics}.
+
+\bibitem[Francis(2004)]{francis2004}
+Francis, J. (2004).
+What do we know about audit quality?
+\textit{The British Accounting Review}.
+
+\bibitem[Chan et al.(2006)]{chan2006}
+Chan, K., Lin, K., \& Mo, P. (2006).
+A political economy of auditor independence.
+\textit{Review of Accounting Studies}.
+
+\bibitem[Kempf \& Tsoutsoura(2024)]{kempf2024}
+Kempf, E., \& Tsoutsoura, M. (2024).
+Political polarization and finance.
+Working paper.
+
+\bibitem[Kandel \& Pearson(1995)]{kandel1995}
+Kandel, E., \& Pearson, N. (1995).
+Differential interpretation of public signals.
+\textit{Journal of Political Economy}.
+
+\end{thebibliography}
+
+\end{document}

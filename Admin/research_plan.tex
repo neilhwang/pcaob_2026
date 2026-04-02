@@ -1,0 +1,95 @@
+
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\title{Research Plan: Political Polarization and Investor Reaction to Auditor-Related Events}
+\author{Neil}
+\date{}
+
+\begin{document}
+
+\maketitle
+\onehalfspacing
+
+\section{Introduction}
+
+This project investigates how political polarization affects investor interpretation of audit-related information. While prior literature studies whether audit signals are informative, this paper examines whether their interpretation varies systematically with political polarization.
+
+\section{Research Question}
+
+\begin{itemize}
+\item Does political polarization affect investor reactions to auditor-related events?
+\item Does polarization increase disagreement (volume, volatility) around such events?
+\item Are effects stronger for more ambiguous or credibility-sensitive audit signals?
+\end{itemize}
+
+\section{Empirical Setting}
+
+The primary setting is auditor changes disclosed via Form 8-K (Item 4.01). These events provide a clean and well-identified audit signal.
+
+\section{Hypotheses}
+
+\textbf{H1:} Market reactions to auditor changes are more extreme in more politically polarized environments.
+
+\textbf{H2:} Polarization increases investor disagreement, reflected in trading volume and absolute returns.
+
+\textbf{H3:} Effects are stronger for economically meaningful auditor changes (e.g., Big 4 to non-Big 4, dismissals, disagreements).
+
+\section{Data}
+
+\subsection{Audit Events}
+Auditor changes identified from SEC EDGAR filings (Form 8-K, Item 4.01).
+
+\subsection{Market Data}
+CRSP for returns and trading volume.
+
+\subsection{Firm Data}
+Compustat for accounting variables and controls.
+
+\subsection{Ownership Data}
+13F filings via WRDS to construct investor base characteristics.
+
+\subsection{Political Data}
+MIT Election Lab for county-level election results.
+
+\section{Variable Construction}
+
+\subsection{Dependent Variables}
+\begin{itemize}
+\item Cumulative abnormal returns (CAR)
+\item Abnormal trading volume
+\item Absolute abnormal returns
+\end{itemize}
+
+\subsection{Key Independent Variables}
+\begin{itemize}
+\item AuditorChange indicator
+\item Political polarization (local and investor-based)
+\end{itemize}
+
+\section{Empirical Specification}
+
+\begin{equation}
+CAR_{i,t} = \alpha + \beta_1 AuditorChange_{i,t} + \beta_2 Polarization_{i,t} + \beta_3 (AuditorChange \times Polarization) + Controls + FE + \varepsilon_{i,t}
+\end{equation}
+
+\section{Extensions}
+
+\begin{itemize}
+\item Restatement announcements (8-K Item 4.02)
+\item Going-concern disclosures
+\item Heterogeneity by investor sophistication
+\end{itemize}
+
+\section{Contribution}
+
+This paper contributes to the auditing and capital markets literature by showing that investor interpretation of audit signals depends on political polarization. It also contributes to broader work on information processing and disagreement in financial markets.
+
+\section{Target Journal}
+
+The goal is publication in a top accounting journal such as \textit{Review of Accounting Studies}.
+
+\end{document}
