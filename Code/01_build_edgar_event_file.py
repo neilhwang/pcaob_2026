@@ -55,9 +55,11 @@ REQUEST_DELAY = 0.12          # seconds between requests (~8 req/sec)
 USER_AGENT    = "Research project neil.hwang@bcc.cuny.edu"
 MAX_RETRIES   = 3
 
-ROOT       = Path(__file__).resolve().parent.parent   # project root
-OUT_FILE   = ROOT / "Data/Processed/auditor_changes_raw.parquet"
-LOG_FILE   = ROOT / "Data/Processed/01_edgar_parse_log.csv"
+ROOT            = Path(__file__).resolve().parent.parent   # project root
+OUT_FILE        = ROOT / "Data/Processed/auditor_changes_raw.parquet"
+LOG_FILE        = ROOT / "Data/Processed/01_edgar_parse_log.csv"
+CHECKPOINT_FILE = ROOT / "Data/Processed/01_checkpoint.csv"  # resume after interruption
+CHECKPOINT_EVERY = 100   # save progress every N filings
 
 logging.basicConfig(
     level=logging.INFO,
@@ -449,11 +451,36 @@ def main() -> None:
     log.info("Step 3: Intersect EFTS candidates with index")
     candidates = intersect_with_index(efts_set, index)
 
-    # Step 4: Parse filings
+    # Step 4: Parse filings — with checkpointing so interrupted runs can resume
     log.info("Step 4: Parse %d candidate filings", len(candidates))
-    results = []
-    for _, row in tqdm(candidates.iterrows(), total=len(candidates), desc="Parsing"):
-        results.append(parse_one_filing(row))
+
+    # Load any previously completed results
+    if CHECKPOINT_FILE.exists():
+        completed = pd.read_csv(CHECKPOINT_FILE)
+        done_accs = set(completed["acc_nodash"].astype(str))
+        results   = completed.to_dict("records")
+        log.info("Resuming from checkpoint: %d already parsed", len(results))
+    else:
+        done_accs = set()
+        results   = []
+
+    remaining = candidates[~candidates["acc_nodash"].isin(done_accs)]
+    log.info("Remaining to parse: %d", len(remaining))
+
+    import warnings
+    for i, (_, row) in enumerate(
+        tqdm(remaining.iterrows(), total=len(remaining), desc="Parsing")
+    ):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")   # suppress XMLParsedAsHTMLWarning
+            results.append(parse_one_filing(row))
+
+        # Save checkpoint periodically
+        if (i + 1) % CHECKPOINT_EVERY == 0:
+            pd.DataFrame(results).to_csv(CHECKPOINT_FILE, index=False)
+
+    # Final checkpoint save
+    pd.DataFrame(results).to_csv(CHECKPOINT_FILE, index=False)
 
     if not results:
         log.error(
