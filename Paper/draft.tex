@@ -24,12 +24,12 @@
 \begin{abstract}
 We examine whether political polarization affects how investors interpret
 auditor-related information. We argue that polarization increases heterogeneity in investors’ priors, institutional trust, and perceived signal precision, causing the same auditor disclosure to generate more dispersed interpretations. Using auditor change events disclosed in Form 8-K (Item 4.01), we
-show that polarization amplifies trading volume, absolute returns, and
-disagreement around these events. Effects are stronger for more ambiguous
-signals, consistent with the idea that polarization matters most when a
-disclosure is harder to map into a clear valuation implication. These findings
-contribute to the auditing, capital markets, and political economy literatures,
-and have implications for disclosure-based audit regulation.
+show that polarization amplifies absolute abnormal returns and abnormal trading
+volume around these events. Effects are stronger for more ambiguous signals,
+consistent with the idea that polarization matters most when a disclosure is
+harder to map into a clear valuation implication. These findings contribute to
+the auditing, capital markets, and political economy literatures, and have
+implications for disclosure-based audit regulation.
 \end{abstract}
 
 % ── 1. Introduction ───────────────────────────────────────────────────────────
@@ -74,8 +74,8 @@ returns from 2000 to 2023. We match firms to their headquarters state and constr
 a state-by-year polarization measure that varies across both the cross-section and
 time. Our main specification regresses absolute cumulative abnormal returns (CARs)
 and abnormal trading volume over the $[-1, +1]$ window around auditor change
-disclosures on the interaction of an event indicator with the polarization measure,
-controlling for firm characteristics and including firm and year fixed effects.
+disclosures on the state-level polarization measure at the time of the event,
+controlling for firm characteristics and including year and industry fixed effects.
 
 We find that [PLACEHOLDER: insert main result once estimates are available].
 These effects are concentrated in [PLACEHOLDER: ambiguous events / dismissals
@@ -92,7 +92,8 @@ generates systematically different reactions depending on investors' political
 priors. Second, we contribute to the emerging literature on political polarization
 in finance \citep{kempf2024}. Existing work focuses primarily on asset allocation,
 partisan trading behavior, and analyst forecasts; we extend this literature to the
-auditing context and to disagreement as a market outcome. Third, we contribute to
+auditing context, documenting that polarization shapes how investors process
+mandatory audit disclosures. Third, we contribute to
 the theoretical literature on heterogeneous beliefs and trading
 \citep{harris1993, kandel1995, hong2007} by providing an empirical setting where
 the source of belief heterogeneity --- political polarization --- is plausibly
@@ -214,13 +215,25 @@ The function $\phi(\cdot)$ is strictly increasing and concave in $\pi_i$.
 
 \begin{proposition}[Polarization and belief dispersion]
     \label{prop:dispersion}
-    Let $\Pi'$ be a mean-preserving spread of $\Pi$. Then
-    $\mathrm{Var}_i[\phi(\pi_i) \mid \Pi'] \geq \mathrm{Var}_i[\phi(\pi_i) \mid \Pi]$.
+    Fix population shares $s_D, s_R > 0$ with $s_D + s_R = 1$ and mean prior
+    $\bar{\pi} = s_D \pi_D + s_R \pi_R$. The variance of posterior beliefs
+    across investor groups is
+    \[
+        \mathrm{Var}_i[\phi(\pi_i)]
+        = s_D s_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2.
+    \]
+    For any increase in $|\pi_D - \pi_R|$ that holds $\bar{\pi}$ fixed,
+    $\mathrm{Var}_i[\phi(\pi_i)]$ strictly increases.
 \end{proposition}
 
 \begin{proof}
-    Since $\phi$ is monotone increasing, a mean-preserving spread in the
-    argument weakly increases the variance of the image. $\square$
+    With two groups, $\mathrm{Var}_i[\phi(\pi_i)] = s_D s_R (\phi(\pi_D) -
+    \phi(\pi_R))^2$ (variance of a two-point distribution). Since $\phi$ is
+    strictly increasing, $|\phi(\pi_D) - \phi(\pi_R)|$ is strictly increasing
+    in $|\pi_D - \pi_R|$. Any change in $(\pi_D, \pi_R)$ that increases
+    $|\pi_D - \pi_R|$ while holding $\bar\pi$ fixed (a mean-preserving spread
+    of the two-point distribution) therefore strictly increases the posterior
+    variance. $\square$
 \end{proof}
 
 \subsection{Equilibrium Prices and Trading}
@@ -274,11 +287,11 @@ heterogeneity lies in investors' priors.
 
 \begin{hyp}
     \label{h2}
-    Political polarization amplifies the signed CAR in the direction of the
-    consensus view of the signal. For negative-signal events (e.g., dismissals,
-    downward quality changes), polarization increases the magnitude of negative
-    abnormal returns. For positive-signal events (e.g., Big-4 upgrades),
-    polarization increases the magnitude of positive abnormal returns.
+    The effect of political polarization on market reactions is stronger for
+    auditor dismissals than for non-dismissals. Dismissals carry more salient
+    negative valence --- the client initiated the change, often amid concerns
+    about financial reporting --- making the signal more informationally
+    consequential and the role of investor priors correspondingly larger.
 \end{hyp}
 
 \begin{hyp}
@@ -335,25 +348,40 @@ frequency, and standardize to mean zero and unit variance.
 
 \subsection{Empirical Specification}
 
+The unit of observation is an auditor change event $i$. We estimate:
 \begin{equation}
     \label{eq:main}
-    Y_{i,t} = \alpha + \beta_1\,\textit{Event}_{i,t}
-    + \beta_2\,\textit{Pol}_{s(i),t}
-    + \beta_3\,(\textit{Event}_{i,t} \times \textit{Pol}_{s(i),t})
-    + \gamma' X_{i,t} + \delta_i + \tau_t + \varepsilon_{i,t},
+    Y_i = \alpha + \beta\,\textit{Pol}_{s(i),\,t(i)}
+    + \gamma' X_{i,\,t(i)-1}
+    + \tau_{t(i)} + \delta_{j(i)} + \varepsilon_i,
 \end{equation}
-where $Y_{i,t}$ is $|CAR_{i,t}|$ or $AbVol_{i,t}$; $\delta_i$ and $\tau_t$
-are firm and year fixed effects; and $X_{i,t}$ includes size, leverage, ROA,
-book-to-market, loss indicator, and sales growth. Standard errors are clustered
-at the firm level. The coefficient of interest is $\beta_3$.
+where $Y_i$ is $|CAR_i|$ or $AbVol_i$; $\textit{Pol}_{s(i),t(i)}$ is the
+standardized ER polarization measure for the firm's headquarters state $s(i)$
+in the event year $t(i)$; $X_{i,t(i)-1}$ is a vector of firm controls measured
+in the fiscal year prior to the event (size, leverage, ROA, book-to-market, loss
+indicator, and sales growth); $\tau_{t(i)}$ are event-year fixed effects; and
+$\delta_{j(i)}$ are 2-digit SIC industry fixed effects. Standard errors are
+clustered at the firm level. The coefficient of interest is $\beta$.
 
 \subsection{Identification}
 
-Firm fixed effects absorb time-invariant confounders. Year fixed effects control
-for aggregate conditions. The interaction design identifies the \textit{differential}
-effect of polarization on event-window returns relative to non-event windows
-within the same firm over time. We additionally exploit within-state time-series
-variation in the ER measure across election cycles.
+Identification rests on two sources of variation in $\textit{Pol}_{s,t}$:
+cross-state differences in the partisan competitiveness of congressional
+elections, and within-state time-series changes across election cycles. Year
+fixed effects absorb aggregate macroeconomic and political conditions that
+affect all firms simultaneously. Industry fixed effects absorb sector-level
+differences in auditor change frequency and investor base composition. The
+key identifying assumption is that, conditional on these controls, a firm's
+HQ state polarization in the event year is uncorrelated with unobserved
+determinants of the market's reaction to its specific auditor change.
+
+The main threat to this assumption is that politically polarized states may
+attract different investor clienteles or have systematically different firm
+characteristics. We address this by controlling directly for observable firm
+characteristics and by exploiting within-state, across-cycle variation ---
+the same state can be more or less polarized in adjacent election cycles,
+providing a quasi-experimental comparison that holds time-invariant state
+characteristics fixed.
 
 % ── 6. Results ────────────────────────────────────────────────────────────────
 
@@ -368,16 +396,19 @@ volume, and polarization measure.]
 \subsection{Main Results}
 
 [PLACEHOLDER: Table 2 — baseline regressions of $|CAR|$ and $AbVol$ on
-$Event \times Polarization$, with and without controls and fixed effects.]
+$\textit{Pol}$, with and without controls; columns (1)--(2) for $|CAR|$,
+columns (3)--(4) for $AbVol$; year and industry FEs throughout.]
 
 \subsection{Heterogeneity by Event Type}
 
-[PLACEHOLDER: Table 3 — split by dismissal vs.\ resignation, Big-4 direction,
-and disclosed disagreements.]
+[PLACEHOLDER: Table 3 — split-sample regressions by event type: dismissals
+vs.\ non-dismissals (Hypothesis~\ref{h2}), and Big-4 quality direction.
+All columns use full controls and year $+$ industry FEs.]
 
 \subsection{Signal Ambiguity}
 
-[PLACEHOLDER: Table 4 — triple interaction with ambiguity indicator, testing
+[PLACEHOLDER: Table 4 — split by high- vs.\ low-ambiguity events (no
+disclosed disagreement and unclear quality direction), testing
 Hypothesis~\ref{h3}.]
 
 \subsection{Robustness}
