@@ -1,0 +1,253 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{longtable}
+\setstretch{1.15}
+\setlist[itemize]{topsep=3pt,itemsep=3pt}
+\setlist[enumerate]{topsep=3pt,itemsep=4pt}
+
+\title{Detailed Revision Report for\\\textit{Political Polarization and Market Reactions to Auditor-Change Disclosures}}
+\author{Prepared as a submission-improvement memo for\\top accounting-journal review and the 2026 Conference on Auditing and Capital Markets}
+\date{April 3, 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Executive Assessment}
+
+This draft has a potentially publishable core idea: political polarization may alter how investors interpret auditor-related disclosures, producing stronger disagreement-sensitive market reactions. The topic is timely, it fits the conference theme well, and the paper has the beginnings of a coherent theory--empirics design. The current version, however, is not yet submission-ready for a top accounting journal or for a strong conference submission. The main reasons are not cosmetic. They are structural: the paper currently overstates what the formal model proves, leaves the key identification concern only partially answered, treats multiple mechanisms as if they were separately supported when the empirics mostly identify only one reduced-form channel, and still contains major placeholders in the introduction and results sections.
+
+My overall recommendation is \textbf{revise before submission rather than circulate now}. The core idea is worth developing. But the draft should first be tightened around one clean causal story, one clean primary outcome, one clean empirical proxy, and a more disciplined distinction between what is \emph{formally derived}, what is \emph{empirically tested}, and what is \emph{interpretive speculation}.
+
+\section*{Highest-Priority Issues Before Any Submission}
+
+\begin{enumerate}
+    \item \textbf{Do not submit with placeholders.} The introduction still contains ``[PLACEHOLDER: insert main result once estimates are available]'' (draft lines 99--103), and the entire Results section is still skeletal (lines 738--791). That alone makes the paper non-submittable.
+    \item \textbf{Resolve the central identification concern.} The empirical design uses headquarters-state polarization as a reduced-form proxy for the political environment in which the disclosure is interpreted (lines 83--97, 682--700). This is the most vulnerable design choice in the paper. It must be defended more forcefully and tested more directly.
+    \item \textbf{Scale back claims about the price response.} The formal model gives a much cleaner prediction for abnormal volume than for $|CAR|$ (lines 344--368, 420--431). The current draft often treats the two outcomes symmetrically, which makes the theory look less disciplined than it actually is.
+    \item \textbf{Fix the theory--empirics mapping.} The paper alternates among priors, institutional trust, and perceived signal precision as mechanisms (lines 61--81, 239--250, 447--461), but only tests a reduced-form ideological-polarization proxy directly. The draft needs a much clearer statement of what is identified and what is not.
+    \item \textbf{Repair local inconsistencies in measurement language and notation.} The introduction says polarization is measured at the congressional-district level (lines 83--85), but the empirical design and main regression are state-level (lines 568--571, 682--685). That inconsistency will immediately undermine reader confidence.
+\end{enumerate}
+
+\section*{Five Iterative Review Passes}
+
+\subsection*{Iteration 1: Contribution, Framing, and Journal Positioning}
+
+\paragraph{What is working.}
+The paper has a strong initial hook. It combines auditing, capital markets, and political polarization in a way that is novel enough for conference interest and potentially journal-relevant. The choice of auditor-change 8-K disclosures is also smart: the setting is public, standardized, and plausibly open to heterogeneous interpretation.
+
+\paragraph{Main deficiencies.}
+
+\begin{enumerate}
+    \item \textbf{The introduction claims success before the evidence exists in the draft.} The sentence ``This paper asks whether political polarization affects how investors interpret auditor-related information --- and finds that it does'' (lines 46--48) is too strong in a draft that still contains result placeholders. Replace this with a neutral statement of the question and empirical design until the final estimates are inserted.
+
+    \item \textbf{The draft promises three mechanisms, but empirically identifies only one reduced-form channel.} The introduction foregrounds heterogeneous priors, institutional trust, and perceived signal precision (lines 63--68), but the empirical design does not separately identify them. A top journal referee will view this as conceptual overreach. You should explicitly state early that the main empirical design is a \emph{reduced-form test of whether polarization amplifies disagreement-sensitive market reactions}, with mechanism-specific language treated as interpretation rather than identification.
+
+    \item \textbf{The paper needs a sharper journal-facing contribution paragraph.} The current contribution discussion (lines 105--121) is reasonable but too diffuse. For a top accounting journal, the paper should emphasize three narrower contributions:
+    \begin{itemize}
+        \item auditor-related disclosures are not interpreted uniformly across political environments;
+        \item disagreement-sensitive outcomes are an underused lens for studying audit disclosures;
+        \item the value of disclosure-based regulation depends not only on disclosure content but also on heterogeneity in trust toward the institutions producing or enforcing disclosure.
+    \end{itemize}
+    The present version drifts too quickly into broad political-economy language, which risks making the paper feel less like an accounting paper and more like a general finance-political-economy paper with an audit setting.
+
+    \item \textbf{The conference and journal versions should not be identical.} For the 2026 Conference on Auditing and Capital Markets, the main goal is a clean, disciplined paper with one central result and one strong mechanism test. For a top journal submission, the paper will need a deeper identification discussion, stronger robustness design, and a more complete results architecture. In other words, the conference version can be narrower; the journal version cannot.
+\end{enumerate}
+
+\paragraph{Actionable revisions.}
+\begin{itemize}
+    \item Rewrite the last two introduction paragraphs so that they distinguish clearly between \emph{main claim}, \emph{identified mechanism}, and \emph{broader implications}.
+    \item Replace broad language such as ``Political polarization amplifies all three channels'' (line 69) with language like: ``Political polarization can plausibly operate through several channels; the present design tests the reduced-form implication that more polarized environments generate stronger disagreement-sensitive responses to the same audit disclosure.''
+    \item Move the discussion of affective polarization out of the introduction's core story and present it as a supplementary extension unless you can materially strengthen the measurement design.
+\end{itemize}
+
+\subsection*{Iteration 2: Theory, Hypotheses, and Theory--Empirics Fit}
+
+\paragraph{What is working.}
+The theory section has a logical skeleton. The proposition on posterior-dispersion monotonicity is a useful formal anchor, and the text correctly recognizes that volume is the cleaner disagreement-sensitive outcome.
+
+\paragraph{Main deficiencies.}
+
+\begin{enumerate}
+    \item \textbf{The model is cleaner than the draft's verbal claims.} The formal model is a heterogeneous-priors model. Full stop. It does not formally model institutional trust or heterogeneous perceived precision, although the prose tries to treat those as equivalent reduced-form channels (lines 239--250). That is acceptable only if you are very explicit that the formal object is prior heterogeneity and that the other channels are \emph{interpretive analogies}, not proved equivalents in the current setup.
+
+    \item \textbf{The price prediction is materially weaker than the volume prediction.} The draft itself says as much in lines 364--368 and in Prediction P2 (lines 420--431). But Hypothesis~1 (lines 471--477) still places $|CAR|$ and $AbVol$ on equal footing. That is not the best way to present the theory. For the journal version, I recommend either:
+    \begin{itemize}
+        \item making \textbf{abnormal volume} the primary outcome and $|CAR|$ a secondary corroborating outcome; or
+        \item augmenting the model so that an absolute-price-response prediction follows more explicitly from the trading environment.
+    \end{itemize}
+
+    \item \textbf{Hypothesis~2 is underived from the formal model.} The theory gives an ambiguity-based comparative static (Section 3.4), but H2 is a stakes/salience hypothesis about dismissals (lines 479--490). That hypothesis may be sensible, but it is not derived from the current formal structure. A referee will ask why dismissal status should interact with polarization absent a modeled ``stakes'' parameter. You need either to (i) reframe H2 as an auxiliary empirical extension, not a core hypothesis, or (ii) introduce a simple importance parameter into the model.
+
+    \item \textbf{The ambiguity result is not fully established as written.} Lines 380--389 claim that sensitivity to priors is decreasing in $p_H-p_L$. Equation (\ref{eq:sensitivity}) gives the derivative of the posterior with respect to the prior, but the text does not prove the comparative static with respect to informativeness under a clearly stated parameterization. This is too quick. A mathematically careful referee will object.
+
+    \item \textbf{The model uses a binary favorable signal, but the empirical setting is more complicated.} In the theory, $s=1$ is an informative signal of firm quality (lines 255--287). In the data, an auditor change can be interpreted as favorable, unfavorable, or ambiguous depending on context. The current draft partly bridges this through the ambiguity discussion, but it would help to say more directly that the model is not intended to map the sign of an auditor switch one-for-one into firm quality; rather, it captures the idea that a common disclosure induces heterogeneous updating.
+\end{enumerate}
+
+\paragraph{Actionable revisions.}
+\begin{itemize}
+    \item Recast the opening paragraph of Section 3 so that it says: ``The model formalizes one sufficient channel --- heterogeneous priors --- that yields the empirical implication of interest.''
+    \item Rewrite H1 to make $AbVol$ primary and $|CAR|$ secondary.
+    \item Either demote H2 to an exploratory prediction or extend the model with a stakes parameter.
+    \item Replace the ambiguity argument with one of the following:
+    \begin{enumerate}[label=(\alph*)]
+        \item a fully proved comparative static under an explicit parameterization of informativeness; or
+        \item a more modest verbal claim that fully revealing signals collapse posterior disagreement, which motivates the ambiguity test without overstating the general derivative result.
+    \end{enumerate}
+\end{itemize}
+
+\subsection*{Iteration 3: Empirical Design, Measurement, and Identification}
+
+\paragraph{What is working.}
+The draft is strongest when it explains why auditor-change disclosures are a good setting: standardized timing, public observability, and meaningful room for interpretation. The three-proxy idea (ER, DW-NOMINATE, ANES-based affective polarization) is also potentially helpful if presented as triangulation rather than exact measurement.
+
+\paragraph{Main deficiencies.}
+
+\begin{enumerate}
+    \item \textbf{The location-based proxy remains the paper's biggest vulnerability.} The draft repeatedly describes headquarters-state polarization as a proxy for the ``political environment in which the disclosure is received'' (lines 87--88, 684--686, 699--700). This is intuitive but contestable. Public equity investors are geographically dispersed; they are not necessarily concentrated in the firm's headquarters state. A referee will ask why headquarters-state polarization should move the beliefs of the marginal traders rather than local employees, customers, or media environments.
+
+    \item \textbf{There is a measurement inconsistency in the introduction.} The introduction says the measure is built ``at the congressional district level'' (lines 83--85), while the main design is state-year. This needs to be corrected immediately. If the underlying raw data are district-level and then aggregated to the state level, say so clearly and consistently.
+
+    \item \textbf{The abnormal-volume measure is described inconsistently.} Lines 359--361 describe $AbVol$ as event-window share turnover scaled by a pre-event benchmark, but lines 541--545 define it as a log-volume deviation from the estimation-window mean. Those are not the same object. Choose one measure and describe it consistently throughout.
+
+    \item \textbf{The identification section needs stronger state-level confound discussion.} The paper says the key assumption is conditional uncorrelatedness between state polarization and omitted determinants of event reactions (lines 707--710). That is too thin. A better discussion would confront at least four state-level confounds directly:
+    \begin{itemize}
+        \item local investor clientele composition,
+        \item local media ecosystems and information environments,
+        \item state business and regulatory environments,
+        \item industry clustering across politically distinctive states.
+    \end{itemize}
+
+    \item \textbf{Inference should better match the level of regressor variation.} The paper recognizes that the regressor varies at state$\times$year (lines 719--723), but the baseline still clusters at the firm level. For the journal version, I would strongly consider two-way clustering (firm and state) or a state-level wild-cluster bootstrap as a main robustness choice rather than a back-end afterthought.
+
+    \item \textbf{The affective-polarization design is clever but fragile.} The $AP_t \times \text{Exposure}_s$ design (lines 658--671) may pick up more than affective polarization; it may also capture partisan intensity, state political homogeneity, or differences in national-news responsiveness. That does not invalidate it, but it means you should present it as suggestive supplementary evidence rather than as strong mechanism identification.
+
+    \item \textbf{The coding of ambiguity needs to be made reproducible.} The draft says ambiguity is based on observable filing characteristics, including undisclosed reasons and unclear quality direction (lines 397--404, 757--759). For a serious review, you need a coding appendix that defines exactly how each event is classified, ideally with examples and intercoder reliability if there is any hand coding.
+\end{enumerate}
+
+\paragraph{Actionable revisions.}
+\begin{itemize}
+    \item Add a separate subsection titled \textbf{Why headquarters-state polarization is informative}. In that subsection, explain the intended channel and openly acknowledge the proxy's limitations.
+    \item Add at least one validation exercise. Strong candidates include:
+    \begin{itemize}
+        \item stronger effects for firms with more local retail ownership,
+        \item stronger effects for smaller firms with more geographically concentrated investor attention,
+        \item weaker effects where institutional ownership is especially national/global.
+    \end{itemize}
+    \item Move state fixed effects from robustness to a more central role.
+    \item Decide whether $AbVol$ is turnover-based or log-volume-based, then revise every mention to match.
+    \item Provide a coding appendix or table note that defines dismissals, resignations, Big-4 direction, disagreements, and ambiguity categories exactly.
+\end{itemize}
+
+\subsection*{Iteration 4: Results Architecture, Conference Readiness, and Presentation Strategy}
+
+\paragraph{Main deficiencies.}
+
+\begin{enumerate}
+    \item \textbf{The paper currently has no usable Results section.} Lines 738--791 are placeholders. For conference review, that is fatal.
+
+    \item \textbf{The introduction and conclusion nevertheless describe findings as if the tables already exist.} This creates a credibility problem. Until the estimates are inserted, tone down all statements that imply completed evidence.
+
+    \item \textbf{The tables should be reorganized around the strongest empirical sequence.} The current outline is acceptable, but the paper would read more sharply with the following sequence:
+    \begin{enumerate}[label=(\roman*)]
+        \item baseline result for $AbVol$,
+        \item corroborating baseline for $|CAR|$,
+        \item ambiguity interaction,
+        \item event-type heterogeneity,
+        \item triangulation and inference robustness,
+        \item supplementary affective-polarization exercise.
+    \end{enumerate}
+    This ordering better mirrors the strength of the theory.
+
+    \item \textbf{Economic magnitudes need to be front-loaded.} A top-journal referee and a conference audience will both ask: how large is the effect of a one-standard-deviation increase in polarization? The paper should report this in the text for both main outcomes.
+\end{enumerate}
+
+\paragraph{Actionable revisions.}
+\begin{itemize}
+    \item Insert an actual one-paragraph Results preview into the introduction once estimates are finalized.
+    \item Add one figure for the conference version, for example a binned scatter or coefficient plot showing the relation between polarization and event-window reactions.
+    \item Include economic magnitude sentences after every main table.
+    \item In the conference draft, keep the results section focused and avoid overloading the reader with many secondary specifications.
+\end{itemize}
+
+\subsection*{Iteration 5: Proof Audit, Notation Audit, Redundancy Audit, and Line Editing}
+
+\paragraph{Proofs.}
+
+\begin{enumerate}
+    \item \textbf{The proof of Proposition~\ref{prop:dispersion} is correct as written for the stated two-group result.} The variance formula and the mean-preserving-spread argument in the appendix (lines 841--901) are both sound.
+
+    \item \textbf{What is not yet justified is the broader extrapolation.} The remark after the proposition says that the same monotonicity ``extends to richer prior distributions under mean-preserving spreads, by the convexity of Bayesian updating when likelihoods are well-separated'' (lines 319--322). That extension is not proved. Unless you add a proof or a precise citation, I recommend deleting or sharply qualifying this sentence.
+
+    \item \textbf{The ambiguity section overstates a mathematical claim.} As noted above, the statement in lines 380--389 that sensitivity is decreasing in $p_H-p_L$ is not established by Equation~(\ref{eq:sensitivity}) alone. Tighten that discussion.
+\end{enumerate}
+
+\paragraph{Notation and consistency issues.}
+
+\begin{enumerate}
+    \item \textbf{District-level versus state-level language.} Lines 83--85 say ``congressional district level,'' while the paper's actual main regressor is state-level (lines 568--571, 682--685). Fix throughout.
+    \item \textbf{Index inconsistency.} The identification section refers to $\textit{Pol}_{s,e}$ (line 702), while the main specification uses $\textit{Pol}_{s(e),t(e)}$ (line 678). Use one notation convention consistently.
+    \item \textbf{Outcome indexing.} In the event-study section, the paper writes $CAR_i$ (line 535), whereas the main regression uses event index $e$ (line 682). Use either firm-event notation or event notation throughout.
+    \item \textbf{Conceptual labeling of the ER measure.} With $\alpha=1$, the ER object is very close to electoral competitiveness. The paper recognizes this later, but the exposition should be clearer from the start that this proxy is not a pure direct measure of ideological polarization.
+\end{enumerate}
+
+\paragraph{Repeated expressions and stylistic redundancies.}
+The draft repeats several formulations often enough that the prose starts to sound circular.
+
+\begin{itemize}
+    \item ``political polarization affects how investors interpret'' appears repeatedly (e.g., lines 25--31, 46--48, 205 onward in substance). Vary the phrasing after the first prominent use.
+    \item ``reduced-form proxy for the polarization of the political environment in which the disclosure is received'' appears in closely related forms multiple times (lines 87--88, 684--686, 699--700). Say it once carefully, then shorten later references.
+    \item The conclusion says ``polarization increases polarization-induced heterogeneity in interpretation'' (lines 811--812 in substance). This is tautological. Replace with ``increases heterogeneity in interpretation'' or ``widens disagreement in interpretation.''
+    \item The introduction duplicates the policy implication almost verbatim in lines 123--134. Condense this to one stronger paragraph.
+\end{itemize}
+
+\paragraph{Concrete line-edit suggestions.}
+
+\begin{longtable}{p{0.23\textwidth} p{0.72\textwidth}}
+\toprule
+\textbf{Location} & \textbf{Suggested fix} \\
+\midrule
+Lines 46--48 & Replace ``--- and finds that it does'' with a neutral formulation until final estimates are inserted. \\
+Lines 83--97 & Replace ``congressional district level'' with language that accurately reflects state-level aggregation. Explain the aggregation in one sentence. \\
+Lines 99--103 & Delete placeholders before circulation. Insert signed direction, economic magnitude, and statistical significance. \\
+Lines 123--134 & Merge the two nearly identical policy-implication sentences into one paragraph. \\
+Lines 239--250 & Clarify that institutional trust and perceived precision are verbal extensions of the formal heterogeneous-priors mechanism, not separately modeled objects. \\
+Lines 344--368 & Make clear that the strongest formal prediction is for $AbVol$, not $|CAR|$. \\
+Lines 380--389 & Soften or re-prove the ambiguity comparative static. \\
+Lines 471--477 & Rewrite H1 so the primary outcome is abnormal volume and the return result is secondary corroboration. \\
+Lines 479--490 & Either justify H2 from theory or relabel it as an auxiliary empirical extension. \\
+Lines 541--545 & Align the definition of $AbVol$ with the description used elsewhere in the paper. \\
+Lines 702--723 & Expand the identification discussion to confront omitted state-level confounds and the clustering issue more directly. \\
+Lines 738--791 & Replace every placeholder with actual results, table notes, and text discussion before any submission. \\
+\bottomrule
+\end{longtable}
+
+\section*{Bottom-Line Recommendation}
+
+At present, the draft reads like a strong conceptual paper in mid-development rather than a submission-ready paper. The idea is good enough to continue pushing. The next revision should not focus primarily on stylistic polishing. It should instead do four substantive things:
+
+\begin{enumerate}
+    \item narrow the core story to one empirically defensible reduced-form mechanism;
+    \item make abnormal volume the lead outcome unless the price theory is strengthened;
+    \item defend and validate the headquarters-state proxy more directly;
+    \item replace all placeholders with actual results and economic magnitudes.
+\end{enumerate}
+
+If you make those changes, the paper could become a credible conference submission and a much stronger candidate for subsequent journal development. In its current form, however, it is still too exposed on identification, too expansive in mechanism language, and too unfinished in the results section for a top-tier submission.
+
+\section*{Suggested Revision Sequence for the Next Draft}
+
+\begin{enumerate}
+    \item Finalize the outcome definitions and sample-construction language.
+    \item Insert the full baseline tables and write the introduction/results preview from actual estimates.
+    \item Rewrite the theory section so the formal and verbal mechanisms are cleanly separated.
+    \item Rebuild the identification section around the proxy defense and inference strategy.
+    \item Then do a final prose-cleaning pass to eliminate redundancy and tighten the contribution language.
+\end{enumerate}
+
+\end{document}

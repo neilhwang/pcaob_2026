@@ -23,7 +23,10 @@
 
 \begin{abstract}
 We examine whether political polarization affects how investors interpret
-auditor-related information. We argue that polarization increases heterogeneity in investors’ priors, institutional trust, and perceived signal precision, causing the same auditor disclosure to generate more dispersed interpretations. Using auditor change events disclosed in Form 8-K (Item 4.01), we
+auditor-related information. We argue that polarization amplifies
+heterogeneity in investors’ interpretation of auditor disclosures by
+intensifying partisan social identity, institutional distrust, and
+disagreement over the credibility of institution-dependent signals. Using auditor change events disclosed in Form 8-K (Item 4.01), we
 show that polarization amplifies absolute abnormal returns and abnormal trading
 volume around these events. Effects are stronger for more ambiguous signals,
 consistent with the idea that polarization matters most when a disclosure is
@@ -46,6 +49,21 @@ fundamentally reshapes how individuals process information, form beliefs, and
 respond to institutions \citep{kempf2024, bordalo2023}. This paper asks whether
 political polarization affects how investors interpret auditor-related information
 --- and finds that it does, in economically meaningful ways.
+
+A key distinction in the political science literature is between
+\emph{ideological} polarization --- divergence in substantive issue positions
+--- and \emph{affective} polarization --- out-party animus, distrust, and
+social distance between partisans \citep{iyengar2012, iyengar2019}. Both
+dimensions matter for the interpretation of auditor-originated disclosures.
+Investors may disagree not only because they attach different substantive
+implications to the same auditor change, but also because they differ in
+the extent to which they trust auditors and the oversight institutions that
+regulate them. Indeed, partisan identity can generate negative evaluations
+of institutions perceived as allied with the out-group, even when
+investors hold similar views on the underlying economic facts
+\citep{iyengar2019}. Auditor disclosures --- which are standardized,
+institution-dependent, and often ambiguous about their implications ---
+are therefore especially exposed to both dimensions of polarization.
 
 We study auditor changes disclosed in Form 8-K (Item 4.01). These events are
 well-suited to our question for three reasons. First, they are public, standardized
@@ -221,6 +239,29 @@ disagreement and affective distrust of gatekeepers. We extend this literature
 to the auditing context, where institutional trust plays an unusually central
 role.
 
+\subsection{Affective Polarization, Social Identity, and Information Processing}
+
+A growing literature shows that affective polarization --- out-party animus,
+distrust, and social distance --- is conceptually and empirically distinct from
+ideological polarization \citep{iyengar2012, iyengar2019}. \citet{iyengar2012}
+demonstrate that partisan identity produces negative evaluations of the
+out-group and social-distance outcomes even when ideological disagreement is
+limited; polarization can intensify through partisan cues and campaigns without
+commensurate growth in issue extremity. \citet{iyengar2019} survey the broad
+downstream consequences of affective polarization, showing that partisan
+animus spills over into nonpolitical settings including employment decisions,
+commercial transactions, and interpersonal trust. This nonpolitical spillover
+makes it plausible that affective polarization also shapes how investors assess
+the credibility of institution-dependent disclosures such as auditor changes.
+
+For measurement, \citet{tyler2023} evaluate the robustness of the ANES
+feeling-thermometer series as an indicator of affective polarization. They
+find that the increase in out-party animus is real but that mixed survey modes
+can inflate estimates in the later part of the time series. We use the ANES
+series as a supplementary national proxy rather than a primary baseline,
+consistent with \citet{tyler2023}'s recommendation to treat thermometer
+measures as useful but not perfectly clean annual indicators.
+
 \subsection{Heterogeneous Beliefs and Trading}
 
 Our theoretical framework draws on models of heterogeneous beliefs in financial
@@ -245,9 +286,19 @@ precision should be understood as reduced-form sources of prior-like
 heterogeneity: a less trusting investor effectively places a lower prior on the
 informativeness of the auditor's signal; an investor who perceives lower signal
 precision effectively flattens the likelihood function. Either way, the
-formal result is the same increase in posterior dispersion. The model therefore
-provides a microfoundation for the broader mechanism described in the
-introduction, not a claim that priors are the only operative channel.
+formal result is the same increase in posterior dispersion. The model therefore provides a microfoundation for the broader mechanism
+described in the introduction, not a claim that priors are the only operative
+channel. In the affective-polarization literature \citep{iyengar2012,
+iyengar2019}, partisan identity and out-party distrust shape how individuals
+evaluate the credibility of information and the institutions that produce it.
+In the present setting, these forces can be interpreted as widening the
+cross-investor gap in trust in the disclosure ($\tau_i$) or in perceived
+signal precision ($\kappa_i$). As shown in Appendix~\ref{app:proofs}, all
+three channels generate the same posterior-dispersion comparative static:
+whenever polarization widens the cross-group posterior log-odds index, belief
+dispersion and disagreement-sensitive market outcomes strictly increase. The
+heterogeneous-priors model below should therefore be read as a tractable
+benchmark case of this broader class of polarization mechanisms.
 The model draws on the heterogeneous-priors framework of \citet{kandel1995}.
 
 \subsection{Setting}
@@ -447,18 +498,29 @@ polarization\,$\times$\,ambiguity interaction with positive sign.
 \end{itemize}
 
 \textbf{Discussion.} The model formalizes one specific channel---heterogeneous
-priors---but the empirical predictions extend to the broader set of mechanisms
-described in Section~\ref{sec:theory}. If polarization instead operates
-through institutional trust, investors in more polarized environments differ
-more sharply in the credibility they assign to the disclosure, producing the
-same increase in posterior dispersion. If polarization operates through
-perceived signal precision, some investors treat the 8-K as highly diagnostic
-while others discount it as strategically motivated, again widening beliefs.
-In each case, the core prediction is the same: polarization amplifies
-disagreement-sensitive market outcomes. The ambiguity interaction in P3 is
-robust to all three channels---ambiguous signals leave more room for
-institutional trust and prior heterogeneity to drive divergent updating.
-A further implication is that standard disclosure-based regulatory remedies
+priors---but the same comparative statics arise under the other two channels
+described in the introduction: heterogeneous institutional trust and
+heterogeneous perceived signal precision. Both can be nested in a unified
+framework. Let investor $i$'s posterior log-odds index be
+\[
+    X_i = a(\pi_i) + \tau_i \kappa_i \ell,
+\]
+where $a(\pi_i) = \log[\pi_i/(1-\pi_i)]$ is the prior log-odds, $\tau_i \in
+[0,1]$ is investor $i$'s trust in the disclosure, $\kappa_i > 0$ is perceived
+signal precision, and $\ell = \log(p_H/p_L) > 0$ is the objective
+log-likelihood ratio. Posterior beliefs are $\mu_i = \sigma(X_i)$, where
+$\sigma(\cdot)$ is the logistic map. Whenever polarization widens the
+cross-group gap $|X_D - X_R|$---whether through divergent priors, divergent
+trust, or divergent perceived precision---the logistic map is strictly
+increasing, so $|\mu_D - \mu_R|$ increases strictly. It follows that
+posterior variance $s_D s_R (\mu_D - \mu_R)^2$ increases under any channel
+(see Appendix~\ref{app:proofs}). The core prediction is therefore
+channel-agnostic: polarization amplifies disagreement-sensitive market
+outcomes regardless of which specific mechanism predominates. The ambiguity
+interaction in P3 is similarly robust: ambiguous signals reduce $\ell$,
+which increases the relative weight of the non-signal components ($a(\pi_i)$
+and $\tau_i$), so prior and trust heterogeneity contribute more to posterior
+dispersion. A further implication is that standard disclosure-based remedies
 cannot fully eliminate polarization-driven disagreement, because the
 heterogeneity lies in how investors process signals, not in what the signals
 contain.
@@ -631,6 +693,19 @@ captures electoral competitiveness, while DW-NOMINATE captures ideological
 distance. If both predict the same investor response, the evidence for a
 polarization mechanism is substantially stronger.
 
+\smallskip
+\noindent\textit{Limitations of measurement.} No single empirical measure
+fully captures the latent identity--alienation object \citep{duclos2004}.
+The ER electoral proxy, DW-NOMINATE ideological gap, and ANES affective
+series each capture a different margin of the latent concept: local electoral
+sorting, elite ideological distance, and national partisan animus,
+respectively. Because these proxies differ in data source, geographic
+aggregation, and conceptual emphasis, convergent evidence across all three is
+more informative than consistency within any single measure. Divergence across
+proxies would instead indicate that the estimated effect is specific to one
+dimension of polarization, a finding that would itself be informative about
+the operative channel.
+
 \subsection{Supplementary Affective Polarization Measure}
 
 The identity--alienation framework of \citet{duclos2004} suggests that
@@ -665,7 +740,15 @@ $\overline{\Delta_R}_t = \mathbb{E}_t[T^R_i - T^D_i \mid
 \text{Republican partisan}]$ is the analogous gap among Republican
 identifiers \citep{iyengar2012}. $AP_t$ is thus the average partisan
 in-group favoritism across both parties. We linearly interpolate between
-survey years to produce an annual series.
+survey years to produce an annual series.\footnote{\citet{tyler2023} evaluate
+the robustness of ANES feeling-thermometer indicators and find that the
+upward trend in out-party animus is real but that mode shifts in later survey
+waves (telephone to online) can inflate the time series. We treat $AP_t$ as a
+supplementary national proxy rather than a clean annual panel, consistent with
+their recommendation. Our supplementary specification interacts $AP_t$ with a
+cross-sectional exposure variable, so any additive time-series bias from mode
+changes is partially absorbed by year fixed effects in the main ideological
+specifications.}
 
 Because $AP_t$ is national, it is absorbed by year fixed effects when entered
 alone. We therefore identify its role through interaction with a
@@ -847,7 +930,7 @@ investors assess the credibility of institution-dependent disclosures.
 
 \appendix
 
-\section{Proof of Proposition~\ref{prop:dispersion}}
+\section{Proof of Proposition~\ref{prop:dispersion} and Additional Theoretical Results}
 \label{app:proofs}
 
 \noindent\textbf{Setup.} Let there be two investor groups, $D$ and $R$, with
@@ -910,5 +993,85 @@ Since $s_D s_R > 0$ is unchanged, we conclude:
     > s_D s_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2
     = \mathrm{Var}_i[\phi(\pi_i)]. \qquad \square
 \]
+
+\bigskip
+
+\noindent\textbf{Propositions A1--A3: Additional Channels.}
+
+The following three propositions establish that the same posterior-dispersion
+comparative static holds when polarization operates through institutional
+trust and perceived signal precision, and nests all three channels in a
+single latent-index representation.
+
+\medskip
+\noindent Let $\sigma(x) \equiv e^x/(1+e^x)$ denote the logistic map, with
+$\sigma'(x) = \sigma(x)(1-\sigma(x)) > 0$ for all $x \in \mathbb{R}$.
+For any prior $\pi \in (0,1)$, define prior log-odds $a(\pi) \equiv
+\log[\pi/(1-\pi)]$ and objective log-likelihood ratio $\ell \equiv
+\log(p_H/p_L) > 0$.
+
+\begin{proposition}[Institutional trust channel]
+\label{prop:trust}
+Fix a common prior $\pi \in (0,1)$ and a favorable signal with
+log-likelihood ratio $\ell > 0$. Suppose investor $i$ discounts the signal by
+trust parameter $\tau_i \in [0,1]$, so that posterior beliefs are
+$m(\tau_i) = \sigma(a(\pi) + \tau_i \ell)$. For two groups $D, R$ with trust
+levels $\tau_D, \tau_R$:
+\[
+    \mathrm{Var}(m(\tau_g)) = s_D s_R \bigl[\sigma(a(\pi)+\tau_D\ell)
+    - \sigma(a(\pi)+\tau_R\ell)\bigr]^2.
+\]
+Any increase in $|\tau_D - \tau_R|$ strictly increases $\mathrm{Var}(m(\tau_g))$.
+\end{proposition}
+
+\begin{proof}
+Since $dm/d\tau = \sigma'(a(\pi)+\tau\ell)\cdot\ell > 0$, $m(\tau)$ is
+strictly increasing. The variance formula follows from the two-point
+distribution, as in Step 1 above. Strict monotonicity of $m$ implies
+$|m(\tau_D)-m(\tau_R)|$ is strictly increasing in $|\tau_D-\tau_R|$,
+which proves the claim. $\square$
+\end{proof}
+
+\begin{proposition}[Perceived precision channel]
+\label{prop:precision}
+Under the same setup, suppose investors share a common prior and common
+trust but differ in perceived signal precision, scaling their effective
+log-likelihood ratio by $\kappa_i > 0$: posterior beliefs are
+$q(\kappa_i) = \sigma(a(\pi) + \kappa_i \ell)$. For two groups $D, R$:
+\[
+    \mathrm{Var}(q(\kappa_g)) = s_D s_R \bigl[\sigma(a(\pi)+\kappa_D\ell)
+    - \sigma(a(\pi)+\kappa_R\ell)\bigr]^2.
+\]
+Any increase in $|\kappa_D - \kappa_R|$ strictly increases $\mathrm{Var}(q(\kappa_g))$.
+\end{proposition}
+
+\begin{proof}
+Identical argument to Proposition~\ref{prop:trust} with $\kappa$ replacing
+$\tau$. $\square$
+\end{proof}
+
+\begin{proposition}[Unified channel representation]
+\label{prop:unified}
+Let each investor have posterior $\mu_g = \sigma(X_g)$, where the latent
+log-odds index $X_g = a(\pi_g) + \tau_g \kappa_g \ell$ may differ across
+groups through any combination of heterogeneous priors $\pi_g$, trust $\tau_g$,
+or perceived precision $\kappa_g$. Then:
+\[
+    \mathrm{Var}(\mu_g) = s_D s_R \bigl[\sigma(X_D) - \sigma(X_R)\bigr]^2,
+\]
+and any increase in $|X_D - X_R|$ strictly increases $\mathrm{Var}(\mu_g)$.
+In particular, if polarization widens the cross-group gap in any one of the
+three underlying components---prior log-odds, trust, or perceived
+precision---posterior variance and disagreement-sensitive trading outcomes
+strictly increase.
+\end{proposition}
+
+\begin{proof}
+The variance formula is the two-point distribution result. Strict
+monotonicity of $\sigma$ implies $|\sigma(X_D)-\sigma(X_R)|$ is strictly
+increasing in $|X_D-X_R|$. Any widening of the gap in a single component
+widens $|X_D-X_R|$ and therefore widens $|\sigma(X_D)-\sigma(X_R)|$.
+$\square$
+\end{proof}
 
 \end{document}
