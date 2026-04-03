@@ -1,0 +1,330 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\doublespacing
+
+\title{Updated Redesign Memo for \textit{Political Polarization and the Interpretation of Auditor Signals}}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Purpose of This Memo}
+
+This memo updates the redesign plan after careful review of Mason (2015), ``I Disrespectfully Agree: The Differential Effects of Partisan Sorting on Social and Issue Polarization.'' The main implication is that the paper should move even more decisively away from a narrow ``heterogeneous priors around auditor changes'' framing and toward a design that distinguishes between \emph{social/affective} polarization and \emph{ideological/issue} polarization.
+
+Mason's core contribution is to show that partisan sorting can increase partisan bias, activism, and anger even when issue positions are comparatively moderate and even when issue extremity is held constant. Her argument is that social polarization and issue polarization are distinct, can move independently, and should not be conflated. That insight is directly useful for this project because it offers a much better conceptual foundation for why investors might interpret the same auditor-originated signal differently without requiring extreme policy disagreement or a literal commitment to Bayesian prior heterogeneity alone.
+
+\section{What Mason (2015) Changes in the Paper's Design Logic}
+
+Mason's central claim is that debate over mass polarization confounded two different phenomena: \emph{social polarization}, characterized by partisan bias, activism, and anger, and \emph{issue position polarization}, characterized by more extreme policy positions. She argues that partisan-ideological sorting increases social polarization more strongly than issue extremity and that people can ``agree on many things but be bitterly divided nonetheless.'' This is the single most useful conceptual takeaway for your paper.
+
+For your setting, the implication is straightforward: investors do not need to hold sharply different substantive policy views in order to interpret an auditor change differently. It is enough that they differ in political identity alignment, partisan affect, distrust of outgroup-linked institutions, or willingness to treat a gatekeeper-originated disclosure as credible. In other words, the mechanism should be about \emph{identity-driven interpretation and trust} as much as about policy-based disagreement.
+
+This helps the paper in three ways.
+
+\begin{enumerate}[label=\textbf{M\arabic*.}]
+    \item It gives a cleaner reason not to rely exclusively on heterogeneous prior beliefs.
+    \item It clarifies why \emph{affective} polarization may be especially important in an auditing setting.
+    \item It suggests that the most natural empirical outcomes are disagreement-sensitive variables such as abnormal volume and $|CAR|$, rather than a universal directional signed-return effect.
+\end{enumerate}
+
+\section{Recommended Core Thesis}
+
+The paper should be rewritten around the following thesis:
+
+\begin{quote}
+Political polarization changes how investors interpret auditor-originated disclosures. The effect is strongest when the disclosure is standardized but difficult to map into a clear valuation implication, and when its credibility depends importantly on trust in auditors and in the institutions that oversee them.
+\end{quote}
+
+That thesis is stronger than a claim about Bayesian posterior dispersion alone. It is also much better aligned with Mason's distinction between social and issue polarization. The paper should argue that auditor disclosures are processed not only through substantive beliefs about firm value, but also through identity-laden beliefs about credibility, gatekeepers, and institutional trust.
+
+\section{Why the Current ``Heterogeneous Priors Only'' Story Is Too Limiting}
+
+The current framing has three weaknesses.
+
+First, it leans too heavily on \emph{heterogeneous priors}. That mechanism is tractable, but too narrow as the public-facing explanation for the paper.
+
+Second, it risks implying that investors must disagree primarily because they have different views about underlying fundamentals. Mason suggests a broader possibility: people can react differently because partisan and ideological identities are aligned in ways that intensify bias, anger, and politically motivated interpretation even when issue positions remain moderate.
+
+Third, the prior-only framing makes it harder to explain why audit-related signals should be especially affected. The better explanation is that audit signals are institution-dependent. Their interpretation depends on whether investors trust auditors, audit committees, the PCAOB, the SEC, and establishment monitoring more generally.
+
+So the paper should replace the narrow formulation with a broader mechanism stack.
+
+\section{Recommended Mechanism Stack}
+
+The paper should explicitly discuss three channels.
+
+\begin{enumerate}[label=\textbf{C\arabic*.}]
+    \item \textbf{Heterogeneous prior beliefs.} Investors enter the event with different baseline views about managers, auditors, governance quality, and the likelihood that an auditor change reflects benign turnover versus underlying reporting concerns.
+    \item \textbf{Heterogeneous institutional trust.} Investors differ in how much they trust auditors, the PCAOB, SEC oversight, and other establishment institutions that certify financial information.
+    \item \textbf{Heterogeneous interpretive style under social polarization.} Investors differ in how strongly identity alignment, partisan sorting, and affective polarization push them toward biased, distrustful, or adversarial interpretations of ambiguous public disclosures.
+\end{enumerate}
+
+The third channel is the one Mason helps most with. Her framework says the relevant divergence need not come from sharply more extreme issue positions; it can come from the strengthening and alignment of political identities that intensify bias and anger. That is exactly the kind of mechanism that can plausibly affect the interpretation of a common but ambiguous disclosure.
+
+\section{How the Theory Section Should Be Rewritten}
+
+The theory should no longer lead with ``in a Bayesian framework with heterogeneous priors.'' Instead, it should open with a short paragraph such as:
+
+\begin{quote}
+We formalize polarization as a force that increases heterogeneity in investors' interpretation of auditor-originated disclosures. This heterogeneity can arise through differences in prior beliefs, trust in auditing institutions, and socially polarized interpretive responses to ambiguous public signals. The Bayesian setup that follows is a tractable microfoundation for this broader economic mechanism rather than the paper's only behavioral interpretation.
+\end{quote}
+
+That move keeps the model while preventing the paper from sounding as though its contribution depends on one strong assumption about investor cognition.
+
+\section{How to Think About Two Types of Polarization}
+
+A major redesign issue is whether and how to incorporate \emph{ideological} and \emph{affective/social} polarization together. The answer is yes, but they must be given distinct roles.
+
+\subsection{Ideological Polarization}
+
+Ideological polarization concerns divergence in issue positions, ideological consistency, and substantive left-right separation. In the broader literature, this is the type of polarization captured by ideological position measures, roll-call based measures, or distributional measures built from issue positions or vote shares. The Thurner et al. paper is in this tradition: it models ideological positions using opinion vectors and measures polarization as variance in pairwise alignment. \cite{thurner2025}
+
+For your paper, ideological polarization is useful as a proxy for the extent to which the political environment is substantively sorted and the extent to which investors' baseline interpretive frames may differ.
+
+\textbf{Best use in the paper:}
+\begin{itemize}
+    \item baseline cross-sectional or time-series proxy for the degree of political division in the firm's environment;
+    \item measure of ideological sorting and substantive policy disagreement;
+    \item useful for explaining divergent interpretations where investors attach different substantive meanings to the same disclosure.
+\end{itemize}
+
+\subsection{Affective or Social Polarization}
+
+Druckman and Levy define affective polarization as the gap between in-party warmth and out-party hostility, and emphasize distrust, animus, stereotypes, social identity, and politically motivated reactions that are not reducible to issue disagreement. \cite{druckmanlevy2021} Mason's 2015 paper is especially valuable because it clarifies that this broader phenomenon can be understood as \emph{social polarization}: the growth of partisan bias, activism, and anger that is driven by the alignment of political identities rather than by commensurate growth in issue extremity. \cite{mason2015}
+
+For your paper, this is extremely useful. Audit disclosures are not just technical signals. They are also credibility-laden signals that depend on trust in professionals and institutions. Affective or social polarization therefore maps naturally into the \emph{trust} and \emph{credibility} channel.
+
+\textbf{Best use in the paper:}
+\begin{itemize}
+    \item mechanism variable for institutional distrust and identity-based interpretation;
+    \item stronger predictor in settings where disclosure credibility depends on confidence in auditors and regulators;
+    \item especially useful for explaining abnormal volume, $|CAR|$, and other disagreement-sensitive outcomes rather than unconditional signed returns.
+\end{itemize}
+
+\subsection{How the Two Should Be Incorporated Together}
+
+The paper should explicitly state that political polarization has at least two empirically relevant dimensions:
+
+\begin{enumerate}[label=\textbf{P\arabic*.}]
+    \item \textbf{Ideological polarization:} divergence in substantive issue positions and ideological sorting.
+    \item \textbf{Affective/social polarization:} partisan animus, distrust, identity alignment, bias, and anger that can intensify interpretation even without equivalent increases in issue extremity.
+\end{enumerate}
+
+The paper's argument should then be:
+
+\begin{quote}
+Ideological polarization and affective/social polarization are conceptually distinct but complementary. Ideological polarization helps explain divergence in substantive interpretive frames. Affective/social polarization helps explain divergence in institutional trust and credibility assessments. Auditor-originated disclosures are likely affected by both, but affective/social polarization may be especially important when the signal's informational value depends on trust in regulated gatekeepers.
+\end{quote}
+
+\section{How Mason Should Be Incorporated Explicitly into the Memo and Paper}
+
+Mason should not be treated as just another citation in the polarization literature review. She should do real conceptual work in the paper.
+
+\subsection{In the Introduction}
+
+Use Mason to justify the paper's distinction between two forms of polarization. A possible move is:
+
+\begin{quote}
+Following Mason (2015), we distinguish between ideological polarization in issue positions and social or affective polarization in bias, anger, and politically motivated interpretation. This distinction is important in our setting because investors may interpret the same auditor-originated disclosure differently even when their underlying policy views are not far apart.
+\end{quote}
+
+\subsection{In the Theory Motivation}
+
+Use Mason to justify why the paper's mechanism should not be framed purely as policy-based disagreement. Her evidence suggests that alignment of partisan and ideological identities can intensify bias and anger more than it intensifies issue extremity. In your paper, the analog is that alignment of political identities may intensify distrust of gatekeepers and divergent interpretation of ambiguous audit signals even if investors' underlying views about cash flows are not radically different.
+
+\subsection{In the Measurement Section}
+
+Use Mason to motivate why ideological and affective/social polarization should not be proxied with a single series. A measure rooted in issue-position divergence is not the same as a measure rooted in animus, distrust, or partisan social identity. This is exactly the kind of conflation she warns against.
+
+\subsection{In the Empirical Predictions}
+
+Mason helps sharpen the empirical predictions:
+
+\begin{enumerate}[label=\textbf{H\arabic*.}]
+    \item Polarization should increase disagreement-sensitive responses to auditor signals.
+    \item The effect should be stronger for ambiguity-rich disclosures.
+    \item The effect should be stronger for affective/social polarization than for ideological polarization when the signal's credibility depends heavily on institutional trust.
+    \item Signed directional reactions should be weaker and less universal than disagreement-sensitive outcomes, because social polarization need not imply a common directional valuation interpretation.
+\end{enumerate}
+
+\section{Why Auditor Changes Are Still a Good Main Setting}
+
+The paper should not abandon auditor changes immediately. They remain a strong main setting for three reasons.
+
+\begin{enumerate}[label=\textbf{A\arabic*.}]
+    \item \textbf{Common public signal.} Item 4.01 disclosures are public and standardized, which is unusually useful for a paper about divergent interpretation of a common disclosure.
+    \item \textbf{Ambiguity.} Auditor changes are often difficult to map into a clean valuation implication. The same event can reflect routine turnover, governance stress, fee renegotiation, auditor-client conflict, or underlying reporting risk.
+    \item \textbf{Institutional dependence.} Interpretation depends strongly on beliefs about auditor quality, governance, and the credibility of institutions that oversee the audit process.
+\end{enumerate}
+
+The key drafting change is that the paper should say auditor changes are a \emph{clean first setting}, not the only place where the mechanism can operate.
+
+\section{What Additional Data or Designs Could Strengthen the Paper?}
+
+The redesign should consider two paths.
+
+\subsection{Version 1: Keep Item 4.01 as the Main Design}
+
+This is the recommended baseline path.
+
+\textbf{Main outcomes:}
+\begin{itemize}
+    \item abnormal trading volume;
+    \item absolute cumulative abnormal returns;
+    \item signed returns only in clearly directional subsamples.
+\end{itemize}
+
+\textbf{Main heterogeneity tests:}
+\begin{itemize}
+    \item disclosed disagreement versus no disagreement;
+    \item dismissal versus resignation;
+    \item Big 4 to non-Big 4 or other quality-changing switches;
+    \item more textually vague or ambiguous Item 4.01 disclosures;
+    \item settings in which institutional trust should matter more.
+\end{itemize}
+
+\textbf{Advantage:} clean, coherent, and still audit-specific.
+
+\subsection{Version 2: Broaden to a Multi-Disclosure Audit Paper}
+
+A second version of the paper could retain Item 4.01 as the flagship setting but add one of the following validation settings:
+
+\begin{itemize}
+    \item Critical Audit Matters (CAMs);
+    \item going-concern opinions;
+    \item material weakness disclosures with strong auditor salience;
+    \item PCAOB inspection-related events, if timing can be cleanly linked to market outcomes.
+\end{itemize}
+
+\textbf{Advantage:} reviewers are less likely to think the contribution lives or dies with one narrow institutional setting.
+
+\textbf{Cost:} more data work and potentially less narrative coherence.
+
+\subsection{Most Promising Alternative Identification Strategies}
+
+If feasible, the redesign should consider one or more of the following:
+
+\begin{enumerate}[label=\textbf{I\arabic*.}]
+    \item \textbf{Investor-base heterogeneity.} Replace or complement headquarters-state polarization with measures that better reflect the geography or politics of the shareholder base.
+    \item \textbf{Cross-disclosure comparisons.} Compare ambiguous audit signals to more directional audit signals and to non-audit corporate disclosures.
+    \item \textbf{Institutional trust interactions.} Interact the event with proxies for trust in institutions or establishment skepticism.
+    \item \textbf{Analyst or options-based disagreement outcomes.} If available, use post-event analyst dispersion, options-implied uncertainty, or other disagreement-sensitive outcomes.
+\end{enumerate}
+
+\section{Recommended Empirical Architecture}
+
+The most defensible empirical architecture is:
+
+\begin{enumerate}[label=\textbf{E\arabic*.}]
+    \item \textbf{Baseline setting:} Item 4.01 auditor changes.
+    \item \textbf{Primary outcomes:} abnormal volume and $|CAR|$.
+    \item \textbf{Primary mechanism:} ambiguity and institutional trust.
+    \item \textbf{Primary polarization measures:} one ideological measure and one affective/social measure.
+    \item \textbf{Interpretation:} ideological polarization proxies divergence in substantive interpretive frames; affective/social polarization proxies distrust, bias, and identity-based rejection of gatekeeper-produced signals.
+    \item \textbf{Validation:} signed-return tests only in directional subsamples; optional extension to CAMs or going-concern opinions.
+\end{enumerate}
+
+A generic baseline specification should be described as:
+
+\begin{align*}
+Y_{i,t} = \alpha + \beta_1 \, \text{AuditSignal}_{i,t} + \beta_2 \, \text{Pol}_{i,t} + \beta_3 \, \text{AuditSignal}_{i,t} \times \text{Pol}_{i,t} \\
++ \beta_4 \, \text{Ambiguity}_{i,t} + \beta_5 \, \text{AuditSignal}_{i,t} \times \text{Pol}_{i,t} \times \text{Ambiguity}_{i,t} + \Gamma X_{i,t} + \varepsilon_{i,t},
+\end{align*}
+
+where $\text{Pol}_{i,t}$ is alternately ideological and affective/social polarization. The triple interaction is central because it ties the paper to the claim that polarization matters most where interpretation is genuinely open-ended.
+
+\section{Recommended Table Structure}
+
+\begin{longtable}{p{0.18\textwidth} p{0.76\textwidth}}
+\toprule
+\textbf{Table} & \textbf{Purpose} \\
+\midrule
+Table 1 & Sample construction, event classification, and summary statistics. \\
+Table 2 & Baseline event-study results for abnormal volume and $|CAR|$ around Item 4.01 auditor changes. \\
+Table 3 & Heterogeneity by ambiguity: disagreement, dismissal, switch type, textual vagueness. \\
+Table 4 & Measurement validation: ideological polarization proxy, affective/social polarization proxy, and joint horse-race specifications. \\
+Table 5 & Mechanism tests focused on institutional trust, signal precision, or investor-base heterogeneity. \\
+Table 6 & Optional extension to CAMs, going-concern opinions, or other audit-originated disclosures. \\
+\bottomrule
+\end{longtable}
+
+\section{Concrete Drafting Changes to Make Immediately}
+
+\subsection{Abstract}
+
+Replace language about ``a Bayesian framework with heterogeneous priors'' with a broader statement about heterogeneous interpretation, institutional trust, and socially polarized responses to ambiguous audit disclosures.
+
+\subsection{Introduction}
+
+The introduction should explicitly distinguish ideological from affective/social polarization and cite Mason for the proposition that social polarization can intensify bias and anger even without equivalent increases in issue extremity.
+
+\subsection{Theory Section}
+
+Retain the formal model, but demote it from being the whole story. Introduce the model as one tractable representation of a broader mechanism.
+
+\subsection{Measurement Section}
+
+Create a subsection titled something like ``Measuring Polarization and Mapping It to the Model.'' This subsection should explain:
+
+\begin{itemize}
+    \item why ideological polarization matters,
+    \item why affective/social polarization matters,
+    \item what each proxy captures,
+    \item why neither proxy is a perfect direct measure of investor interpretation,
+    \item why using both is a strength rather than a weakness,
+    \item why Mason implies that conflating issue-position dispersion with social polarization would be a conceptual mistake.
+\end{itemize}
+
+\subsection{Empirical Section}
+
+Shift the emphasis away from universal signed market reaction and toward disagreement-sensitive outcomes. Signed-return tests should appear only when the underlying signal is reasonably directional.
+
+\section{Bottom-Line Recommendation}
+
+The strongest version of the project is not:
+
+\begin{quote}
+Polarization widens Bayesian posterior beliefs around auditor changes because investors have heterogeneous priors.
+\end{quote}
+
+The strongest version is:
+
+\begin{quote}
+Political polarization changes how investors interpret auditor-originated disclosures. It does so by increasing heterogeneity in prior beliefs, institutional trust, and socially polarized modes of interpretation. Item 4.01 auditor changes provide a clean first setting because they are public, standardized, ambiguous, and institution-dependent. The paper should distinguish ideological from affective/social polarization and use both deliberately: ideological polarization to capture divergence in substantive interpretive frames, and affective/social polarization to capture partisan distrust, bias, anger, and identity-based rejection of gatekeeper-produced signals. Mason (2015) is especially important because it shows why these two forms of polarization should not be conflated and why social polarization can matter even when issue extremity is relatively muted.
+\end{quote}
+
+That version is broader, more realistic, more reviewer-proof, and easier to extend.
+
+\begin{thebibliography}{9}
+
+\bibitem{druckmanlevy2021}
+James N. Druckman and Jeremy Levy,
+\textit{Affective Polarization in the American Public},
+Institute for Policy Research Working Paper WP-21-27, 2021.
+
+\bibitem{mason2015}
+Lilliana Mason,
+\textit{``I Disrespectfully Agree'': The Differential Effects of Partisan Sorting on Social and Issue Polarization},
+\textit{American Journal of Political Science}, 59(1), 128--145, 2015.
+
+\bibitem{thurner2025}
+Stefan Thurner, Markus Hofer, and Jan Korbel,
+\textit{Why More Social Interactions Lead to More Polarization in Societies},
+\textit{Proceedings of the National Academy of Sciences}, 122(44), e2517530122, 2025.
+
+\end{thebibliography}
+
+\end{document}
