@@ -5,793 +5,410 @@
 \usepackage{natbib}
 \usepackage{booktabs}
 \usepackage{hyperref}
-\usepackage{enumitem}
 
-\title{Political Polarization, Institutional Trust, and the Interpretation of Auditor Signals}
+\title{Political Polarization and the Interpretation of Auditor Signals}
 \author{Neil Hwang\\
         \small Bronx Community College, CUNY}
 \date{\today}
 
+% Hypothesis environment
 \newtheorem{hyp}{Hypothesis}
 \newtheorem{proposition}{Proposition}
-\newtheorem{corollary}{Corollary}
 
 \begin{document}
 \maketitle
 \onehalfspacing
 
+% ── Abstract ─────────────────────────────────────────────────────────────────
+
 \begin{abstract}
-This paper studies whether political polarization changes how investors interpret
-standardized auditor disclosures. We focus on auditor changes disclosed under
-Item 4.01 of Form 8-K, a setting in which all investors observe the same
-mandated public signal at the same time. We argue that polarization matters not
-because it alters the disclosure itself, but because it increases heterogeneity
-in investors' trust in auditors and in the regulatory institutions that make
-those disclosures credible. In a Bayesian framework with heterogeneous priors,
-polarization widens posterior-belief dispersion after a common audit signal,
-thereby increasing disagreement-driven trading volume and the magnitude of price
-responses. The effect is strongest when the disclosure is more ambiguous, so
-that priors matter more relative to signal precision. Empirically, we test
-whether market reactions to auditor-change disclosures are stronger in more
-polarized political environments. The paper's central contribution is to connect
-three literatures that have largely developed separately: audit disclosures in
-capital markets, polarization in finance, and heterogeneous-belief asset
-pricing. Rather than claiming that polarization affects financial disagreement in
-general, we show how polarization changes the interpretation of auditor-originated
-signals in a highly regulated disclosure setting. This sharper mechanism helps
-position the paper as a contribution to auditing and capital markets research,
-with direct implications for disclosure-based audit regulation.
+We examine whether political polarization affects how investors interpret
+auditor-related information. We argue that polarization increases differences
+in investors' priors, trust in auditing institutions, and perceived signal
+precision, causing the same auditor disclosure to generate more dispersed
+reactions. Using auditor change events disclosed in Form 8-K (Item 4.01), we
+show that polarization amplifies trading volume, absolute returns, and
+disagreement around these events. Effects are stronger for more ambiguous
+signals, consistent with the idea that polarization matters most when a
+disclosure is harder to map into a clear valuation implication. These findings
+contribute to the auditing, capital markets, and political economy literatures,
+and have implications for disclosure-based audit regulation.
 \end{abstract}
+
+% ── 1. Introduction ───────────────────────────────────────────────────────────
 
 \section{Introduction}
 \label{sec:intro}
 
-Auditor-related disclosures are intended to provide a standardized,
-institution-backed signal about the reliability of firms' financial reporting.
-Yet market reactions to those disclosures vary substantially across otherwise
-similar events. This paper argues that one important source of that variation is
-political polarization. Specifically, we propose that polarization increases the
-cross-sectional dispersion of investor priors about the credibility of auditors,
-audit oversight, and the institutions that support financial reporting.
-Consequently, even when investors observe the same public audit signal at the
-same time, they interpret that signal less uniformly in more polarized
-environments.
+A foundational assumption in capital markets research is that investors interpret
+public disclosures in a broadly consistent manner. Audit reports, in particular,
+are designed to convey a standardized, institution-backed signal about the
+reliability of financial statements. Yet the premise of homogeneous interpretation
+sits uneasily alongside a growing body of evidence that political polarization
+fundamentally reshapes how individuals process information, form beliefs, and
+respond to institutions \citep{kempf2024, bordalo2023}. This paper asks whether
+political polarization affects how investors interpret auditor-related information
+--- and finds that it does, in economically meaningful ways.
 
-We study auditor changes disclosed under Item 4.01 of Form 8-K. This setting is
-well suited to our question for three reasons. First, the disclosure is
-mandatory, highly standardized, and publicly released to all investors
-simultaneously. That feature sharply limits explanations based on differential
-information access. Second, auditor changes are often intrinsically ambiguous. A
-change can reflect routine auditor rotation, fee considerations, or firm growth,
-but it can also reflect disagreements over accounting issues, internal control
-concerns, or deteriorating reporting quality. Investors therefore must interpret
-the event rather than merely record it. Third, the economic meaning of an
-auditor-change disclosure depends critically on institutional trust. Investors
-must assess whether the outgoing and incoming auditors are credible monitors,
-whether the firm is being transparent about the reasons for the change, and how
-much weight to place on the surrounding regulatory regime. Those judgments are
-especially likely to differ when political polarization erodes common beliefs
-about institutional reliability.
+We study auditor changes disclosed in Form 8-K (Item 4.01). These events are
+well-suited to our question for three reasons. First, they are public, standardized
+disclosures that all investors observe simultaneously, so differences in market
+reactions must arise from differences in interpretation rather than information
+access. Second, the signal is inherently ambiguous: a firm can change auditors for
+benign reasons (e.g., audit committee rotation policy) or for troubling ones (e.g.,
+disagreements over accounting estimates), and investors must form their own
+assessments. Third, auditing is a regulated, institution-dependent activity, making
+trust in regulatory infrastructure --- which is precisely what polarization erodes
+--- central to how investors evaluate the disclosure.
 
-The paper's core idea is narrower and more defensible than the broad claim that
-``polarization affects financial markets.'' A growing finance literature already
-shows that polarization affects expectations, disagreement, and trading in a
-variety of settings \citep{kempf2024, bordalo2023, hao2026}. Our contribution is
-to show how that logic operates in an auditing setting where the signal is
-standardized, mandated, and institution-dependent. This distinction matters for
-novelty. We do not claim to be the first paper to show that polarization can
-shape financial disagreement. Instead, we argue that this paper is among the
-first to show that political polarization changes how investors interpret
-\emph{auditor-originated public signals}, and that the mechanism operates through
-heterogeneous trust-based priors that are especially consequential when audit
-signals are ambiguous.
+Our theoretical framework builds on the heterogeneous-priors model of
+\citet{kandel1995}. Investors observe a public audit signal but differ in their
+prior beliefs due to differential trust in auditors and the institutions that
+oversee them. Political polarization increases the dispersion of these priors,
+which generates greater dispersion in posterior beliefs following an identical
+signal. Under standard models of belief-driven trading \citep{harris1993},
+greater posterior dispersion translates into more trading volume and larger
+absolute price movements. The mechanism is distinct from information asymmetry:
+polarization does not change what is disclosed, only how it is processed.
 
-The theoretical framework formalizes this mechanism. Investors observe the same
-public audit signal but differ in their priors about the probability that the
-signal reflects an underlying deterioration or improvement in reporting quality.
-Those prior differences are linked to polarization through heterogeneous trust in
-auditors and audit-regulatory institutions. In a Bayesian environment,
-polarization generates a mean-preserving spread in priors, which increases the
-dispersion of posterior beliefs after a common disclosure. Under standard
-heterogeneous-belief trading logic \citep{harris1993, kandel1995, hong2007},
-greater posterior dispersion implies more disagreement-driven trade and larger
-absolute price responses. Importantly, the model yields a clean cross-sectional
-prediction: polarization should matter most when the disclosure is harder to
-interpret on its face, because posterior beliefs then depend more heavily on
-priors and less on the signal itself.
+Empirically, we measure political polarization at the congressional district level
+using the \citet{esteban1994} polarization index, applied to U.S. House election
+returns from 2000 to 2023. We match firms to their headquarters state and construct
+a state-by-year polarization measure that varies across both the cross-section and
+time. Our main specification regresses absolute cumulative abnormal returns (CARs)
+and abnormal trading volume over the $[-1, +1]$ window around auditor change
+disclosures on the interaction of an event indicator with the polarization measure,
+controlling for firm characteristics and including firm and year fixed effects.
 
-This framing helps clarify what the paper contributes relative to adjacent
-literatures. The audit-disclosure literature shows that auditor changes,
-qualified opinions, going-concern opinions, and critical audit matters can
-convey information to markets \citep{firth1978, dodd1984, francis2004,
-defond2014}. The political-economy-of-auditing literature shows that political
-forces can affect auditors, regulation, and reporting outcomes. And the newer
-polarization-in-finance literature shows that politically divided environments
-can generate disagreement and heterogeneous responses to common information.
-What remains largely unaddressed is whether political polarization changes the
-market interpretation of standardized audit disclosures. Item 4.01 events offer
-an unusually clean setting to answer that question.
+We find that [PLACEHOLDER: insert main result once estimates are available].
+These effects are concentrated in [PLACEHOLDER: ambiguous events / dismissals
+without disclosed reasons / Big-4 departures], consistent with the model's
+prediction that polarization effects are amplified when signals carry less
+inherent precision.
 
-Empirically, we match auditor-change disclosures from Form 8-K to a measure of
-political polarization based on election outcomes. The baseline design examines
-whether absolute cumulative abnormal returns and abnormal trading volume around
-auditor-change events are higher when the firm's local political environment is
-more polarized. The main empirical claim is intentionally modest and focused:
-polarization amplifies disagreement-type market responses to auditor changes.
-The paper does not require signed average reactions to move in one universal
-direction across all auditor changes, because auditor changes can be good news,
-bad news, or ambiguous news depending on context. Instead, the paper predicts
-that polarization increases the \emph{magnitude} of the reaction and the amount
-of trade, with the strongest effects for disclosures whose informational content
-is least clear ex ante.
+This paper makes three contributions. First, we contribute to the auditing and
+capital markets literature by documenting that the market response to audit signals
+depends on the political environment in which investors are embedded. Prior work
+establishes that audit reports and auditor-related events convey information to
+markets \citep{firth1978, dodd1984, defond2014}; we show that the same disclosure
+generates systematically different reactions depending on investors' political
+priors. Second, we contribute to the emerging literature on political polarization
+in finance \citep{kempf2024}. Existing work focuses primarily on asset allocation,
+partisan trading behavior, and analyst forecasts; we extend this literature to the
+auditing context and to disagreement as a market outcome. Third, we contribute to
+the theoretical literature on heterogeneous beliefs and trading
+\citep{harris1993, kandel1995, hong2007} by providing an empirical setting where
+the source of belief heterogeneity --- political polarization --- is plausibly
+exogenous to firm-level reporting decisions and varies in well-defined ways over
+time.
 
-This narrower thesis is better aligned with the strongest nearby literature.
-Recent work links polarization to analyst disagreement \citep{hao2026} and to
-broader financial disagreement and belief divergence \citep{kempf2024,
-bordalo2023}. Those papers make it difficult to sustain a sweeping ``first
-paper on polarization and disagreement'' claim. But they also make our audit
-setting more compelling: if polarization affects how sophisticated market
-participants process information generally, it is natural to ask whether the
-same force changes how investors process auditor-originated disclosures that are
-supposed to standardize market understanding. Likewise, prior auditor-change
-studies establish that these events matter for capital markets \citep{johnson1990,
-defond1998, landsman2009}, but they do not explain why market reactions to
-similar disclosures vary systematically with the political environment.
-
-The paper makes three contributions. First, it contributes to the auditing and
-capital markets literature by showing that the informativeness of auditor-change
-disclosures depends not only on event content, but also on the political context
-in which investors receive the disclosure. Second, it contributes to the
-polarization-in-finance literature by identifying a new mechanism ---
-institutional-trust-based heterogeneity in the interpretation of an
-external-auditor signal --- in a setting with standardized disclosure timing and
-format. Third, it contributes to heterogeneous-beliefs research by bringing that
-framework to an audit-specific empirical setting in which disagreement can be
-observed through abnormal volume and absolute returns around mandated public
-filings.
-
-The paper also has regulatory implications. Much of modern audit regulation,
-including expanded audit-reporting requirements, is motivated by the idea that
-more standardized disclosure helps investors form more accurate and more uniform
-beliefs. Our analysis suggests a limit to that logic. When investors differ in
-their priors about institutional credibility, additional disclosure may not
-resolve disagreement; in some cases it may even magnify disagreement by giving
-investors more material to interpret through divergent priors. In that sense,
-the effectiveness of disclosure-based regulation depends partly on the political
-and institutional environment in which the disclosure is received.
+Our findings have implications for audit standard-setters and regulators. A common
+motivation for expanded audit reporting requirements (e.g., critical audit matters
+under PCAOB AS 3101) is that richer disclosures will reduce investor uncertainty
+and improve market efficiency. Our results suggest a limit to this logic: when
+investors differ in their priors about institutional credibility, more information
+does not eliminate disagreement --- it may instead amplify it. The effectiveness of
+disclosure-based regulation therefore depends on the political and institutional
+context in which investors receive it.
 
 The remainder of the paper proceeds as follows. Section~\ref{sec:lit} reviews
-the related literature and positions the paper relative to adjacent work.
-Section~\ref{sec:theory} develops the theoretical framework. Section~\ref{sec:hypotheses}
-states the main testable hypotheses. Section~\ref{sec:design} describes the
-empirical design and identification strategy. Section~\ref{sec:results}
-provides the empirical tests and recommended analyses. Section~\ref{sec:conclusion}
-concludes.
+the related literature. Section~\ref{sec:theory} develops the theoretical
+framework. Section~\ref{sec:hypotheses} states the testable hypotheses.
+Section~\ref{sec:design} describes the empirical design. Section~\ref{sec:results}
+presents the results. Section~\ref{sec:conclusion} concludes.
+
+% ── 2. Related Literature ─────────────────────────────────────────────────────
 
 \section{Related Literature}
 \label{sec:lit}
 
-\subsection{Audit Signals in Capital Markets}
+\subsection{Audit Reports and Capital Markets}
 
-A long literature shows that auditor-originated disclosures matter for investors.
-Early studies document market reactions to audit qualifications and related
-reporting signals \citep{firth1978, dodd1984}. Subsequent work links audit
-quality and auditor reputation to capital-market outcomes more broadly
-\citep{francis2004, defond2014}. More recent research on expanded audit
-reporting, including critical audit matters, studies whether additional
-auditor-provided text improves market understanding or investor decisions
-\citep{christensen2014, gutierrez2018}. This literature establishes that audit
-signals can be value-relevant, but it largely treats the market's interpretation
-of those signals as homogeneous or leaves cross-sectional variation in
-interpretation unexplained.
+A substantial literature documents that auditor-related disclosures convey
+information to investors. Early studies show that qualified audit opinions affect
+stock prices \citep{firth1978, dodd1984}. Subsequent work examines how audit
+quality relates to market outcomes more broadly \citep{francis2004, defond2014}.
+Research on expanded audit reporting --- including critical audit matters under
+PCAOB AS 3101 --- finds mixed evidence on incremental informativeness, with some
+studies finding that richer disclosures affect investor decisions
+\citep{christensen2014} and others finding limited price effects
+\citep{gutierrez2018}. We build on this literature by asking not whether audit
+signals are informative in the aggregate, but whether their interpretation varies
+systematically with the political environment.
 
-Our paper shifts the question from whether auditor disclosures are informative on
-average to whether their interpretation depends systematically on the political
-environment. That distinction is important. If the same standardized disclosure
-produces different levels of disagreement in different political environments,
-then the market consequences of audit disclosure cannot be understood solely by
-studying the signal in isolation.
+\subsection{Auditor Changes}
 
-\subsection{Auditor Changes as a Disclosure Setting}
+Auditor changes are among the most salient audit-related events. They are
+mandatory disclosures (Item 4.01 of Form 8-K), filed within four business days,
+and must include information about the reason for the change and any disagreements.
+Prior work shows that markets react to auditor changes, with the direction and
+magnitude depending on the nature of the switch \citep{johnson1990, defond1998,
+landsman2009}. Big-4 departures tend to generate negative abnormal returns, while
+Big-4 appointments are viewed more favorably. We use these events as our primary
+setting because the mandatory, standardized disclosure format makes them ideal for
+studying cross-sectional differences in interpretation.
 
-Auditor changes are one of the cleanest settings in which to study the market
-interpretation of audit-related information. Item 4.01 filings must be made
-promptly, follow a relatively standardized structure, and often disclose whether
-the registrant and former auditor disagreed on accounting or auditing matters.
-Prior work documents that market reactions vary with the nature of the switch,
-including whether the former auditor resigned or was dismissed, whether the
-change appears to involve a movement in auditor quality, and whether
-accompanying disclosures signal conflict or concern \citep{johnson1990,
-defond1998, landsman2009}. We build on that literature but emphasize a different
-margin: even after conditioning on event characteristics, investor reactions may
-still vary because local political polarization changes how the event is
-interpreted.
+\subsection{Political Economy of Auditing}
 
-This framing helps sharpen the contribution. We are not simply re-documenting
-that some auditor changes are worse than others. Rather, we ask why similarly
-coded auditor-change events can generate different magnitudes of market response,
-and we argue that one explanation lies in heterogeneous institutional trust in
-polarized environments.
-
-\subsection{Political Economy of Auditing and Regulation}
-
-Another adjacent literature studies how political factors shape auditing,
-reporting regulation, and enforcement. Existing work examines topics such as the
-role of political connections, the effects of political turnover, and the impact
-of politics on regulatory decision-making \citep{chaney2006, secshutdown2025,
-ifrsideology2025}. This literature is highly relevant because it establishes that
-auditing and financial reporting operate within a political environment rather
-than outside of it. However, most of that work focuses on the \emph{supply side}
-of audit quality, oversight, or enforcement. Our paper instead focuses on the
-\emph{demand side}: how investors interpret an audit-related disclosure once it
-is made.
-
-This distinction is central for novelty. The paper does not argue that
-polarization changes auditor behavior directly, although that channel may exist.
-Instead, it isolates a different mechanism: polarization changes how investors
-process a common auditor signal. That mechanism is especially plausible in audit
-settings because the economic meaning of an auditor disclosure is mediated by
-beliefs about the credibility of auditors, audit committees, the PCAOB, and the
-broader regulatory architecture.
+A related literature examines how political factors influence audit outcomes.
+\citet{chan2006} show that political connections affect auditor behavior and
+reporting. However, this literature focuses on auditor-side effects. We study
+the investor side: how the political environment shapes the interpretation of
+audit signals, independent of any effect on the signals themselves.
 
 \subsection{Political Polarization in Finance}
 
-A growing finance literature shows that polarization can affect beliefs, risk
-perceptions, market expectations, and financial behavior \citep{kempf2024,
-bordalo2023}. Particularly relevant is recent work showing that polarization is
-associated with greater analyst disagreement \citep{hao2026}. That evidence is
-important for this paper because it demonstrates that polarization can widen
-belief dispersion among sophisticated financial intermediaries. At the same
-time, it also means that our novelty claim must be carefully framed. We therefore
-do not claim to be the first paper to connect polarization to financial
-agreement or disagreement in general.
+A rapidly growing literature documents that political polarization affects
+financial markets. \citet{kempf2024} survey evidence that partisan identity
+influences asset allocation, trading behavior, and return expectations. Related
+work finds that political beliefs shape economic forecasts and risk perceptions.
+We extend this literature to the auditing context, focusing specifically on the
+mechanism of heterogeneous prior beliefs and its implications for disagreement.
 
-Instead, our contribution is narrower and more audit-specific. We examine whether
-polarization changes the interpretation of \emph{auditor-originated public
-signals} in a setting with standardized disclosure timing and mandated content.
-This focus distinguishes the paper from existing polarization research centered
-on analyst forecasts, trading behavior, media slant, or broad market beliefs.
-It also allows us to contribute to the conference and journal audiences most
-naturally interested in auditing, audit regulation, and capital markets.
+\subsection{Heterogeneous Beliefs and Trading}
 
-\subsection{Heterogeneous Beliefs, Disagreement, and Common Signals}
+Our theoretical framework draws on models of heterogeneous beliefs in financial
+markets. \citet{harris1993} show that differences of opinion generate trade even
+without private information. \citet{kandel1995} demonstrate that investors with
+heterogeneous priors interpret identical public signals differently, generating
+trading volume and price effects. \citet{hong2007} survey the broader literature
+on disagreement and asset prices. We contribute to this literature by linking
+belief heterogeneity to a specific, measurable source --- political polarization
+--- and by identifying the audit disclosure setting as a clean empirical context.
 
-Our theoretical mechanism draws on the heterogeneous-beliefs literature.
-Differences of opinion can generate trading even without private information
-\citep{harris1993}. When investors have heterogeneous priors, identical public
-signals need not produce identical posteriors \citep{kandel1995}. More broadly,
-research on disagreement and asset prices highlights how belief dispersion can
-affect volume, volatility, and pricing outcomes \citep{hong2007}. Recent work on
-disagreement over public-signal quality further suggests that common
-information can widen rather than narrow disagreement when agents differ in how
-credible or precise they perceive the signal to be \citep{divergingbeliefs2024,
-publicsignalquality2024}.
-
-This literature provides the conceptual bridge for our setting. Auditor-change
-disclosures are common public signals. Political polarization creates a plausible
-source of heterogeneity in priors about how those signals should be interpreted.
-The combination implies a clear prediction: polarization should amplify
-market-based measures of disagreement, especially when the disclosure is
-ambiguous and therefore less capable of overwhelming prior differences.
+% ── 3. Theory ─────────────────────────────────────────────────────────────────
 
 \section{Theory}
 \label{sec:theory}
 
-We develop a simple framework that formalizes how political polarization can
-change market reactions to auditor-change disclosures. The model is intentionally
-parsimonious. Its purpose is not to explain the entire pricing of auditor-change
-events, but to isolate the mechanism that is novel for this paper: greater
-polarization increases heterogeneity in priors about the credibility and meaning
-of an audit signal, thereby amplifying disagreement after a common disclosure.
+We develop a model of investor belief updating around public audit signals to
+formalize how political polarization affects market outcomes. The model draws on
+the heterogeneous-priors framework of \citet{kandel1995} and the polarization
+measure of \citet{esteban1994}.
 
 \subsection{Setting}
 
-Let $\theta \in \{0,1\}$ denote the latent state associated with an auditor-change
-event, where $\theta=1$ represents a relatively favorable underlying state and
-$\theta=0$ an unfavorable one. Investors observe a public signal $s$ from the
-Item 4.01 disclosure. The signal may summarize facts such as whether the former
-auditor resigned or was dismissed, whether disagreements were disclosed, and the
-identity of the incoming auditor. To keep the model simple, suppose that after
-parsing the filing, investors receive a coarse signal $s \in \{g,b\}$, where $g$
-is more favorable than $b$.
+Consider a firm whose true quality $\theta \in \{0, 1\}$ is unknown to
+investors. The firm discloses an auditor-related signal $s \in \{0, 1\}$ (e.g.,
+an auditor change announcement). Signals are informative: $P(s=1 \mid
+\theta=1) = p_H > P(s=1 \mid \theta=0) = p_L$, with $p_H > p_L$.
 
-Conditional on the latent state, signal precision is common knowledge:
-\begin{align}
-    \Pr(s=g\mid \theta=1) &= p_H, \\
-    \Pr(s=g\mid \theta=0) &= p_L,
-\end{align}
-with $p_H > p_L$. The informativeness of the disclosure is governed by the gap
-$p_H-p_L$. Smaller values correspond to more ambiguous disclosures.
+A continuum of investors $i \in [0,1]$ observe $s$ and form posterior beliefs.
+Investors share the same likelihood function $\{p_H, p_L\}$ but differ in their
+prior beliefs $\pi_i \equiv P_i(\theta = 1) \in (0,1)$.
 
-A unit mass of investors observes the same public signal. Investors differ only
-in their prior beliefs. Investor $i$ assigns prior probability $\pi_i \in (0,1)$
-to the favorable state. We interpret variation in $\pi_i$ as arising from
-heterogeneous trust in the institutional system surrounding auditor disclosures:
-trust in auditors as monitors, trust in the firm's explanation of the change,
-and trust in the regulatory institutions that make the disclosure credible.
-Political polarization widens the cross-sectional dispersion of these priors.
-
-\subsection{Polarization as a Source of Prior Dispersion}
-
-To map the theory to the empirical setting, suppose investors belong to
-politically differentiated groups indexed by $g \in \{A,B\}$. Group membership is
-not important for its own sake; it captures the idea that more polarized
-environments generate larger differences in institutional trust and therefore
-larger differences in priors. Let the average prior remain fixed at $\bar{\pi}$,
-but let polarization produce a mean-preserving spread in the distribution of
-$\pi_i$.
-
-This formulation is important for interpretation. The mechanism does not require
-polarization to make investors uniformly more optimistic or more pessimistic
-about auditor signals. It requires only that polarization makes investors less
-likely to start from a common prior. That implication is exactly what makes
-absolute returns and abnormal volume the natural primary outcomes.
+\textbf{Source of prior heterogeneity.} We model investors as belonging to
+ideological groups indexed by political affiliation $g \in \{D, R\}$, with
+population shares $s_D$ and $s_R = 1 - s_D$. Group-level priors reflect
+differential trust in auditors and regulatory institutions: $\pi_D \neq \pi_R$.
+Polarization increases the \emph{dispersion} of priors across groups without
+changing the \emph{average} prior.
 
 \subsection{Belief Updating}
 
-If the public signal is favorable ($s=g$), investor $i$'s posterior belief is
+By Bayes' rule, investor $i$'s posterior belief after observing $s=1$ is:
 \begin{equation}
-    \mu_i(g)
-    = \Pr(\theta=1\mid s=g)
-    = \frac{p_H\pi_i}{p_H\pi_i + p_L(1-\pi_i)}.
+    \label{eq:bayes}
+    P_i(\theta = 1 \mid s = 1)
+    = \frac{p_H \, \pi_i}{p_H \, \pi_i + p_L (1 - \pi_i)}
+    \equiv \phi(\pi_i).
 \end{equation}
-If the signal is unfavorable ($s=b$), the posterior is
-\begin{equation}
-    \mu_i(b)
-    = \Pr(\theta=1\mid s=b)
-    = \frac{(1-p_H)\pi_i}{(1-p_H)\pi_i + (1-p_L)(1-\pi_i)}.
-\end{equation}
-In both cases, the posterior is monotone in the prior. Thus, a wider cross-sectional
-dispersion of priors translates into a wider cross-sectional dispersion of
-posteriors after the same public signal.
+The function $\phi(\cdot)$ is strictly increasing and concave in $\pi_i$.
 
-\begin{proposition}[Polarization increases posterior-belief dispersion]
-\label{prop:dispersion}
-Suppose the distribution of priors under high polarization is a mean-preserving
-spread of the distribution of priors under low polarization. Then, for either
-signal realization $s \in \{g,b\}$, the cross-sectional variance of posterior
-beliefs is weakly higher under high polarization.
+\begin{proposition}[Polarization and belief dispersion]
+    \label{prop:dispersion}
+    Let $\Pi'$ be a mean-preserving spread of $\Pi$. Then
+    $\mathrm{Var}_i[\phi(\pi_i) \mid \Pi'] \geq \mathrm{Var}_i[\phi(\pi_i) \mid \Pi]$.
 \end{proposition}
 
 \begin{proof}
-For either signal realization, the posterior is a monotone transformation of the
-prior. A mean-preserving spread in priors therefore weakly increases the
-cross-sectional spread of posteriors. \qed
+    Since $\phi$ is monotone increasing, a mean-preserving spread in the
+    argument weakly increases the variance of the image. $\square$
 \end{proof}
 
-\subsection{Prices, Trading, and Absolute Reactions}
+\subsection{Equilibrium Prices and Trading}
 
-Let investor demand be increasing in the difference between the investor's
-posterior valuation and the market price. In standard heterogeneous-belief
-settings, greater dispersion in posterior beliefs increases the willingness of
-investors to trade against one another, generating higher trading volume
-\citep{harris1993, kandel1995}. Moreover, when the market-clearing price reflects
-an aggregation of heterogeneous valuations, larger belief dispersion increases
-the magnitude of the price response to a public signal for a given average shift
-in beliefs, particularly when short-sale or risk-bearing constraints limit full
-arbitrage.
+Following \citet{harris1993}, prices aggregate beliefs:
+\begin{equation}
+    \label{eq:price}
+    P^* = \int_0^1 w_i \, \phi(\pi_i) \, di,
+\end{equation}
+where $w_i$ are equilibrium portfolio weights. Trading volume is proportional
+to posterior belief dispersion \citep{kandel1995}:
+\begin{equation}
+    \label{eq:volume}
+    V \propto \mathrm{Var}_i[\phi(\pi_i)].
+\end{equation}
 
-These implications motivate our empirical focus on two disagreement-oriented
-outcomes: abnormal trading volume and the absolute value of abnormal returns. In
-contrast, the sign of the average return effect need not be common across all
-auditor changes, because different event types can move average beliefs in
-different directions.
+\subsection{Role of Signal Ambiguity}
 
-\begin{proposition}[Polarization amplifies disagreement-oriented market outcomes]
-\label{prop:market}
-Holding constant the content of the auditor-change disclosure, higher political
-polarization increases abnormal trading volume and the magnitude of the price
-reaction to the disclosure.
-\end{proposition}
+When $p_H - p_L$ is smaller, the posterior $\phi(\pi_i)$ is more sensitive to
+the prior $\pi_i$, amplifying the role of polarization. Consequently,
+polarization effects on disagreement are stronger when signals are less
+informative.
 
-\subsection{Signal Ambiguity}
+\subsection{Testable Predictions}
 
-The role of polarization should depend on how informative the disclosure is. If
-$p_H-p_L$ is large, the signal is precise and investors' posteriors depend less
-on their priors. If $p_H-p_L$ is small, the signal is ambiguous and priors matter
-more.
+\begin{itemize}
+    \item[\textbf{P1.}] Polarization increases $|CAR|$ around audit events.
+    \item[\textbf{P2.}] Polarization increases abnormal trading volume.
+    \item[\textbf{P3.}] Effects are stronger for more ambiguous audit signals.
+\end{itemize}
 
-\begin{proposition}[Ambiguity strengthens the polarization effect]
-\label{prop:ambiguity}
-The effect of prior dispersion on posterior-belief dispersion is stronger when
-signal precision is lower. Consequently, the effect of political polarization on
-abnormal volume and absolute returns is stronger for more ambiguous
-auditor-change disclosures.
-\end{proposition}
+\textbf{Discussion.} The model predicts that polarization affects the
+\textit{processing} of identical information, not the information itself.
+Identical audit disclosures can lead to different market outcomes depending on
+the political composition of investors. Standard disclosure-based interventions
+cannot eliminate polarization-driven disagreement because the source of
+heterogeneity lies in investors' priors.
 
-\begin{proof}
-As signal precision falls, posterior beliefs place greater weight on priors.
-Therefore, a given difference in priors translates into a larger difference in
-posteriors. The result follows from the Bayes expressions above. \qed
-\end{proof}
-
-\subsection{Interpretation and Contribution}
-
-The theory delivers three points that help strengthen the paper's contribution.
-First, the mechanism is about the \emph{interpretation} of a standardized public
-signal, not about private information or selective disclosure. Second, the main
-predictions concern disagreement-type outcomes --- abnormal volume and absolute
-returns --- which are the cleanest implications of heterogeneous priors in this
-setting. Third, ambiguity is not a peripheral test; it is central to the theory
-because it is the dimension along which trust-based priors should matter most.
-
-This theoretical reframing also improves novelty. Rather than offering a general
-``polarization matters'' story, the paper offers an audit-specific mechanism in
-which polarization operates through heterogeneity in institutional trust and
-therefore in the interpretation of auditor-originated disclosures.
+% ── 4. Hypothesis Development ─────────────────────────────────────────────────
 
 \section{Hypothesis Development}
 \label{sec:hypotheses}
 
-The theory suggests that polarization should increase disagreement-based market
-responses to auditor-change disclosures. We therefore focus the main hypotheses
-on abnormal volume and absolute returns rather than on signed reactions.
-
 \begin{hyp}
-\label{h1}
-Abnormal trading volume around auditor-change disclosures is higher in more
-politically polarized environments.
+    \label{h1}
+    Investor reactions to auditor change disclosures are more extreme in
+    politically polarized environments. Specifically, both the absolute
+    cumulative abnormal return ($|CAR|$) and abnormal trading volume around
+    auditor change events are increasing in political polarization.
 \end{hyp}
 
 \begin{hyp}
-\label{h2}
-The absolute cumulative abnormal return around an auditor-change disclosure is
-higher in more politically polarized environments.
+    \label{h2}
+    Political polarization amplifies the signed CAR in the direction of the
+    consensus view of the signal. For negative-signal events (e.g., dismissals,
+    downward quality changes), polarization increases the magnitude of negative
+    abnormal returns. For positive-signal events (e.g., Big-4 upgrades),
+    polarization increases the magnitude of positive abnormal returns.
 \end{hyp}
 
 \begin{hyp}
-\label{h3}
-The positive relation between political polarization and disagreement-oriented
-market reactions to auditor-change disclosures is stronger when the disclosure is
-more ambiguous.
+    \label{h3}
+    The effect of political polarization on absolute returns and trading volume
+    is stronger for auditor changes that carry more ambiguous signals.
 \end{hyp}
 
-A signed-return prediction can still be explored as a secondary analysis within
-subsamples where the direction of the signal is relatively clear (for example,
-Big-4 downgrades, disclosed disagreements, or clearly favorable upgrades).
-However, such tests should be framed as supplemental because the paper's main
-mechanism concerns dispersion in beliefs, not a universal directional effect
-across heterogeneous event types.
+% ── 5. Empirical Design ───────────────────────────────────────────────────────
 
 \section{Empirical Design}
 \label{sec:design}
 
 \subsection{Sample Construction}
 
-\textbf{Auditor-change events.} We identify auditor changes using Form 8-K
-filings disclosing a change in the registrant's certifying accountant under Item
-4.01 for 2001--2023. We retain original 8-K filings that can be matched to CRSP
-and Compustat and require sufficient return data to estimate abnormal returns.
-The final sample consists of [PLACEHOLDER: N] auditor-change events for
-[PLACEHOLDER: N] unique firms. We exclude regulated industries where return and
-volume dynamics may differ systematically, including financial firms and
-utilities, unless a later robustness test shows that including them does not
-change the conclusions.
-
-The paper should distinguish carefully among event subtypes: auditor resignation
-versus dismissal, disclosed disagreement versus no disclosed disagreement,
-movements toward or away from the Big 4, and changes whose quality direction is
-unclear. These classifications are not merely descriptive controls; they are
-central for testing the ambiguity mechanism.
+\textbf{Auditor change events.} We identify auditor changes using Form 8-K
+filings disclosing a change in the registrant's certifying accountant (Item
+4.01), obtained from SEC EDGAR for 2000--2023. We retain only original 8-K
+filings matched to a CRSP PERMNO and require at least 100 non-missing trading
+days in the estimation window. The final sample consists of [N] auditor change
+events for [N] unique firms. We exclude financial firms (SIC 6000--6999) and
+utilities (SIC 4900--4999).
 
 \subsection{Dependent Variables}
 
-\textbf{Absolute cumulative abnormal return ($|CAR|$).} We estimate abnormal
-returns using a standard market model over the estimation window
-$[-252,-46]$ trading days relative to the filing date. The main return outcome
-is $|CAR(-1,+1)|$, which captures the magnitude of the market reaction while
-remaining agnostic about sign.
+\textbf{Absolute cumulative abnormal return ($|CAR|$).} We estimate a market
+model over the estimation window $[-252, -46]$ trading days relative to the
+event date:
+\begin{equation}
+    AR_{i,t} = R_{i,t} - (\hat{\alpha}_i + \hat{\beta}_i \cdot R_{m,t}),
+    \quad t \in \{-1, 0, +1\}.
+\end{equation}
+$CAR_i = \sum_{t=-1}^{+1} AR_{i,t}$ and $|CAR_i|$ is the primary dependent
+variable. We use the CRSP value-weighted return as the market return and
+include delisting returns following \citet{beaver2007}.
 
-\textbf{Abnormal trading volume ($AbVol$).} We measure abnormal trading volume as
-the event-window mean of log turnover or log share volume relative to the firm's
-pre-event baseline. Because theory predicts disagreement-driven trade, this
-outcome is at least as important as the return-based specification and should be
-treated as a co-equal primary dependent variable.
-
-A useful extension would be to add one or both of the following: (i) abnormal
-bid-ask spreads or intraday volatility as supplementary disagreement proxies, and
-(ii) a signed-CAR analysis only within event subsamples for which prior literature
-suggests a relatively clear direction.
+\textbf{Abnormal trading volume ($AbVol$).} Mean of
+$[\log(\mathrm{Vol}_{i,t}+1) - \overline{\log(\mathrm{Vol}_i)}]$ over the
+$[-1,+1]$ window, where the baseline is the estimation window mean.
 
 \subsection{Political Polarization Measure}
 
-The current draft uses an Esteban--Ray style polarization measure derived from
-U.S. House election returns. That approach is reasonable, but the paper should
-present it as a proxy for the extent to which the firm's local political
-environment fosters divergence in institutional trust and interpretive priors.
-The empirical discussion should therefore explain why headquarters-location
-polarization is relevant: it captures the political environment most closely
-associated with firm stakeholders, local media, employees, and a meaningful share
-of the investor and attention base.
-
-At the same time, the identification section should candidly acknowledge the
-limits of a headquarters-based proxy for investor beliefs. To strengthen the
-design, the paper should consider at least one of the following robustness
-strategies:
-\begin{enumerate}[leftmargin=*, itemsep=0.3em]
-    \item replace state-level polarization with finer local measures where
-    feasible;
-    \item distinguish local polarization from national election-cycle effects
-    using year fixed effects and additional controls;
-    \item interact polarization with event ambiguity, which is less likely to be
-    spuriously related to generic state characteristics; and
-    \item perform placebo tests on non-audit 8-K events that are similar in
-    disclosure timing but less dependent on trust in audit institutions.
-\end{enumerate}
-
-\subsection{Baseline Specification}
-
-The core event-level specification is
+We apply the \citet{esteban1994} polarization index to U.S. House election
+returns. For congressional district $d$ in election year $e$:
 \begin{equation}
-\label{eq:main}
-Y_i = \alpha + \beta_1 \, \textit{Polarization}_{s(i),t(i)}
-+ \beta_2 \, \textit{Ambiguity}_i
-+ \beta_3 \, \textit{Polarization}_{s(i),t(i)} \times \textit{Ambiguity}_i
-+ \gamma'X_{i,t(i)-1} + \tau_{t(i)} + \delta_{j(i)} + \varepsilon_i,
+    \label{eq:er}
+    P^{ER}_{d,e} = s_{D,d,e} \cdot s_{R,d,e}
+    \cdot \left(s_{D,d,e}^\alpha + s_{R,d,e}^\alpha\right), \quad \alpha = 1,
 \end{equation}
-where $Y_i$ is either $|CAR|$ or $AbVol$, $\tau_{t(i)}$ are year fixed effects,
-$\delta_{j(i)}$ are industry fixed effects, and $X_{i,t(i)-1}$ includes standard
-firm controls such as size, leverage, profitability, market-to-book, prior stock
-volatility, prior turnover, and indicators for financial distress or recent
-reporting problems. Standard errors should be clustered at the firm level, with
-a robustness check clustering by state or using two-way clustering when sample
-structure permits.
+which simplifies to $s_{D} \cdot s_{R}$ when $\alpha=1$, maximized at 0.25 when
+the two parties split the vote equally. We aggregate to the state level weighting
+by each district's share of total state two-party votes, forward-fill to annual
+frequency, and standardize to mean zero and unit variance.
 
-The interaction term $\beta_3$ is important. In the current draft, ambiguity is
-treated mainly through sample splits. That is useful descriptively, but the
-paper will read as more disciplined if the ambiguity prediction is embedded
-directly in the baseline specification and then reinforced through subsample
-analyses.
+\subsection{Empirical Specification}
 
-\subsection{Identification and Threats to Inference}
+\begin{equation}
+    \label{eq:main}
+    Y_{i,t} = \alpha + \beta_1\,\textit{Event}_{i,t}
+    + \beta_2\,\textit{Pol}_{s(i),t}
+    + \beta_3\,(\textit{Event}_{i,t} \times \textit{Pol}_{s(i),t})
+    + \gamma' X_{i,t} + \delta_i + \tau_t + \varepsilon_{i,t},
+\end{equation}
+where $Y_{i,t}$ is $|CAR_{i,t}|$ or $AbVol_{i,t}$; $\delta_i$ and $\tau_t$
+are firm and year fixed effects; and $X_{i,t}$ includes size, leverage, ROA,
+book-to-market, loss indicator, and sales growth. Standard errors are clustered
+at the firm level. The coefficient of interest is $\beta_3$.
 
-The key empirical challenge is not whether polarization is measured with noise;
-it is whether polarization is proxying for other local characteristics that also
-affect market reactions to auditor changes. The draft should therefore discuss
-and test the following concerns more explicitly.
+\subsection{Identification}
 
-\textbf{Local information environments.} More polarized states may have
-different media environments, investor clienteles, or firm types. The paper
-should include controls for local socioeconomic conditions and, where feasible,
-firm-level information-environment proxies such as analyst coverage,
-institutional ownership, or prior return volatility.
+Firm fixed effects absorb time-invariant confounders. Year fixed effects control
+for aggregate conditions. The interaction design identifies the \textit{differential}
+effect of polarization on event-window returns relative to non-event windows
+within the same firm over time. We additionally exploit within-state time-series
+variation in the ER measure across election cycles.
 
-\textbf{Selection into auditor changes.} Polarization may affect the probability
-that certain types of firms experience auditor changes. This concern does not
-invalidate the event-study design, but it means the interpretation of cross-sectional
-coefficients should be conditional on the occurrence of an auditor-change event.
-A first-stage analysis of the incidence or type of auditor changes could be
-helpful, even if only as a descriptive appendix.
+% ── 6. Results ────────────────────────────────────────────────────────────────
 
-\textbf{National political shocks.} Because polarization trends upward over time,
-year fixed effects are necessary but may not be sufficient. The paper should show
-that the results are not driven by a few election years or by the post-2016
-period alone.
-
-\textbf{Institutional-trust mechanism.} The strongest version of the paper would
-include at least one proxy that makes the institutional-trust channel more
-direct. Candidate moderators include measures of local trust in institutions,
-firm-level governance quality, auditor reputation salience, or whether the filing
-contains explicit disagreement language. Even if such evidence is imperfect, it
-would substantially strengthen the mechanism.
-
-\section{Results and Recommended Empirical Roadmap}
+\section{Results}
 \label{sec:results}
 
-Because the current draft is at a proposal stage, this section should be written
-as a disciplined empirical roadmap rather than as a placeholder summary. The
-paper will be stronger if the final version reports results in the following
-sequence.
+\subsection{Descriptive Statistics}
 
-\subsection{Descriptive Evidence}
+[PLACEHOLDER: Table 1 — summary statistics for event sample, CARs, abnormal
+volume, and polarization measure.]
 
-Begin by describing the sample composition and basic market responses around
-Item 4.01 events. Report the distribution of event types, ambiguity measures, and
-polarization. A simple figure plotting mean $|CAR|$ and abnormal volume by
-polarization tercile would provide a transparent nonparametric first look.
+\subsection{Main Results}
 
-\subsection{Baseline Tests of Hypotheses~\ref{h1} and \ref{h2}}
+[PLACEHOLDER: Table 2 — baseline regressions of $|CAR|$ and $AbVol$ on
+$Event \times Polarization$, with and without controls and fixed effects.]
 
-The first table should estimate Equation~\eqref{eq:main} without the ambiguity
-interaction and then with it. The paper should treat volume and absolute returns
-as parallel primary outcomes. The baseline interpretation should be straightforward:
-if $\beta_1 > 0$, then auditor-change disclosures generate larger disagreement-type
-market responses in more polarized environments.
+\subsection{Heterogeneity by Event Type}
 
-To improve credibility, each table should move incrementally from a parsimonious
-specification to one with rich firm controls, fixed effects, and alternative
-clustering schemes. The text should emphasize economic magnitudes rather than
-statistical significance alone.
+[PLACEHOLDER: Table 3 — split by dismissal vs.\ resignation, Big-4 direction,
+and disclosed disagreements.]
 
-\subsection{Ambiguity Tests of Hypothesis~\ref{h3}}
+\subsection{Signal Ambiguity}
 
-The ambiguity test should be central, not ancillary. The most compelling design
-is an interaction between polarization and an event-level ambiguity indicator,
-followed by targeted subsample analyses. Several ambiguity proxies are available:
-\begin{enumerate}[leftmargin=*, itemsep=0.3em]
-    \item no disclosed disagreement combined with no obvious quality-direction
-    signal;
-    \item same-tier auditor changes;
-    \item sparse or boilerplate textual explanation in Item 4.01;
-    \item cases in which the filing discloses a change but provides limited
-    context about the reason.
-\end{enumerate}
+[PLACEHOLDER: Table 4 — triple interaction with ambiguity indicator, testing
+Hypothesis~\ref{h3}.]
 
-If the theory is correct, the interaction coefficient should be positive. This
-result would sharply distinguish the paper from a generic story that polarized
-states simply have more volatile stocks.
+\subsection{Robustness}
 
-\subsection{Mechanism and Supplemental Tests}
+[PLACEHOLDER: Table 5 — alternative polarization measures ($\alpha = 0.8$,
+$\alpha = 1.2$), alternative event windows ($[-2,+2]$), dropping single-district
+states.]
 
-The next set of analyses should show that the result is most pronounced when the
-audit-institution channel is most salient. Candidate tests include:
-\begin{itemize}[leftmargin=*, itemsep=0.3em]
-    \item stronger effects for dismissals, disclosed disagreements, and Big-4
-    downgrades or other auditor-quality-sensitive events;
-    \item stronger effects for firms with weaker information environments, where
-    investors have more room to rely on priors;
-    \item weaker effects for comparatively clear and routine auditor changes;
-    \item a signed-CAR analysis only within event categories whose directional
-    content is well understood in prior research.
-\end{itemize}
-
-These tests would help transform the paper from a reduced-form association into
-an audit-specific interpretation story.
-
-\subsection{Robustness and Falsification}
-
-A top-journal version of the paper should include several robustness checks.
-First, vary the event window and the abnormal-return model. Second, use
-alternative polarization measures where feasible. Third, re-estimate after
-excluding influential states, election years, or the most politically salient
-periods. Fourth, conduct placebo tests using nearby non-audit 8-K events.
-Fifth, show that results are not driven entirely by generic return volatility or
-turnover in polarized states.
-
-A particularly valuable falsification test would compare auditor-change events to
-other standardized 8-K disclosures that are economically important but less tied
-to institutional trust in auditing. If polarization matters much more for
-auditor-change filings than for those placebo disclosures, the paper's mechanism
-becomes considerably more convincing.
+% ── 7. Conclusion ─────────────────────────────────────────────────────────────
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-This paper argues that political polarization changes how investors interpret
-standardized auditor disclosures. The contribution is not a broad claim that
-politics matters for markets in every setting, nor a generic replication of the
-idea that polarization can widen disagreement. Instead, the paper identifies an
-audit-specific mechanism: polarization increases heterogeneity in institutional
-trust and therefore in prior beliefs about the meaning of auditor-originated
-signals. In a setting where all investors observe the same mandated disclosure,
-that mechanism predicts more disagreement-driven trade and larger absolute price
-responses, especially when the signal is ambiguous.
+Political polarization affects how investors interpret auditor signals, with
+implications for market efficiency and audit regulation. Identical disclosures
+generate more extreme market reactions --- larger absolute returns and higher
+trading volume --- in more polarized political environments. These effects are
+stronger for ambiguous signals, consistent with a model in which polarization
+increases prior dispersion and amplifies the role of priors in belief updating.
 
-This reframing improves both novelty and fit with the auditing literature. The
-paper sits at the intersection of research on audit disclosures in capital
-markets, political polarization in finance, and heterogeneous-belief asset
-pricing, but its distinctive contribution is to show how these ideas interact in
-auditor-change events. That positioning should resonate with a conference and
-journal audience interested in auditing, capital markets, and the limits of
-disclosure-based regulation.
+The findings suggest that the effectiveness of disclosure-based regulation
+depends on the political context in which disclosures are received. As
+polarization has increased persistently over the past two decades, its effect
+on audit signal interpretation may be growing. Future research should examine
+whether these patterns extend to other audit-related disclosures, including
+critical audit matters, going concern opinions, and internal control reports.
 
-In the next draft, the paper should prioritize four tasks: tightening the event
-classification, making the ambiguity interaction central to the design,
-strengthening the institutional-trust mechanism, and presenting the empirical
-results in a way that foregrounds economic magnitude and falsification. If those
-steps are executed well, the project can be framed as a credible and novel paper
-for an auditing-and-capital-markets audience rather than as a broad political
-finance paper with an audit application.
-
-\begin{thebibliography}{99}
-
-\bibitem[Bordalo et~al.(2023)]{bordalo2023}
-Bordalo, P., Gennaioli, N., Ma, Y., and Shleifer, A. (2023).
-\newblock Beliefs and economic behavior under polarization.
-\newblock Working paper.
-
-\bibitem[Chaney et~al.(2006)]{chaney2006}
-Chaney, P., Faccio, M., and Parsley, D. (2006).
-\newblock The quality of accounting information in politically connected firms.
-\newblock Working paper / journal version as applicable.
-
-\bibitem[Christensen et~al.(2014)]{christensen2014}
-Christensen, B., Glover, S., and Wolfe, C. (2014).
-\newblock Do critical audit matter paragraphs in the audit report change
-nonprofessional investors' decision making?
-\newblock Auditing-related working paper.
-
-\bibitem[DeFond and Zhang(2014)]{defond2014}
-DeFond, M. and Zhang, J. (2014).
-\newblock A review of archival auditing research.
-\newblock \emph{Journal of Accounting and Economics}, 58, 275--326.
-
-\bibitem[DeFond et~al.(1998)]{defond1998}
-DeFond, M., Wong, T., and Li, S. (1998).
-\newblock The impact of improved auditor independence on audit market
-concentration in China.
-\newblock Placeholder entry; replace with the correct auditor-change citation used
-in the final paper.
-
-\bibitem[Dodd et~al.(1984)]{dodd1984}
-Dodd, P., Dopuch, N., Holthausen, R., and Leftwich, R. (1984).
-\newblock Qualified audit opinions and stock prices.
-\newblock \emph{Journal of Accounting and Economics}, 6, 3--38.
-
-\bibitem[Firth(1978)]{firth1978}
-Firth, M. (1978).
-\newblock Qualified audit reports: Their impact on investment decisions.
-\newblock \emph{The Accounting Review}, 53, 642--650.
-
-\bibitem[Francis(2004)]{francis2004}
-Francis, J. (2004).
-\newblock What do we know about audit quality?
-\newblock \emph{British Accounting Review}, 36, 345--368.
-
-\bibitem[Gutierrez et~al.(2018)]{gutierrez2018}
-Gutierrez, E., Minutti-Meza, M., Tatum, K., and Vulcheva, M. (2018).
-\newblock Consequences of adopting an expanded auditor's report in the United
-Kingdom.
-\newblock \emph{Review of Accounting Studies}, 23, 1543--1587.
-
-\bibitem[Hao et~al.(2026)]{hao2026}
-Hao, Q., Nain, A., and Xu, Y. (2026).
-\newblock Political polarization and analyst disagreement.
-\newblock Working paper.
-
-\bibitem[Harris and Raviv(1993)]{harris1993}
-Harris, M. and Raviv, A. (1993).
-\newblock Differences of opinion make a horse race.
-\newblock \emph{Review of Financial Studies}, 6, 473--506.
-
-\bibitem[Hong and Stein(2007)]{hong2007}
-Hong, H. and Stein, J. (2007).
-\newblock Disagreement and the stock market.
-\newblock \emph{Journal of Economic Perspectives}, 21, 109--128.
-
-\bibitem[IFRS Ideology Paper(2025)]{ifrsideology2025}
-Author(s) omitted. (2025).
-\newblock Political ideology shapes reporting regulation.
-\newblock Placeholder entry; replace with final bibliographic details.
-
-\bibitem[Johnson and Lys(1990)]{johnson1990}
-Johnson, W. and Lys, T. (1990).
-\newblock The market for audit services: Evidence from voluntary auditor changes.
-\newblock Placeholder entry; replace with final bibliographic details.
-
-\bibitem[Kandel and Pearson(1995)]{kandel1995}
-Kandel, E. and Pearson, N. (1995).
-\newblock Differential interpretation of public signals and trade in speculative
-markets.
-\newblock \emph{Journal of Political Economy}, 103, 831--872.
-
-\bibitem[Kempf et~al.(2024)]{kempf2024}
-Kempf, E., McCartney, W., and others. (2024).
-\newblock Political polarization and finance.
-\newblock Working paper / review.
-
-\bibitem[Landsman et~al.(2009)]{landsman2009}
-Landsman, W., Nelson, K., and Rountree, B. (2009).
-\newblock Auditor switches and market reactions.
-\newblock Placeholder entry; replace with final bibliographic details.
-
-\bibitem[Public Signal Quality Paper(2024)]{publicsignalquality2024}
-Author(s) omitted. (2024).
-\newblock Disagreement about public information quality and informational price
-efficiency.
-\newblock Placeholder entry; replace with final bibliographic details.
-
-\bibitem[SEC Shutdown Paper(2025)]{secshutdown2025}
-Author(s) omitted. (2025).
-\newblock Economic consequences of political polarization: Evidence from an SEC
-shutdown and its effect on insider trading.
-\newblock Placeholder entry; replace with final bibliographic details.
-
-\bibitem[Diverging Beliefs Paper(2024)]{divergingbeliefs2024}
-Author(s) omitted. (2024).
-\newblock Financial information and diverging beliefs.
-\newblock Placeholder entry; replace with final bibliographic details.
-
-\end{thebibliography}
+\bibliographystyle{apalike}
+\bibliography{references}
 
 \end{document}
