@@ -51,7 +51,7 @@ from parse_8K import parse_8k_filing
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 START_YEAR    = 2001   # 2000 has 0 hits under correct EFTS query; Item 4.01 disclosures start 2001
-END_YEAR      = 2023
+END_YEAR      = 2024
 REQUEST_DELAY = 0.12          # seconds between requests (~8 req/sec)
 USER_AGENT    = "Research project neil.hwang@bcc.cuny.edu"
 MAX_RETRIES   = 3

@@ -5,7 +5,7 @@ Build the Esteban & Ray (1994) political polarization measure from MIT Election
 Lab congressional district election returns.
 
 INPUT:  Data/Raw/mit_house_elections.tab
-        (MIT Election Lab, "U.S. House 1976–2022", Harvard Dataverse DOI:10.7910/DVN/IG0UN2)
+        (MIT Election Lab, "U.S. House 1976–2024", Harvard Dataverse DOI:10.7910/DVN/IG0UN2)
         Download instructions: see README block below.
 OUTPUT: Data/Processed/polarization_state_year.parquet
         Columns: state_fips, year, pol_er_alpha1, pol_er_alpha08,
@@ -30,7 +30,7 @@ MEASURE:
 
 HOW TO DOWNLOAD THE RAW DATA:
     1. Go to: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IG0UN2
-    2. Download the file "1976-2022-house.tab"
+    2. Download the file "1976-2024-house.tab"
     3. Save it as: Data/Raw/mit_house_elections.tab
     The file is ~10 MB and requires a free Harvard Dataverse account.
 
@@ -255,7 +255,7 @@ def aggregate_to_state(df: pd.DataFrame) -> pd.DataFrame:
 # ── Step 6: Forward-fill to annual frequency ──────────────────────────────────
 
 def expand_to_annual(df: pd.DataFrame, start_year: int = 1976,
-                     end_year: int = 2023) -> pd.DataFrame:
+                     end_year: int = 2024) -> pd.DataFrame:
     """
     House elections occur every even year. Forward-fill each election cycle's
     polarization measure into the following odd year (e.g., 2002 measure applies

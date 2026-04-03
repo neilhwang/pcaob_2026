@@ -82,7 +82,7 @@ how it is processed.
 
 Empirically, we measure political polarization at the congressional district level
 using the \citet{esteban1994} polarization index, applied to U.S. House election
-returns from 2000 to 2023. We match firms to their headquarters state and construct
+returns from 2000 to 2024. We match firms to their headquarters state and construct
 a state-by-year polarization measure that varies across both the cross-section and
 time. Our main specification regresses absolute cumulative abnormal returns (CARs)
 and abnormal trading volume over the $[-1, +1]$ window around auditor change
@@ -354,11 +354,15 @@ in the signals themselves.
 
 \textbf{Auditor change events.} We identify auditor changes using Form 8-K
 filings disclosing a change in the registrant's certifying accountant (Item
-4.01), obtained from SEC EDGAR for 2000--2023. We retain only original 8-K
-filings matched to a CRSP PERMNO and require at least 100 non-missing trading
-days in the estimation window. The final sample consists of [N] auditor change
-events for [N] unique firms. We exclude financial firms (SIC 6000--6999) and
-utilities (SIC 4900--4999).
+4.01), obtained from SEC EDGAR for 2001--2024.\footnote{We end the sample in
+2024 because DW-NOMINATE ideological scores for the 119th Congress (which
+began January 2025) are not yet available in final form from Voteview. The
+Esteban-Ray polarization measure is unaffected, as the 2024 U.S. House
+election results are available from the MIT Election Lab.} We retain only
+original 8-K filings matched to a CRSP PERMNO and require at least 100
+non-missing trading days in the estimation window. The final sample consists
+of [N] auditor change events for [N] unique firms. We exclude financial firms
+(SIC 6000--6999) and utilities (SIC 4900--4999).
 
 \subsection{Dependent Variables}
 

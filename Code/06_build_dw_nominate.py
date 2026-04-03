@@ -27,7 +27,7 @@ MEASURES:
             polarization as a time-series variable.
 
     All measures are expanded to annual frequency (each Congress covers two
-    calendar years) and the output covers 1976-2023 to align with the ER
+    calendar years) and the output covers 1976-2024 to align with the ER
     polarization panel from script 02.
 
 NOTE ON TIMING:
@@ -258,7 +258,7 @@ def expand_to_annual(
     out = out.rename(columns={"state_abbrev": "state_abbr"})
 
     # Keep only years within our sample window (align with ER panel)
-    out = out[(out["year"] >= 1976) & (out["year"] <= 2023)]
+    out = out[(out["year"] >= 1976) & (out["year"] <= 2024)]
     out = out.sort_values(["state_abbr", "year"]).reset_index(drop=True)
 
     log.info("Annual panel: %d state x year rows", len(out))
@@ -303,7 +303,7 @@ def main() -> None:
     )
     log.info(
         "National gap trend (selected years):\n%s",
-        nat_trend[nat_trend["year"].isin([1980, 1990, 2000, 2010, 2020, 2023])]
+        nat_trend[nat_trend["year"].isin([1980, 1990, 2000, 2010, 2020, 2024])]
         .to_string(index=False),
     )
 
