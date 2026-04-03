@@ -74,14 +74,24 @@ greater posterior dispersion translates into more trading volume and larger
 absolute price movements. The mechanism is distinct from information asymmetry:
 polarization does not change what is disclosed, only how it is processed.
 
-Empirically, we measure political polarization at the congressional district level
-using the \citet{esteban1994} polarization index, applied to U.S. House election
-returns from 2000 to 2023. We match firms to their headquarters state and construct
-a state-by-year polarization measure that varies across both the cross-section and
-time. Our main specification regresses absolute cumulative abnormal returns (CARs)
-and abnormal trading volume over the $[-1, +1]$ window around auditor change
-disclosures on the interaction of an event indicator with the polarization measure,
-controlling for firm characteristics and including firm and year fixed effects.
+Empirically, a central challenge is that the model's polarization parameter is
+latent: we do not directly observe the extent to which ideology shapes investors'
+priors, trust in audit institutions, or perceptions of signal credibility. We
+therefore follow the polarization-measurement literature in using complementary
+proxies rather than treating any single political variable as a sufficient statistic
+for the mechanism. Our primary cross-sectional measure is a state-by-year index
+constructed from district-level election returns using the \citet{esteban1994}
+polarization framework. This measure captures the local political environment in
+which firms, boards, and many investors are embedded. We complement it with a
+national elite-polarization measure based on the distance between party means in
+DW-NOMINATE scores, which captures the broader national political-information
+environment. This design lets us distinguish between cross-sectional heterogeneity
+in the local ideological environment and time-series variation in nationwide
+political conflict. Our main specification regresses absolute cumulative abnormal
+returns (CARs) and abnormal trading volume over the $[-1, +1]$ window around
+auditor change disclosures on the interaction of an event indicator with these
+polarization proxies, controlling for firm characteristics and including firm and
+year fixed effects.
 
 We find that [PLACEHOLDER: insert main result once estimates are available].
 These effects are concentrated in [PLACEHOLDER: ambiguous events / dismissals
@@ -186,8 +196,12 @@ belief heterogeneity to a specific, measurable source --- political polarization
 
 We develop a model of investor belief updating around public audit signals to
 formalize how political polarization affects market outcomes. The model draws on
-the heterogeneous-priors framework of \citet{kandel1995} and the polarization
-measure of \citet{esteban1994}.
+the heterogeneous-priors framework of \citet{kandel1995}. Importantly, the
+model's polarization parameter should be interpreted as a reduced-form summary of
+ideology-linked heterogeneity in priors, institutional trust, and perceived signal
+precision, rather than as any one observed political series. In the empirics, this
+latent object is mapped to multiple complementary proxies motivated by the
+polarization-measurement literature.
 
 \subsection{Setting}
 
@@ -325,27 +339,73 @@ include delisting returns following \citet{beaver2007}.
 $[\log(\mathrm{Vol}_{i,t}+1) - \overline{\log(\mathrm{Vol}_i)}]$ over the
 $[-1,+1]$ window, where the baseline is the estimation window mean.
 
-\subsection{Political Polarization Measure}
+\subsection{Measuring Polarization and Mapping It to the Model}
 
-We apply the \citet{esteban1994} polarization index to U.S. House election
-returns. For congressional district $d$ in election year $e$:
+A key empirical challenge is that the model's polarization parameter is not
+observed directly. The theory requires a measure of the extent to which ideology
+shapes investors' priors, trust in audit institutions, and perceived signal
+precision. No single empirical variable perfectly captures this latent object.
+Following the polarization-measurement literature, we therefore use
+complementary proxies that capture different margins of political polarization,
+rather than treating all measures as interchangeable.
+
+\paragraph{State-level polarization (primary cross-sectional measure).}
+Our primary measure captures the local political environment in which firms are
+embedded. We apply the \citet{esteban1994} polarization index to U.S. House
+election returns. For congressional district $d$ in election year $e$:
 \begin{equation}
     \label{eq:er}
     P^{ER}_{d,e} = s_{D,d,e} \cdot s_{R,d,e}
     \cdot \left(s_{D,d,e}^\alpha + s_{R,d,e}^\alpha\right), \quad \alpha = 1,
 \end{equation}
-which simplifies to $s_{D} \cdot s_{R}$ when $\alpha=1$, maximized at 0.25 when
-the two parties split the vote equally. We aggregate to the state level weighting
-by each district's share of total state two-party votes, forward-fill to annual
-frequency, and standardize to mean zero and unit variance.
+where $s_{D,d,e}$ and $s_{R,d,e}$ are the Democratic and Republican vote
+shares. We then aggregate the district-level values to the state-year level
+using district shares of total state two-party votes, forward-fill between
+elections, and standardize the resulting series to mean zero and unit variance.
+This measure is intended to proxy for the cross-sectional ideological
+environment surrounding the firm, including local political discourse,
+institutional trust, board oversight climate, and the investor base most likely
+to be geographically or socially connected to the firm.
+
+\paragraph{National elite polarization (complementary time-series measure).}
+We complement the state-level measure with a national index based on the
+distance between Democratic and Republican party means in DW-NOMINATE scores in
+the U.S. House. This measure captures national elite polarization and the
+broader political-information environment. Conceptually, it is better suited to
+capturing aggregate time-series shifts in ideological conflict than local
+cross-sectional heterogeneity. In our setting, the national measure therefore
+serves as a complementary proxy for periods in which investors are more likely
+to interpret institution-dependent disclosures through a polarized national
+lens.
+
+\paragraph{Why multiple measures are necessary.}
+The state-level and national measures are not intended to be substitutes. The
+state-level index is our primary measure for baseline cross-sectional tests,
+while the national elite-polarization series is used to assess whether the same
+mechanism appears in aggregate time-series variation. If the theory is correct,
+results should not depend mechanically on one operationalization of
+polarization, but coefficient magnitudes may differ because the measures capture
+distinct dimensions of the latent object in the model.
+
+\paragraph{Measurement limitations.}
+Neither proxy directly observes the ideological composition of the marginal
+trader in a given stock. Instead, these measures capture the political
+environment in which investors process auditor-originated disclosures. This is
+an advantage for external validity but also an important interpretive
+qualification: the empirical tests should be viewed as reduced-form evidence on
+ideology-linked heterogeneity in interpretation, not as a direct measurement of
+individual investor beliefs.
 
 \subsection{Empirical Specification}
 
+Our baseline specification uses the state-level polarization proxy because it
+provides economically meaningful cross-sectional variation in the political
+environment surrounding the firm:
 \begin{equation}
     \label{eq:main}
     Y_{i,t} = \alpha + \beta_1\,\textit{Event}_{i,t}
-    + \beta_2\,\textit{Pol}_{s(i),t}
-    + \beta_3\,(\textit{Event}_{i,t} \times \textit{Pol}_{s(i),t})
+    + \beta_2\,\textit{Pol}^{State}_{s(i),t}
+    + \beta_3\,(\textit{Event}_{i,t} \times \textit{Pol}^{State}_{s(i),t})
     + \gamma' X_{i,t} + \delta_i + \tau_t + \varepsilon_{i,t},
 \end{equation}
 where $Y_{i,t}$ is $|CAR_{i,t}|$ or $AbVol_{i,t}$; $\delta_i$ and $\tau_t$
@@ -353,13 +413,32 @@ are firm and year fixed effects; and $X_{i,t}$ includes size, leverage, ROA,
 book-to-market, loss indicator, and sales growth. Standard errors are clustered
 at the firm level. The coefficient of interest is $\beta_3$.
 
+We then estimate parallel specifications replacing $\textit{Pol}^{State}_{s(i),t}$
+with a national elite-polarization series, $\textit{Pol}^{National}_{t}$, to
+evaluate whether the same mechanism appears in aggregate time-series variation.
+Because the national measure has no within-year cross-sectional variation, it is
+not a substitute for the baseline design; instead, it plays a distinct role by
+capturing periods in which polarized national politics may heighten differences
+in the interpretation of institution-dependent disclosures.
+
 \subsection{Identification}
 
 Firm fixed effects absorb time-invariant confounders. Year fixed effects control
 for aggregate conditions. The interaction design identifies the \textit{differential}
 effect of polarization on event-window returns relative to non-event windows
-within the same firm over time. We additionally exploit within-state time-series
-variation in the ER measure across election cycles.
+within the same firm over time. The state-level measure is central for this
+purpose because it combines cross-sectional and time-series variation and maps
+most closely to the paper's claim that firms embedded in more polarized local
+environments experience more heterogeneous reactions to the same disclosure.
+
+The national elite-polarization measure serves a different identification role.
+Rather than exploiting local cross-sectional variation, it tests whether the
+same disclosure generates stronger market reactions in periods of heightened
+nationwide ideological conflict. This distinction is important: the state-level
+measure captures where the mechanism is stronger in the cross section, whereas
+the national measure captures when the broader political-information environment
+is more polarized. Using both measures therefore helps validate the mapping from
+theory to data and reduces reliance on any single operationalization.
 
 % ── 6. Results ────────────────────────────────────────────────────────────────
 
@@ -386,11 +465,18 @@ and disclosed disagreements.]
 [PLACEHOLDER: Table 4 — triple interaction with ambiguity indicator, testing
 Hypothesis~\ref{h3}.]
 
-\subsection{Robustness}
+\subsection{Measurement Validation and Robustness}
 
-[PLACEHOLDER: Table 5 — alternative polarization measures ($\alpha = 0.8$,
-$\alpha = 1.2$), alternative event windows ($[-2,+2]$), dropping single-district
-states.]
+[PLACEHOLDER: Table 5 — measurement validation and robustness. Panel A reports
+baseline results using the state-level polarization proxy. Panel B replaces the
+baseline proxy with the national elite-polarization measure based on DW-NOMINATE.
+Panel C varies the Esteban--Ray parameter ($\alpha = 0.8$, $1.2$) to assess
+sensitivity to the functional form of the polarization index. Panel D reports
+alternative event windows ($[-2,+2]$) and sample restrictions, including the
+exclusion of single-district states. The purpose of this table is not merely to
+cycle through alternative political variables, but to show that the paper's
+inferences do not rest on a single ad hoc operationalization of polarization and
+that different measures play distinct empirical roles consistent with the model.]
 
 % ── 7. Conclusion ─────────────────────────────────────────────────────────────
 
