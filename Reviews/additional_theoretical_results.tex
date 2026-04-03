@@ -1,0 +1,244 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{setspace}
+\usepackage{bm}
+\usepackage{hyperref}
+\onehalfspacing
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+
+\title{Additional Theoretical Results for Multiple Polarization Channels}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Purpose}
+
+Yes---\emph{if done selectively}. The current draft is right to avoid making the paper depend on a fully general behavioral model. But the sentence
+
+\begin{quote}
+``The model formalizes one specific channel---heterogeneous priors---but the empirical predictions extend to the broader set of mechanisms described in Section~\texttt{theory}.''
+\end{quote}
+
+leaves the reader with a legitimate concern: the theory proves one mechanism, while the empirics are interpreted more broadly. The cleanest fix is \emph{not} to build a much larger model of investor behavior. The better fix is to add a short set of propositions showing that the same comparative statics obtain under two additional channels that are already described in the draft: \textbf{heterogeneous institutional trust} and \textbf{heterogeneous perceived signal precision}. This strengthens theory--empirics alignment while preserving tractability.
+
+The results below are written so they can be inserted as an additional subsection or appendix to the paper. They formalize three claims:
+\begin{enumerate}
+    \item the heterogeneous-priors result can be rewritten in odds form;
+    \item the same posterior-dispersion comparative statics arise when polarization widens cross-investor \emph{trust} in the credibility of the audit signal;
+    \item the same posterior-dispersion comparative statics arise when polarization widens cross-investor \emph{perceived precision} of the audit signal.
+\end{enumerate}
+
+The final theorem nests all three channels in a single latent-index representation.
+
+\section{Notation}
+
+Let $\sigma(x) \equiv \dfrac{e^x}{1+e^x}$ denote the logistic map. For any prior $\pi \in (0,1)$, define prior log-odds
+\[
+    a(\pi) \equiv \log\!\left(\frac{\pi}{1-\pi}\right).
+\]
+For a favorable auditor-originated signal $s=1$, define the objective log-likelihood ratio
+\[
+    \ell \equiv \log\!\left(\frac{p_H}{p_L}\right) > 0,
+\]
+where $p_H = \Pr(s=1\mid \theta=1)$ and $p_L = \Pr(s=1\mid \theta=0)$ with $p_H>p_L>0$.
+
+In what follows, the economy contains two investor groups $g\in\{D,R\}$ with population shares $s_D,s_R>0$ and $s_D+s_R=1$. For any variable $x_g$ taking two values, the cross-group variance is
+\[
+    \operatorname{Var}(x_g)=s_Ds_R(x_D-x_R)^2.
+\]
+
+\section{Benchmark reformulation: heterogeneous priors}
+
+The baseline model in the draft assumes that investors share the same likelihood function but differ in priors. The posterior after observing $s=1$ can be written as
+\[
+    \phi(\pi_i)=\frac{p_H\pi_i}{p_H\pi_i+p_L(1-\pi_i)}.
+\]
+The first result rewrites the model in odds form.
+
+\begin{proposition}[Odds representation of the benchmark model]\label{prop:odds}
+For any investor with prior $\pi_i\in(0,1)$ and favorable signal $s=1$,
+\[
+    \phi(\pi_i)=\sigma\!\big(a(\pi_i)+\ell\big).
+\]
+Consequently, if polarization increases $|a(\pi_D)-a(\pi_R)|$, then the variance of posterior beliefs
+\[
+    \operatorname{Var}\big(\phi(\pi_g)\big)=s_Ds_R\big[\sigma(a(\pi_D)+\ell)-\sigma(a(\pi_R)+\ell)\big]^2
+\]
+strictly increases.
+\end{proposition}
+
+\begin{proof}
+Starting from Bayes' rule,
+\[
+    \phi(\pi_i)=\frac{p_H\pi_i}{p_H\pi_i+p_L(1-\pi_i)}
+    =\frac{\frac{p_H}{p_L}\frac{\pi_i}{1-\pi_i}}{1+\frac{p_H}{p_L}\frac{\pi_i}{1-\pi_i}}.
+\]
+Define $\ell=\log(p_H/p_L)$ and $a(\pi_i)=\log(\pi_i/(1-\pi_i))$. Then
+\[
+    \frac{p_H}{p_L}\frac{\pi_i}{1-\pi_i}=e^{\ell+a(\pi_i)},
+\]
+so
+\[
+    \phi(\pi_i)=\frac{e^{\ell+a(\pi_i)}}{1+e^{\ell+a(\pi_i)}}=\sigma\!\big(a(\pi_i)+\ell\big).
+\]
+Since $\sigma'(x)=\sigma(x)(1-\sigma(x))>0$ for all $x\in\mathbb{R}$, the logistic map is strictly increasing. Therefore
+\[
+    \big|\sigma(a(\pi_D)+\ell)-\sigma(a(\pi_R)+\ell)\big|
+\]
+is strictly increasing in $|a(\pi_D)-a(\pi_R)|$. Multiplying the squared difference by the positive factor $s_Ds_R$ proves the variance claim.
+\end{proof}
+
+\begin{remark}
+Proposition~\ref{prop:odds} is equivalent to the benchmark result in the draft, but it is much more useful for extensions because all additional channels can be represented as shifts in the posterior log-odds index.
+\end{remark}
+
+\section{Additional channel 1: heterogeneous institutional trust}
+
+Suppose now that investors share the same prior $\pi\in(0,1)$ and the same objective signal realization $s=1$, but differ in the degree to which they trust the auditor-originated signal. Let $\tau_i\in[0,1]$ denote investor $i$'s trust in the signal. A natural reduced form is that trust scales the informational contribution of the log-likelihood ratio. Then investor $i$'s posterior is
+\begin{equation}\label{eq:trustposterior}
+    m(\tau_i)=\sigma\!\big(a(\pi)+\tau_i\ell\big).
+\end{equation}
+When $\tau_i=0$, the investor fully discounts the signal and the posterior equals the prior; when $\tau_i=1$, the investor applies the full Bayesian update.
+
+\begin{proposition}[Institutional trust channel]\label{prop:trust}
+Fix a common prior $\pi\in(0,1)$ and a favorable signal with log-likelihood ratio $\ell>0$. Let posterior beliefs be given by \eqref{eq:trustposterior}. Then:
+\begin{enumerate}
+    \item $m(\tau)$ is strictly increasing in $\tau$ on $[0,1]$;
+    \item for two groups $D,R$ with trust levels $\tau_D,\tau_R\in[0,1]$,
+    \[
+        \operatorname{Var}\big(m(\tau_g)\big)=s_Ds_R\big[\sigma(a(\pi)+\tau_D\ell)-\sigma(a(\pi)+\tau_R\ell)\big]^2;
+    \]
+    \item any increase in $|\tau_D-\tau_R|$ strictly increases \(\operatorname{Var}(m(\tau_g))\).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Differentiate \eqref{eq:trustposterior} with respect to $\tau$:
+\[
+    \frac{dm(\tau)}{d\tau}=\sigma'\!\big(a(\pi)+\tau\ell\big)\,\ell.
+\]
+Because $\ell>0$ and $\sigma'(x)>0$ for all $x$, the derivative is strictly positive. This proves part (1).
+
+For part (2), with two groups the variance of a two-point distribution is exactly
+\[
+    s_Ds_R\big(m(\tau_D)-m(\tau_R)\big)^2,
+\]
+which yields the displayed expression after substituting \eqref{eq:trustposterior}.
+
+For part (3), because $m(\tau)$ is strictly increasing, the absolute difference
+\[
+    |m(\tau_D)-m(\tau_R)|
+\]
+is strictly increasing in $|\tau_D-\tau_R|$. Multiplying its square by the positive constant $s_Ds_R$ proves the claim.
+\end{proof}
+
+\begin{corollary}[Trading under heterogeneous trust]\label{cor:trustvolume}
+Under the same disagreement-to-turnover mapping used in the draft, abnormal trading volume is increasing in $|\tau_D-\tau_R|$.
+\end{corollary}
+
+\begin{proof}
+The draft assumes that turnover is increasing in cross-investor posterior dispersion. By Proposition~\ref{prop:trust}, posterior dispersion is strictly increasing in $|\tau_D-\tau_R|$. Therefore abnormal trading volume is increasing in the trust gap.
+\end{proof}
+
+\section{Additional channel 2: heterogeneous perceived precision}
+
+Now suppose investors share the same prior $\pi\in(0,1)$ and fully trust the signal, but differ in the \emph{precision} they perceive the signal to have. Let $\kappa_i>0$ scale the perceived informativeness of the log-likelihood ratio. Investor $i$'s posterior is
+\begin{equation}\label{eq:precisionposterior}
+    q(\kappa_i)=\sigma\!\big(a(\pi)+\kappa_i\ell\big).
+\end{equation}
+This nests several interpretations. For instance, one investor may regard the 8-K disclosure as highly diagnostic of underlying firm quality, while another regards it as only weakly informative or strategically contaminated.
+
+\begin{proposition}[Perceived precision channel]\label{prop:precision}
+Fix a common prior $\pi\in(0,1)$ and favorable signal with objective log-likelihood ratio $\ell>0$. Let perceived-precision-scaled posteriors be given by \eqref{eq:precisionposterior}. Then:
+\begin{enumerate}
+    \item $q(\kappa)$ is strictly increasing in $\kappa$ on $(0,\infty)$;
+    \item for two groups $D,R$,
+    \[
+        \operatorname{Var}\big(q(\kappa_g)\big)=s_Ds_R\big[\sigma(a(\pi)+\kappa_D\ell)-\sigma(a(\pi)+\kappa_R\ell)\big]^2;
+    \]
+    \item any increase in $|\kappa_D-\kappa_R|$ strictly increases \(\operatorname{Var}(q(\kappa_g))\).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Differentiate \eqref{eq:precisionposterior} with respect to $\kappa$:
+\[
+    \frac{dq(\kappa)}{d\kappa}=\sigma'\!\big(a(\pi)+\kappa\ell\big)\,\ell.
+\]
+Again, since $\ell>0$ and $\sigma'(x)>0$, this derivative is strictly positive. This proves part (1). Parts (2) and (3) then follow exactly as in the proof of Proposition~\ref{prop:trust}, replacing $m(\cdot)$ by $q(\cdot)$ and $\tau$ by $\kappa$.
+\end{proof}
+
+\begin{corollary}[Trading under heterogeneous perceived precision]\label{cor:precisionvolume}
+Under the disagreement-to-turnover mapping in the draft, abnormal trading volume is increasing in $|\kappa_D-\kappa_R|$.
+\end{corollary}
+
+\begin{proof}
+By Proposition~\ref{prop:precision}, posterior variance increases strictly in the cross-group precision gap. The maintained volume mapping then implies the result.
+\end{proof}
+
+\section{Unified theorem: multiple channels in one latent index}
+
+The previous results suggest a common structure. Heterogeneous priors shift prior log-odds. Heterogeneous trust scales the informational contribution of the signal. Heterogeneous perceived precision does the same. These can be combined into one latent update index.
+
+Let investor $i$ have prior log-odds $a_i$, trust parameter $\tau_i\ge 0$, and perceived-precision parameter $\kappa_i\ge 0$. Let the posterior under a favorable signal be
+\begin{equation}\label{eq:unified}
+    \mu_i=\sigma\!\big(a_i+z_i\big),
+    \qquad z_i\equiv \tau_i\kappa_i\ell.
+\end{equation}
+Thus the total posterior log-odds index is the sum of a prior component and a signal-processing component.
+
+\begin{proposition}[Unified channel representation]\label{prop:unified}
+Suppose two groups $D,R$ have posterior beliefs
+\[
+    \mu_g=\sigma(X_g), \qquad X_g\in\mathbb{R},
+\]
+where $X_g$ may differ because of heterogeneous priors, heterogeneous trust, heterogeneous perceived precision, or any combination thereof. Then:
+\begin{enumerate}
+    \item
+    \[
+        \operatorname{Var}(\mu_g)=s_Ds_R\big[\sigma(X_D)-\sigma(X_R)\big]^2;
+    \]
+    \item any increase in $|X_D-X_R|$ strictly increases $\operatorname{Var}(\mu_g)$;
+    \item in particular, if polarization widens any one of the three underlying components---prior log-odds $a_g$, trust $\tau_g$, or perceived precision $\kappa_g$---in a way that widens $|X_D-X_R|$, then posterior dispersion and disagreement-sensitive trading outcomes strictly increase.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Part (1) is the variance formula for a two-point distribution. For part (2), the logistic map $\sigma$ is strictly increasing on $\mathbb{R}$ because
+\[
+    \sigma'(x)=\frac{e^x}{(1+e^x)^2}>0.
+\]
+Hence
+\[
+    |\sigma(X_D)-\sigma(X_R)|
+\]
+is strictly increasing in $|X_D-X_R|$. Squaring the difference and multiplying by $s_Ds_R>0$ yields the result.
+
+Part (3) follows immediately from \eqref{eq:unified}: any widening of the cross-group gap in the latent index $X_g$ widens the posterior gap and therefore increases posterior variance.
+\end{proof}
+
+\begin{remark}[What this buys the paper]
+Proposition~\ref{prop:unified} is the key theoretical payoff. It shows that the paper does not need three unrelated models. It needs one short baseline model plus a compact theorem establishing that the same comparative statics survive when polarization enters through broader and empirically plausible channels. That is enough to justify the paper's interpretation of the evidence without making the theory section unwieldy.
+\end{remark}
+
+\section{Suggested insertion text for the draft}
+
+A concise way to incorporate the results above into the paper is to insert the following paragraph immediately after the current discussion paragraph in the theory section:
+
+\begin{quote}
+``The same comparative statics obtain when polarization operates through channels other than heterogeneous priors. If investors share a common prior but differ in trust in the credibility of auditor-originated disclosures, posterior beliefs take the form $\sigma(a(\pi)+\tau_i\ell)$, where $\tau_i$ scales the informational contribution of the disclosure. Likewise, if investors differ in the precision they assign to the signal, posteriors take the form $\sigma(a(\pi)+\kappa_i\ell)$. In both cases, any increase in cross-group dispersion in $\tau_i$ or $\kappa_i$ widens posterior disagreement and therefore increases disagreement-sensitive outcomes such as abnormal turnover. More generally, whenever polarization widens the latent posterior log-odds index across investor groups, posterior variance increases. Thus the heterogeneous-priors model should be interpreted as a tractable benchmark case of a broader class of polarization mechanisms rather than as the only channel consistent with the data.''
+\end{quote}
+
+If you want a more formal presentation, Propositions~\ref{prop:trust}--\ref{prop:unified} can appear in an online appendix while the paragraph above remains in the main text.
+
+\section*{Bottom line}
+
+Adding \emph{some} additional theory would make the paper stronger, but only if it remains disciplined. The strongest revision is not to write a fully new behavioral model of investors. It is to prove that the paper's empirical predictions survive under two additional channels that the paper already invokes in words. The propositions above do exactly that.
+
+\end{document}

@@ -284,6 +284,11 @@ Investor $i$'s posterior belief after observing $s=1$ is:
 \end{equation}
 The function $\phi(\cdot)$ is strictly increasing and concave in $\pi_i$.
 
+We now establish the central comparative static of the model: that any
+widening of the gap between group priors --- holding the average prior
+fixed --- increases the dispersion of posterior beliefs. This is the
+formal sense in which polarization amplifies disagreement.
+
 \begin{proposition}[Polarization and belief dispersion]
     \label{prop:dispersion}
     Fix population shares $s_D, s_R > 0$ with $s_D + s_R = 1$ and mean prior
@@ -297,22 +302,24 @@ The function $\phi(\cdot)$ is strictly increasing and concave in $\pi_i$.
     $\mathrm{Var}_i[\phi(\pi_i)]$ strictly increases.
 \end{proposition}
 
-\begin{proof}
-    With two groups, $\mathrm{Var}_i[\phi(\pi_i)] = s_D s_R (\phi(\pi_D) -
-    \phi(\pi_R))^2$ (variance of a two-point distribution). Since $\phi$ is
-    strictly increasing, $|\phi(\pi_D) - \phi(\pi_R)|$ is strictly increasing
-    in $|\pi_D - \pi_R|$. Any change in $(\pi_D, \pi_R)$ that increases
-    $|\pi_D - \pi_R|$ while holding $\bar\pi$ fixed (a mean-preserving spread
-    of the two-point distribution) therefore strictly increases the posterior
-    variance. $\square$
-\end{proof}
+\noindent\textit{Proof.} See Appendix~\ref{app:proofs}. $\square$
 
-\noindent\textit{Note on scope.} Proposition~\ref{prop:dispersion} is stated
-for a two-group environment for tractability. The same monotonicity result
-extends to richer distributions of priors: any mean-preserving spread of a
-continuous prior distribution increases the variance of the induced posterior
-distribution, by the convexity properties of Bayesian updating under
-well-separated likelihoods.
+\medskip
+\noindent\textbf{Remark.} Proposition~\ref{prop:dispersion} isolates the
+mechanism through which polarization enters the model. The key condition is
+a \emph{mean-preserving spread} of priors: polarization shifts the two groups
+farther apart while leaving the population-average prior $\bar\pi$ unchanged.
+This rules out the alternative that polarization merely correlates with
+aggregate pessimism or optimism about firm quality. Under this condition, the
+posterior variance increases strictly --- more polarized priors generate more
+dispersed beliefs after observing the same signal. The proposition thereby
+provides the microfoundation for both empirical predictions: more dispersed
+posteriors produce higher disagreement-driven trading volume (Prediction~1)
+and, through demand imbalance, larger absolute price movements (Prediction~2).
+The result is stated for a two-group setting for tractability; the same
+monotonicity extends to richer prior distributions under mean-preserving
+spreads, by the convexity of Bayesian updating when likelihoods are
+well-separated.
 
 \subsection{Equilibrium Prices and Trading}
 
@@ -515,18 +522,25 @@ of [N] auditor change events for [N] unique firms. We exclude financial firms
 
 \subsection{Dependent Variables}
 
-\textbf{Absolute cumulative abnormal return ($|CAR|$).} We estimate a market
-model over the estimation window $[-252, -46]$ trading days relative to the
-event date:
+\textbf{Absolute cumulative abnormal return ($|CAR|$).} Following standard
+event-study methodology \citep{mackinlay1997}, we estimate a market model
+over the estimation window $[-252, -46]$ trading days relative to the event
+date, using at least 100 non-missing trading days to estimate parameters:
 \begin{equation}
     AR_{i,t} = R_{i,t} - (\hat{\alpha}_i + \hat{\beta}_i \cdot R_{m,t}),
     \quad t \in \{-1, 0, +1\}.
 \end{equation}
-$CAR_i = \sum_{t=-1}^{+1} AR_{i,t}$ and $|CAR_i|$ is the primary dependent
-variable. We use the CRSP value-weighted return as the market return and
-include delisting returns following \citet{beaver2007}.
+The window begins 252 days before the event to capture a full trading year
+of pre-event returns and ends 46 days before to avoid contamination from
+information leakage in the run-up period. $CAR_i = \sum_{t=-1}^{+1} AR_{i,t}$
+and $|CAR_i|$ is the primary dependent variable. We use the CRSP
+value-weighted return as the market return and include delisting returns
+following \citet{beaver2007}.
 
-\textbf{Abnormal trading volume ($AbVol$).} Mean of
+\textbf{Abnormal trading volume ($AbVol$).} We measure trading-volume
+reactions over the $[-1, +1]$ event window, consistent with the short-run
+agreement-to-disagree framework of \citet{kandel1995} in which volume spikes
+at the moment beliefs diverge. $AbVol$ is the mean of
 $[\log(\mathrm{Vol}_{i,t}+1) - \overline{\log(\mathrm{Vol}_i)}]$ over the
 $[-1,+1]$ window, where the baseline is the estimation window mean.
 
@@ -670,13 +684,11 @@ standardized state political polarization measure for the headquarters state
 $s(e)$ of the event's firm in event year $t(e)$ --- a reduced-form proxy
 for the polarization of the political environment in which the disclosure is
 received, not a direct measure of investor political identity;
-$X_{e,t(e)-1}$ is a vector of firm controls measured
-in the fiscal year prior to the event (size, leverage, ROA, book-to-market, loss
-indicator, and sales growth); $\tau_{t(e)}$ are event-year fixed effects; and $X_{i,t(i)-1}$ is a vector of firm controls measured
-in the fiscal year prior to the event (size, leverage, ROA, book-to-market, loss
-indicator, and sales growth); $\tau_{t(e)}$ are event-year fixed effects; and
-$\delta_{j(e)}$ are 2-digit SIC industry fixed effects. Standard errors are
-clustered at the firm level. The coefficient of interest is $\beta$.
+$X_{e,t(e)-1}$ is a vector of firm controls measured in the fiscal year prior
+to the event (size, leverage, ROA, book-to-market, loss indicator, and sales
+growth); $\tau_{t(e)}$ are event-year fixed effects; and $\delta_{j(e)}$ are
+2-digit SIC industry fixed effects. Standard errors are clustered at the firm
+level. The coefficient of interest is $\beta$.
 
 \subsection{Identification}
 
@@ -708,7 +720,15 @@ Because the polarization regressor varies at the state$\times$year level,
 column (7) of Table~\ref{tab:robust} reports state-level clustering as a
 robustness check; the baseline clusters at the firm level, which is
 conservative for event-level inference but optimistic relative to the
-regressor's level of variation.
+regressor's level of variation.\footnote{A finer-grained alternative would
+match firms to county-level polarization using the MIT Election Lab
+county-level presidential returns and the firm's headquarter county from
+Compustat. County-level matching provides sharper geographic identification
+and avoids averaging across heterogeneous within-state counties.
+The cost is that the ER index requires repeated competitive elections; county
+presidential returns are available only quadrennially, and congressional
+district boundaries do not align with county boundaries. We treat county-level
+matching as a feasible robustness check to be reported in the online appendix.}
 
 % ── 6. Results ────────────────────────────────────────────────────────────────
 
@@ -810,5 +830,73 @@ investors assess the credibility of institution-dependent disclosures.
 
 \bibliographystyle{apalike}
 \bibliography{references}
+
+% ── Appendix ──────────────────────────────────────────────────────────────────
+
+\appendix
+
+\section{Proof of Proposition~\ref{prop:dispersion}}
+\label{app:proofs}
+
+\noindent\textbf{Setup.} Let there be two investor groups, $D$ and $R$, with
+population shares $s_D, s_R > 0$ and $s_D + s_R = 1$. Group $g$ holds prior
+$\pi_g \in (0,1)$. The mean prior is $\bar{\pi} = s_D \pi_D + s_R \pi_R$.
+After observing signal $s=1$, investor $i$ in group $g$ holds posterior
+$\phi(\pi_g)$, where the Bayesian updating function is
+\[
+    \phi(\pi) = \frac{p_H \pi}{p_H \pi + p_L(1-\pi)},
+    \qquad p_H > p_L > 0.
+\]
+The function $\phi$ is strictly increasing and continuous on $(0,1)$.
+
+\medskip
+\noindent\textbf{Step 1: Variance formula.}
+The posterior beliefs across groups follow a two-point distribution placing
+mass $s_D$ at $\phi(\pi_D)$ and mass $s_R$ at $\phi(\pi_R)$. The population
+mean posterior is $\bar{\phi} = s_D \phi(\pi_D) + s_R \phi(\pi_R)$. A
+standard calculation gives:
+\begin{align*}
+    \mathrm{Var}_i[\phi(\pi_i)]
+    &= s_D\bigl(\phi(\pi_D) - \bar\phi\bigr)^2
+     + s_R\bigl(\phi(\pi_R) - \bar\phi\bigr)^2 \\
+    &= s_D (s_R)^2 \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2
+     + s_R (s_D)^2 \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2 \\
+    &= s_D s_R (s_D + s_R) \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2 \\
+    &= s_D s_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2,
+\end{align*}
+where the second equality uses $\phi(\pi_D) - \bar\phi = s_R(\phi(\pi_D) -
+\phi(\pi_R))$ and $\phi(\pi_R) - \bar\phi = -s_D(\phi(\pi_D) - \phi(\pi_R))$,
+and the last equality uses $s_D + s_R = 1$. This establishes the variance
+formula in Proposition~\ref{prop:dispersion}.
+
+\medskip
+\noindent\textbf{Step 2: Monotonicity in $|\pi_D - \pi_R|$.}
+Without loss of generality, assume $\pi_D > \pi_R$. A mean-preserving
+spread that increases $|\pi_D - \pi_R|$ by $\epsilon > 0$ while holding
+$\bar\pi$ fixed requires:
+\[
+    \pi_D' = \pi_D + s_R \epsilon, \qquad
+    \pi_R' = \pi_R - s_D \epsilon,
+\]
+so that $s_D \pi_D' + s_R \pi_R' = s_D \pi_D + s_R \pi_R = \bar\pi$.
+
+Since $\phi$ is strictly increasing:
+\[
+    \phi(\pi_D') = \phi(\pi_D + s_R\epsilon) > \phi(\pi_D),
+    \qquad
+    \phi(\pi_R') = \phi(\pi_R - s_D\epsilon) < \phi(\pi_R).
+\]
+Therefore:
+\[
+    \phi(\pi_D') - \phi(\pi_R')
+    > \phi(\pi_D) - \phi(\pi_R) > 0.
+\]
+Since $s_D s_R > 0$ is unchanged, we conclude:
+\[
+    \mathrm{Var}_i[\phi(\pi_i')]
+    = s_D s_R \bigl(\phi(\pi_D') - \phi(\pi_R')\bigr)^2
+    > s_D s_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2
+    = \mathrm{Var}_i[\phi(\pi_i)]. \qquad \square
+\]
 
 \end{document}
