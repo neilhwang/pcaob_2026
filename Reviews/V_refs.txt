@@ -1,0 +1,73 @@
+A citation sentence you can pair with these is:
+“Related work finds that political beliefs and partisan identities shape both economic expectations and perceived risks.”
+
+
+Coibion, Gorodnichenko, and Weber (2020), “Political Polarization and Expected Economic Outcomes.”
+This is one of the cleanest citations for the first half of your sentence. The paper shows that respondents’ beliefs about likely election outcomes are strongly associated with their expectations about inflation, unemployment, mortgage rates, and stock returns, and that information treatments only modestly reduce those partisan gaps.
+@techreport{coibion2020political,
+  title={Political polarization and expected economic outcomes},
+  author={Coibion, Olivier and Gorodnichenko, Yuriy and Weber, Michael},
+  year={2020},
+  institution={National Bureau of Economic Research}
+}
+
+
+
+Binder, Kamdar, and Ryngaert (2024), “Partisan Expectations and COVID-Era Inflation.”
+This paper directly shows that partisan affiliation predicts inflation expectations, with Republicans’ expectations becoming more elevated and more sensitive to shocks during the COVID-era inflation episode. It is especially useful if you want a modern macro-expectations example.
+
+Mian, Sufi, and Khoshkhou (2025), “Inflation Expectations and Political Polarization.”
+This paper finds that party identity is predictive of inflation forecasts and beliefs about recent inflation and the Fed’s target, reinforcing the point that partisan identity shapes economic expectations.
+
+Gerber and Huber (2009), “Partisanship and Economic Behavior: Do Partisan Differences in Economic Forecasts Predict Real Economic Behavior?”
+This is a useful classic citation because it frames partisanship as a “perceptual screen” and links partisan differences in economic forecasts to actual behavior, not just survey responses.
+
+
+@techreport{CoibionGorodnichenkoWeber2020,
+  author      = {Coibion, Olivier and Gorodnichenko, Yuriy and Weber, Michael},
+  title       = {Political Polarization and Expected Economic Outcomes},
+  institution = {National Bureau of Economic Research},
+  type        = {NBER Working Paper},
+  number      = {28044},
+  year        = {2020},
+  month       = oct,
+  doi         = {10.3386/w28044}
+}
+
+@techreport{BinderKamdarRyngaert2024,
+  author      = {Binder, Carola and Kamdar, Rupal and Ryngaert, Jane M.},
+  title       = {Partisan Expectations and COVID-Era Inflation},
+  institution = {National Bureau of Economic Research},
+  type        = {NBER Working Paper},
+  number      = {32650},
+  year        = {2024},
+  month       = jul,
+  doi         = {10.3386/w32650}
+}
+
+@article{BarriosHochberg2021,
+  author  = {Barrios, John M. and Hochberg, Yael V.},
+  title   = {Risk Perceptions and Politics: Evidence from the COVID-19 Pandemic},
+  journal = {Journal of Financial Economics},
+  volume  = {142},
+  pages   = {862--879},
+  year    = {2021},
+  doi     = {10.1016/j.jfineco.2021.05.039}
+}
+
+@article{GerberHuber2009,
+  author  = {Gerber, Alan S. and Huber, Gregory A.},
+  title   = {Partisanship and Economic Behavior: Do Partisan Differences in Economic Forecasts Predict Real Economic Behavior?},
+  journal = {American Political Science Review},
+  volume  = {103},
+  number  = {3},
+  pages   = {407--426},
+  year    = {2009}
+}
+
+@article{BinderKamdarRyngaert2024JME,
+  author  = {Binder, Carola and Kamdar, Rupal and Ryngaert, Jane M.},
+  title   = {Partisan Expectations and COVID-Era Inflation},
+  journal = {Journal of Monetary Economics},
+  year    = {2024}
+}
