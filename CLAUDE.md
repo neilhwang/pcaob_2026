@@ -109,6 +109,22 @@ If the assistant creates a new script, Neil will assign its number and position 
 - BibTeX references go in the existing `.bib` file. Do not create a new one.
 - Do not reformat or restructure sections without asking.
 
+## Overleaf Sync
+
+The paper is mirrored to a separate GitHub repo (`pcaob_paper`) that Overleaf pulls from. Whenever LaTeX files or tables are updated, the assistant must remind Neil to run the sync script:
+
+```
+.\sync_overleaf.ps1
+```
+
+Run from the project root (`C:\Users\neilh\documents\pcaob_2026`) in PowerShell. It copies `Paper/draft.tex`, `Paper/references.bib`, `Output/Tables/*.tex`, and `Output/Figures/*` to the Overleaf repo, commits, and pushes automatically.
+
+After the script completes, Neil pulls in Overleaf via **Menu → GitHub → Pull**.
+
+- The sync script is at: `sync_overleaf.ps1`
+- The Overleaf repo is at: `C:\Users\neilh\documents\pcaob_paper`
+- GitHub: https://github.com/neilhwang/pcaob_paper
+
 ---
 
 ## Progress Logs

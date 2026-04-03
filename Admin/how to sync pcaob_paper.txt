@@ -1,0 +1,3 @@
+to sync pcaob_paper (small repo for generating pdf) with pcaob_2026 (big repo)
+
+.\sync_overleaf.ps1

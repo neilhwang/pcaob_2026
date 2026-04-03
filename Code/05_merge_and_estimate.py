@@ -20,6 +20,7 @@ OUTPUTS:
     Output/Tables/tab04_ambiguity.tex
     Output/Tables/tab05_robustness.tex
     Output/Tables/tab06_affective.tex
+    Output/Tables/tab07_permutation.tex           (permutation test, 5,000 draws)
     Data/Processed/analysis_sample.parquet        (merged estimation sample)
 
 SPECIFICATION:
@@ -622,7 +623,7 @@ def run_robustness(df: pd.DataFrame) -> None:
              specs["m8"].pvalues["competitive_std"])
 
     coef_map = {
-        "competitive_std":  r"Competitiveness (baseline)",
+        "competitive_std":  r"Polarization (baseline)",
         "er_pres_std":      r"Pres. ER Polarization",
         "pol_std":          r"House ER Polarization",
         "dw_std":           r"DW-NOMINATE (state gap)",
@@ -655,7 +656,94 @@ def run_robustness(df: pd.DataFrame) -> None:
     )
 
 
-# ── Step 8: Supplementary affective-polarization test (Table 6) ───────────────
+# ── Step 8: Permutation test for baseline coefficient (Table 7) ───────────────
+
+def run_permutation_test(df: pd.DataFrame, n_perm: int = 5_000,
+                         seed: int = 42) -> None:
+    """
+    Randomization/permutation test for the baseline |CAR| result.
+
+    Procedure:
+      1. Estimate the baseline OLS coefficient on competitive_std.
+      2. Permute the competitive_std column across observations n_perm times
+         (holding all other variables fixed) and re-estimate β each time.
+      3. The permutation p-value is the fraction of permuted β̂ values that
+         are ≥ the actual β̂ (one-sided, since we predict β > 0).
+      4. Write a LaTeX snippet with the actual coefficient, clustered SE p-value,
+         and permutation p-value.
+
+    This addresses concerns about finite-sample bias in the baseline t-test:
+    if the actual β is genuinely non-zero, it should fall in the extreme tail
+    of the permutation null distribution.
+
+    Note: permuted draws use OLS without clustering (for speed); clustering
+    affects the SE but not the coefficient, so the permutation distribution of
+    β̂ is the same under either approach.
+    """
+    ctrl = " + ".join(CONTROLS)
+    fe   = "C(year_str) + C(sic2_str)"
+    formula = f"absCar ~ competitive_std + {ctrl} + {fe}"
+
+    # Actual coefficient (clustered SE)
+    m_actual = run_ols(formula, df)
+    beta_actual = m_actual.params["competitive_std"]
+    p_actual    = m_actual.pvalues["competitive_std"]
+    se_actual   = m_actual.bse["competitive_std"]
+    log.info("Permutation test — actual β=%.4f SE=%.4f p(clustered)=%.3f",
+             beta_actual, se_actual, p_actual)
+
+    # Permutation draws (OLS, no clustering — coefficient invariant to SE method)
+    rng = np.random.default_rng(seed)
+    perm_betas = []
+    comp_vals = df["competitive_std"].values.copy()
+    formula_plain = formula  # same formula; statsmodels draws from df
+
+    perm_df = df.copy()
+    for _ in range(n_perm):
+        perm_df["competitive_std"] = rng.permutation(comp_vals)
+        m_perm = smf.ols(formula_plain, data=perm_df).fit()
+        perm_betas.append(m_perm.params["competitive_std"])
+
+    perm_betas = np.array(perm_betas)
+    perm_p = (perm_betas >= beta_actual).mean()
+    log.info("Permutation p-value (one-sided): %.4f  (β_actual=%.4f falls at "
+             "%.1f-th percentile of null)", perm_p, beta_actual,
+             100 * (1 - perm_p))
+
+    # Write a minimal LaTeX table
+    lines = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\caption{Permutation Test for Baseline Coefficient}",
+        r"\label{tab:permutation}",
+        r"\begin{tabular}{lcc}",
+        r"\toprule",
+        r" & Actual & Permutation null \\",
+        r"\midrule",
+        rf"$\hat{{\beta}}$ (Competitiveness) & {fmt(beta_actual)} & --- \\",
+        rf"SE (firm-clustered) & ({fmt(se_actual)}) & --- \\",
+        rf"$p$-value (clustered $t$-test) & {fmt(p_actual, 3)} & --- \\",
+        rf"$p$-value (permutation, one-sided) & {fmt(perm_p, 3)} & --- \\",
+        rf"Permutations & & {n_perm:,} \\",
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"\begin{flushleft}",
+        r"\footnotesize Notes: The permutation $p$-value is the fraction of "
+        r"5{,}000 random reshufflings of the \textit{Competitiveness} variable "
+        r"that produce a coefficient estimate $\geq$ the actual $\hat{\beta}$. "
+        r"The outcome variable is $|CAR[-1,+1]|$; controls and fixed effects "
+        r"match the baseline specification (Table~\ref{tab:main}, column~2). "
+        r"Permuted draws use OLS without clustering; the coefficient estimate "
+        r"is invariant to the choice of standard error.",
+        r"\end{flushleft}",
+        r"\end{table}",
+    ]
+    out_path = OUT_TABS / "tab07_permutation.tex"
+    out_path.write_text("\n".join(lines), encoding="utf-8")
+    log.info("Permutation table written: %s", out_path)
+
+
+# ── Step 9: Supplementary affective-polarization test (Table 6) ───────────────
 
 def run_affective_test(df: pd.DataFrame) -> None:
     """
@@ -720,7 +808,7 @@ def run_affective_test(df: pd.DataFrame) -> None:
                          k, param, m.params[param], m.pvalues[param])
 
     coef_map = {
-        "competitive_std":                   r"\textit{Competitiveness}",
+        "competitive_std":                   r"\textit{Polarization}",
         "high_ambiguity":                    r"High Ambiguity",
         "competitive_std:high_ambiguity":    r"\textit{Competitiveness} $\times$ Ambiguity",
         "ap_x_exposure":                 r"$AP \times Exposure$",
@@ -849,6 +937,10 @@ def main() -> None:
     # Robustness — Table 5
     log.info("Running Table 5: Robustness")
     run_robustness(df)
+
+    # Permutation test — Table 7
+    log.info("Running Table 7: Permutation test (5,000 draws)")
+    run_permutation_test(df)
 
     # Affective polarization supplementary test — Table 6
     log.info("Running Table 6: Affective polarization validation")

@@ -18,7 +18,13 @@
       "WebFetch(domain:dataverse.harvard.edu)",
       "Bash(curl -s -I \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/VOQCHQ\")",
       "Bash(tasklist /FI 'IMAGENAME eq python.exe' /FO CSV)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(sort -k4 -rn)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(powershell.exe -File sync_overleaf.ps1)"
     ]
   }
 }
