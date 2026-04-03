@@ -35,10 +35,10 @@ politically polarized states: a one-standard-deviation increase in partisan pola
 is associated with a 0.47 percentage point increase in absolute abnormal returns
 relative to a sample mean of 5.0\% ($p = 0.040$), and a 0.11-unit increase in
 abnormal trading volume relative to its event-window baseline ($p = 0.010$).
-Effects are concentrated in auditor resignations --- the more informationally
-ambiguous class of changes ---
+Effects are concentrated in auditor resignations --- whose 8-K filings more
+often leave the specific cause of the change unstated ---
 consistent with polarization amplifying investor disagreement most when the
-disclosure provides less inherent guidance about fault or severity. These findings
+filing provides less objective guidance about fault or severity. These findings
 suggest that the effectiveness of mandatory audit-related disclosure as an
 information transmission mechanism depends on the social and political
 environment in which investors interpret it, not only on the content of
@@ -132,7 +132,7 @@ characteristics, year fixed effects, and industry fixed effects. These effects
 are concentrated in auditor resignations rather than client-initiated dismissals
 ($\beta = 0.012$, $p = 0.043$ vs.\ $\beta = 0.003$, $p = 0.203$), consistent
 with the prediction that polarization amplifies investor disagreement most when
-the disclosure provides less inherent guidance about fault or severity. The
+the filing provides less objective guidance about the specific cause of the change. The
 main coefficient is robust to a county-level polarization proxy and survives
 two-way clustering of standard errors by firm and state; alternative proxies
 based on DW-NOMINATE roll-call scores are directionally consistent but less
@@ -540,19 +540,29 @@ The formal model does not parameterize event type, so this prediction is not
 derived from the theoretical framework. We nonetheless examine whether the
 polarization effect differs between auditor resignations and client-initiated
 dismissals, motivated by the ambiguity logic of Section~\ref{sec:ambiguity}.
-Resignations --- where the auditor terminates the engagement --- are
-informationally less clear-cut than dismissals: the filing does not assign
-obvious blame, the reasons are often generic or unstated, and investors must
-infer whether the departure reflects a routine decision or serious underlying
-disagreement. In terms of the ambiguity definition in Section~\ref{sec:ambiguity},
-resignations represent the higher-ambiguity event class: they leave greater
-interpretive latitude regarding the severity, source, and implications of the
-change than dismissals do. Dismissals, in contrast, assign initiative to the
-client, providing interpretive guidance about the direction of the separation
-even when the stated reason is sparse.
-The ambiguity channel therefore predicts that polarization effects are larger
-for resignations than for dismissals. We treat this as an auxiliary empirical
-exercise (Table~\ref{tab:event_type}) rather than a core hypothesis.
+The prior accounting literature generally characterizes auditor resignations as
+worse-news signals on average, reflecting auditor risk-management responses to
+deteriorating client quality, rather than as inherently more ambiguous events
+than dismissals \citep{beneish2005, johnson1990}. Our claim is specifically
+about \emph{per-filing} informational content, not event-level signal quality.
+\citet{beneish2005} document that approximately three-quarters of auditor
+resignation announcements use standard boilerplate language without attributing
+the departure to any accounting disagreement or internal-control concern; these
+unexplained filings generate no significant market reaction for former clients,
+because they provide no incremental information beyond what investors had already
+inferred from prior observable deterioration. Only the one-quarter of resignations
+accompanied by explicit attribution generate large negative returns. In terms of
+the ambiguity definition in Section~\ref{sec:ambiguity}, unexplained resignation
+filings represent the higher-interpretive-latitude class: they leave investors
+without objective guidance about the specific cause, making politically shaped
+priors and trust in the auditor as an institution relatively more important for
+forming assessments. Dismissals, in contrast, assign initiative to the client
+regardless of how sparse the stated reason is, providing directional information
+about the nature of the separation. The interpretation channel therefore predicts
+that polarization effects are larger for resignations as a class, because a
+greater fraction of those filings leave investors without objective informational
+guidance. We treat this as an auxiliary empirical exercise
+(Table~\ref{tab:event_type}) rather than a core hypothesis.
 
 \begin{hyp}
     \label{h2}
@@ -944,9 +954,11 @@ The effect is concentrated in auditor resignations: $\beta = 0.012$,
 $p = 0.043$. Among dismissals --- where the client terminates the auditor and the
 adversarial nature of the separation is more transparent --- the coefficient is
 $\beta = 0.003$ and statistically indistinguishable from zero ($p = 0.203$). This
-asymmetry is consistent with the mechanism: when the signal is inherently ambiguous
-about fault (resignation), politically heterogeneous investor bases disagree more
-about its interpretation, generating larger price and volume responses. Splits by
+asymmetry is consistent with the mechanism: most resignation filings use
+boilerplate language without specific attribution and thus provide limited
+objective guidance about the cause of the change \citep{beneish2005}, leaving
+investors to rely more heavily on their politically shaped priors and
+institutional trust when forming assessments. Splits by
 quality direction (Big-4 departures and non-Big-4 upgrades) are also reported but
 are individually insignificant, likely due to small subsamples.
 
@@ -1057,9 +1069,11 @@ This paper provides evidence that market reactions to auditor-change disclosures
 are stronger in more politically polarized states, consistent with heterogeneous
 interpretation of an ambiguous mandatory audit-related signal. The same
 auditor-change disclosures generate larger absolute returns and higher trading
-volume where the surrounding political environment is more divided. For absolute returns, effects are concentrated in auditor resignations --- the more
-ambiguous event type --- consistent with polarization amplifying disagreement most
-when fault and severity are unclear. For abnormal volume, the effect is strongest
+volume where the surrounding political environment is more divided. For absolute returns, effects are concentrated in auditor resignations ---
+whose filings more often provide limited objective guidance about the specific
+cause of the change \citep{beneish2005} --- consistent with polarization
+amplifying disagreement most when investors must rely on their own priors
+rather than the filing's content. For abnormal volume, the effect is strongest
 in the low-ambiguity subsample, where clear quality signals give investors with
 opposing political priors concrete grounds for disagreement about severity.
 
