@@ -47,12 +47,11 @@ the social and political environment in which investors interpret it.
 \label{sec:intro}
 
 Auditor-change disclosures are among the most consequential mandatory filings
-in the Form~8-K reporting system. A firm that changes auditors must disclose the
-event within four business days, report any disagreements, and explain the
-reasons for the change. Prior research establishes that these disclosures
-convey significant information to investors: markets react to auditor changes,
-with the direction and magnitude of abnormal returns reflecting assessments
-of future reporting quality, regulatory relationships, and management credibility
+in the Form~8-K reporting system. The mandatory filing (Form~8-K Item~4.01) must include the reasons for the
+change and any disagreements between the firm and its outgoing auditor.
+Prior research establishes that these disclosures are informative: abnormal
+returns around auditor changes reflect assessments of future reporting quality,
+regulatory relationships, and management credibility
 \citep{dodd1984, defond1998, landsman2009}. Yet the magnitude of market reactions
 varies substantially across otherwise similar events, and the sources of that
 cross-sectional variation are incompletely understood. This paper identifies one
@@ -186,15 +185,13 @@ systematically with the political environment.
 
 \subsection{Auditor Changes}
 
-Auditor changes are among the most salient audit-related events. They are
-mandatory disclosures (Item 4.01 of Form 8-K), filed within four business days,
-and must include information about the reason for the change and any disagreements.
-Prior work shows that markets react to auditor changes, with the direction and
-magnitude depending on the nature of the switch \citep{johnson1990, defond1998,
-landsman2009}. Big-4 departures tend to generate negative abnormal returns, while
-Big-4 appointments are viewed more favorably. We use these events as our primary
-setting because the mandatory, standardized disclosure format makes them ideal for
-studying cross-sectional differences in interpretation.
+Auditor changes are among the most salient audit-related events. The
+direction and magnitude of market reactions depend on the nature of the
+switch \citep{johnson1990, defond1998, landsman2009}: Big-4 departures tend
+to generate negative abnormal returns, while Big-4 appointments are viewed
+more favorably. We use these events as our primary setting because the
+mandatory, standardized disclosure format makes them ideal for studying
+cross-sectional differences in interpretation.
 
 \subsection{Political Economy of Auditing}
 
@@ -211,18 +208,13 @@ design and oversight---has measurable consequences for financial reporting
 quality.
 
 Our paper examines a different and largely unexplored dimension: the
-\emph{investor side} of the audit signal. Even holding the content of an
-audit disclosure constant, political polarization may alter how investors
-interpret it. This mechanism is particularly salient in the context of
-PCAOB oversight, whose authority and credibility as a regulatory body may
-not be assessed uniformly across investor groups. Investors who are
-more skeptical of regulatory institutions---a tendency documented to vary
-systematically with political identity \citep{kempf2024}---may discount the
-credibility of auditor disclosures differently from investors who trust
-regulatory oversight. The result is that the same Form~8-K filing can
-generate heterogeneous investor reactions not because investors differ in
-what information they possess, but because they differ in their assessment
-of the signal's institutional credibility. This mechanism is orthogonal to
+\emph{investor side} of the audit signal. This mechanism is particularly
+salient in the context of PCAOB oversight, whose authority and credibility
+as a regulatory body may not be assessed uniformly across investor groups.
+Investors who are more skeptical of regulatory institutions --- a tendency
+documented to vary systematically with political identity \citep{kempf2024}
+--- may discount the credibility of auditor disclosures differently from
+investors who trust regulatory oversight. This mechanism is orthogonal to
 the auditor-side political economy literature and complements it: even if
 political pressures leave auditor behavior unchanged, polarization in the
 investor population can amplify the capital-market consequences of those
@@ -234,33 +226,26 @@ A rapidly growing literature documents that political polarization affects
 capital markets. \citet{kempf2024} survey evidence that partisan identity
 influences asset allocation, trading behavior, and return expectations. Related
 work finds that political beliefs shape economic forecasts and risk perceptions.
-A key distinction in the broader political science literature is between
-\emph{ideological} polarization --- divergence in substantive issue positions
---- and \emph{affective} or \emph{social} polarization --- partisan animus,
-distrust, and identity-driven bias \citep{druckmanlevy2021}. \citet{mason2015}
-shows that partisan sorting can intensify bias and anger even without
-commensurate growth in issue extremity, suggesting that identity alignment
-alone can drive divergent responses to the same information. This distinction
-is important for our setting: auditor disclosures are institution-dependent
-signals whose interpretation may be shaped by both substantive policy
-disagreement and affective distrust of gatekeepers. We extend this literature
-to the auditing context, where institutional trust plays an unusually central
-role.
+The political science literature distinguishes ideological from affective
+polarization (reviewed in Section~\ref{sec:affective} below); both forms are
+relevant here, because auditor disclosures are institution-dependent signals
+whose interpretation may be shaped by substantive policy disagreement and by
+affective distrust of gatekeepers alike. We extend this literature to the
+auditing context, where institutional trust plays an unusually central role.
 
 \subsection{Affective Polarization, Social Identity, and Information Processing}
+\label{sec:affective}
 
-A growing literature shows that affective polarization --- out-party animus,
-distrust, and social distance --- is conceptually and empirically distinct from
-ideological polarization \citep{iyengar2012, iyengar2019}. \citet{iyengar2012}
-demonstrate that partisan identity produces negative evaluations of the
-out-group and social-distance outcomes even when ideological disagreement is
-limited; polarization can intensify through partisan cues and campaigns without
-commensurate growth in issue extremity. \citet{iyengar2019} survey the broad
-downstream consequences of affective polarization, showing that partisan
-animus spills over into nonpolitical settings including employment decisions,
-commercial transactions, and interpersonal trust. This nonpolitical spillover
-makes it plausible that affective polarization also shapes how investors assess
-the credibility of institution-dependent disclosures such as auditor changes.
+The recent political science literature distinguishes ideological polarization
+--- divergence in substantive issue positions --- from affective polarization
+--- out-party animus, distrust, and social distance that can intensify even
+when policy views are moderate \citep{iyengar2012, iyengar2019, mason2015,
+druckmanlevy2021}. \citet{iyengar2019} document that partisan animus spills
+over into nonpolitical settings --- employment decisions, commercial
+transactions, and interpersonal trust --- even when the domain has no direct
+political content. This nonpolitical spillover makes it plausible that
+affective polarization also shapes how investors assess the credibility of
+institution-dependent disclosures such as auditor changes.
 
 For measurement, \citet{tyler2023} evaluate the robustness of the ANES
 feeling-thermometer series as an indicator of affective polarization. They
@@ -472,9 +457,8 @@ polarization\,$\times$\,ambiguity interaction with positive sign.
     opportunities, raising aggregate volume even in the absence of private
     information. This prediction follows directly from
     Proposition~\ref{prop:dispersion}: polarization increases posterior
-    variance, which increases $V$. We test P1 using abnormal trading volume ($AbVol$) as the outcome,
-    measured as the mean log-volume deviation from the estimation-window
-    mean over the $[-1,+1]$ event window.
+    variance, which increases $V$. We test P1 using abnormal trading volume
+    ($AbVol$) as the outcome (defined in Section~\ref{sec:design}).
 
     \item[\textbf{P2.}] \textit{Polarization and absolute returns (secondary
     empirical prediction).} When investors on opposing sides of the prior
