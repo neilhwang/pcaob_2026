@@ -1,0 +1,66 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{setspace}
+\usepackage{hyperref}
+
+\title{Reviewer Report: Theoretical and Empirical Assessment\\
+\large \textit{Political Polarization and Market Reactions to Auditor-Change Disclosures}}
+\date{\today}
+
+\begin{document}
+\maketitle
+\onehalfspacing
+
+\section{General Assessment}
+The manuscript tackles an excellent research question, leveraging a robust structural setup to bridge political polarization with the capital markets literature. The logistic mapping of the Bayesian updating process in Appendix A is elegant and well-suited for a rigorous presentation. However, a close evaluation of the theoretical framework reveals a critical mathematical misstatement regarding equilibrium prices, a logical paradox in the volume-ambiguity prediction (Hypothesis 2), and a few notational inconsistencies. 
+
+By addressing the mathematical properties of the updating function more formally, you can actually generate sharper, signed empirical predictions that will appeal to the demanding standards of a top-tier accounting or finance journal.
+
+\section{Assessment of Theoretical Proofs}
+
+\subsection{The Concavity of the Updating Function and $P^*$}
+In Section 3.3, the text claims: \textit{``an increase in polarization that constitutes a mean-preserving spread of priors leaves $P^*$ unchanged in expectation but increases the cross-sectional dispersion of posteriors.''}
+
+This statement is mathematically false under standard Bayesian updating, and fixing it yields a powerful new empirical prediction. 
+Consider your updating function for a positive signal ($s=1$):
+$$ \phi(\pi) = \frac{p_H \pi}{p_H \pi + p_L(1-\pi)} $$
+Assuming $p_H > p_L$, the second derivative of this function is strictly negative:
+$$ \phi''(\pi) = \frac{-2 p_H p_L (p_H - p_L)}{[(p_H - p_L) \pi + p_L]^3} < 0 $$
+Because $\phi(\pi)$ is strictly concave for all $\pi \in (0,1)$, Jensen's Inequality dictates that for any mean-preserving spread of priors, $E[\phi(\pi)] < \phi(E[\pi])$. Therefore, polarization strictly \textbf{decreases} the average posterior belief upon receiving a positive signal, pushing average prices down. 
+
+Conversely, the updating function for a negative signal ($s=0$) is strictly \textbf{convex}. A mean-preserving spread of priors will strictly \textbf{increase} the average posterior belief. 
+
+\textbf{Recommendation:} Remove the claim that $P^*$ is unchanged. Instead, exploit Jensen's Inequality. Auditor resignations are generally viewed as negative signals ($s=0$). Because the updating function is convex, polarization should induce an \textit{upward} (less negative) bias in the average CAR for resignations, relative to the unpolarized baseline. Testing this signed prediction will heavily fortify your theoretical contribution.
+
+\subsection{Proof of Proposition 1}
+The algebraic expansion in Step 1 of the proof correctly establishes the variance for a two-point distribution. Step 2 correctly proves monotonicity by relying on the fact that $\phi(\pi)$ is strictly increasing. The proof is mathematically sound as written.
+
+\section{The Ambiguity-Volume Paradox (Hypothesis 2)}
+
+There is a severe logical gap between the Bayesian model in Section 3 and the empirical prediction in Hypothesis 2. 
+
+The draft argues that as a signal becomes more ambiguous ($p_H \to p_L$), prior heterogeneity contributes more to posterior dispersion, driving higher abnormal trading volume. However, event-window trading volume in the Kandel-Pearson framework is driven by the \textit{change} in beliefs (the update), not the static level of the posteriors. 
+
+Let the belief update be $U(\pi) = \phi(\pi) - \pi$. Trading volume is proportional to $|U(\pi_D) - U(\pi_R)|$.
+If an auditor change is perfectly ambiguous ($p_H = p_L$), no investor updates their belief. Thus, $U(\pi_D) = U(\pi_R) = 0$. If there is no belief revision, there is no event-window trading volume. Your model mathematically predicts that as ambiguity increases ($\Delta \to 0$), event-window volume should \textbf{drop to zero}, which directly contradicts Hypothesis 2.
+
+\textbf{Recommendation to close the gap:} The gap exists because the objective precision of the signal ($\ell = \log(p_H/p_L)$) is doing too much heavy lifting. To fix this, lean entirely on the \textbf{perceived precision channel} ($\kappa_i$) formalized in Proposition A2. Argue that when objective signals are ambiguous (i.e., a lateral Big-4 switch), the \textit{objective} likelihood ratio is uninformative, forcing investors to rely on their subjective, politically-driven trust parameters ($\tau_i$) to infer the severity of the event. This bridges the theory to the empirics without violating the mechanics of Bayesian updating.
+
+\section{Notational Consistency}
+
+\begin{itemize}
+    \item \textbf{Index Mismatch:} Section 3.2 uses the subscript $i$ to index individual investors (e.g., $\pi_i$), but the proof in Appendix A shifts to indexing by group $g$ (e.g., $\pi_g$). This should be unified. 
+    \item \textbf{Portfolio Weights:} Equation 2 introduces $w_i$ (equilibrium portfolio weights) but does not define them structurally. Because you immediately pivot to the Kandel and Pearson (1995) volume result, the $w_i$ term feels orphaned. I recommend either defining a simple CARA utility setup to derive $w_i$, or dropping Equation 2 and stating the pricing and volume relationships proportionally.
+    \item \textbf{Latent Index Consistency:} In Appendix A, Proposition A3 introduces $\mu_g = \sigma(X_g)$. To maintain consistency with Section 3, ensure the reader knows that $\mu_g$ is functionally identical to $\phi(\pi_g)$ from Equation 1.
+\end{itemize}
+
+\section{Closing the Gap Between Theory and Empirics}
+
+The theoretical model assumes a perfectly segmented investor base with two distinct priors ($s_D$ and $s_R$). The empirical proxy (Equation 5) assumes that the headquarters state's presidential competitiveness is a valid instrument for this segmentation. 
+
+While the draft acknowledges this as a noisy proxy, there is a missing logical step: \textit{Why} does a competitive state proxy for a bifurcated shareholder base? 
+
+\textbf{Recommendation:} You must explicitly state the assumption of \textit{local bias} in equity markets (e.g., Coval and Moskowitz, 1999). If retail and institutional investors exhibit a preference for locally headquartered firms, then the political makeup of the headquarters state accurately reflects the political makeup of the firm's marginal investors. Adding a brief citation to the local bias literature mathematically and logically justifies using state-level electoral data as a proxy for the unobserved $s_D$ and $s_R$ parameters in your model.
+
+\end{document}

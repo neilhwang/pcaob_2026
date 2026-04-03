@@ -109,7 +109,7 @@ rather than a precise measure of individual investor beliefs; measurement error
 of this kind attenuates estimated coefficients toward zero, so our findings are
 likely conservative. Our sample consists of 678 Form~8-K Item~4.01 filings from
 2001 to 2023, matched to CRSP daily return and volume data and Compustat firm
-characteristics. Our main specification regresses $|CAR(-1,+1)|$ and abnormal
+characteristics. Our main specification regresses $|CAR[-1,+1]|$ and abnormal
 trading volume on standardized state competitiveness, controlling for firm size,
 leverage, profitability, and book-to-market ratio, with year and industry
 fixed effects throughout.
@@ -118,7 +118,7 @@ We find that firms headquartered in more politically competitive states experien
 significantly larger absolute abnormal returns and abnormal trading volume around
 auditor-change disclosures. A one-standard-deviation increase in state partisan
 competitiveness is associated with a 0.47 percentage point increase in
-$|CAR(-1,+1)|$ ($\beta = 0.005$, $p = 0.040$) and a 0.11-unit increase in
+$|CAR[-1,+1]|$ ($\beta = 0.005$, $p = 0.040$) and a 0.11-unit increase in
 abnormal volume ($\beta = 0.111$, $p = 0.010$), controlling for firm
 characteristics, year fixed effects, and industry fixed effects. These effects
 are concentrated in auditor resignations rather than client-initiated dismissals
@@ -307,7 +307,9 @@ prior beliefs $\pi_i \equiv P_i(\theta = 1) \in (0,1)$.
 
 \textbf{Source of prior heterogeneity.} We model investors as belonging to
 ideological groups indexed by political affiliation $g \in \{D, R\}$, with
-population shares $s_D$ and $s_R = 1 - s_D$. Group-level priors reflect
+population shares $s_D$ and $s_R = 1 - s_D$. Individual investor $i$ belongs
+to group $g(i)$, so $\pi_i \equiv \pi_{g(i)}$; the subscript $i$ indexes
+individuals and $g$ indexes groups throughout. Group-level priors reflect
 differential trust in auditors and regulatory institutions: $\pi_D \neq \pi_R$.
 In the model, all heterogeneity is captured by differences in $\pi_i$; in
 practice, polarization may also affect how investors perceive signal precision
@@ -356,92 +358,81 @@ farther apart while leaving the population-average prior $\bar\pi$ unchanged.
 This rules out the alternative that polarization merely correlates with
 aggregate pessimism or optimism about firm quality. Under this condition, the
 posterior variance increases strictly --- more polarized priors generate more
-dispersed beliefs after observing the same signal. The proposition thereby
-provides the microfoundation for both empirical predictions: more dispersed
-posteriors produce higher disagreement-driven trading volume (Prediction~1)
-and, through demand imbalance, larger absolute price movements (Prediction~2).
+dispersed beliefs after observing the same signal. The proposition thereby provides the formal microfoundation for the primary
+empirical prediction: more dispersed posteriors produce higher
+disagreement-driven trading volume (Prediction~1). Larger absolute price
+movements (Prediction~2) follow from the same dispersion mechanism under
+additional market-friction assumptions but are not formally derived here.
 The result is stated for a tractable two-group setting; extension to
 richer prior distributions would require additional assumptions on the
 shape of the distribution and is left for future work.
 
 \subsection{Equilibrium Prices and Trading}
 
-Following \citet{harris1993}, prices aggregate beliefs:
-\begin{equation}
-    \label{eq:price}
-    P^* = \int_0^1 w_i \, \phi(\pi_i) \, di,
-\end{equation}
-where $w_i$ are equilibrium portfolio weights. Trading volume is increasing in
-posterior belief dispersion \citep{kandel1995}:
+Trading volume is increasing in posterior belief dispersion
+\citep{harris1993, kandel1995}:
 \begin{equation}
     \label{eq:volume}
     V \text{ increasing in } \mathrm{Var}_i[\phi(\pi_i)].
 \end{equation}
 
-The equilibrium price $P^*$ is a weighted average of investors' posterior
-beliefs. By Proposition~\ref{prop:dispersion}, an increase in polarization
-that constitutes a mean-preserving spread of priors leaves $P^*$ unchanged
-in expectation but increases the cross-sectional dispersion of posteriors.
-This has two distinct empirical implications that motivate our outcome
-variables.
+By Proposition~\ref{prop:dispersion}, polarization strictly increases
+posterior belief dispersion. The formally derived prediction is therefore for
+abnormal trading volume: more dispersed posteriors generate more investor
+pairs with divergent beliefs and hence mutually beneficial trading
+opportunities, raising aggregate volume even in the absence of private
+information. This is the primary theoretical implication of the model.
 
-First, when some investors revise beliefs strongly upward and others strongly
-downward in response to the same signal, the absolute price movement
-$|P^* - P_0|$ is increasing in posterior dispersion even when the average
-direction is zero. This maps directly to our first empirical outcome, the
-absolute cumulative abnormal return $|CAR[-1,+1]|$: a more polarized
-investor base produces larger absolute price reactions to the same
-auditor-change disclosure without necessarily producing a predictable
-direction. In this sense the model predicts cross-sectional variation in
-\emph{how much} prices move, not \emph{which way} they move.
-
-Second, trade is generated by the meeting of investors who update positively
-with those who update negatively. Equation~\eqref{eq:volume} formalizes the
-\citet{kandel1995} result that disagreement-driven turnover is proportional
-to the variance of posterior beliefs: more dispersed posteriors mean more
-investor pairs with mutually beneficial trades, and hence higher aggregate
-volume. This maps to our second outcome variable, abnormal trading volume
-($AbVol$), measured as the mean log-volume deviation from the estimation-window
-mean over the $[-1,+1]$ event window. Combining equations \eqref{eq:price} and \eqref{eq:volume} with
-Proposition~\ref{prop:dispersion}, the model predicts that both $|CAR|$ and
-$AbVol$ are increasing in political polarization. The prediction for volume
-is especially clean: unlike price, which depends on equilibrium weights
-$w_i$ that can in principle offset belief dispersion, volume rises
-monotonically with the variance of posteriors under standard no-short-selling
-or symmetric-trading assumptions \citep{harris1993}.
+Absolute price movements are a secondary and less formally established
+implication. Equilibrium prices aggregate beliefs; when polarized investors
+revise posteriors in opposite directions around the same event, the resulting
+demand imbalance can amplify absolute price movements. However, the Bayesian
+updating function $\phi(\pi)$ is strictly \emph{concave}: because $\phi''(\pi)
+< 0$, a mean-preserving spread of priors does not leave the average posterior
+unchanged, and the direction of the shift depends on the sign of the
+realized signal. Without additional structure on market clearing and
+short-sale constraints, the model does not yield a sharp signed or unsigned
+prediction for prices. We therefore treat $|CAR[-1,+1]|$ as a motivated
+complementary outcome --- evidence that polarization moves both $AbVol$ and
+$|CAR|$ strengthens the overall picture --- but $AbVol$ is the primary
+formal implication of Proposition~\ref{prop:dispersion}.
 
 \subsection{Role of Signal Ambiguity}
 \label{sec:ambiguity}
 
-The Bayesian framework also generates a result with respect to signal
-informativeness that is central to our empirical design. Differentiating
-the posterior with respect to the prior:
-\begin{equation}
-    \label{eq:sensitivity}
-    \phi'(\pi_i) = \frac{p_H \, p_L}{\bigl[p_H \pi_i + p_L(1-\pi_i)\bigr]^2}.
-\end{equation}
-This expression makes the role of signal informativeness transparent through
-two limiting cases. In the extreme case of a fully revealing signal ($p_H = 1,
-p_L = 0$), $\phi'(\pi_i) = 0$ for all $\pi_i$: every investor updates to the
-same posterior regardless of prior, so polarization has no effect on posterior
-dispersion. In the opposite extreme of an uninformative signal ($p_H = p_L$),
-$\phi(\pi_i) = \pi_i$ and posteriors equal priors, so prior heterogeneity maps
-directly into posterior dispersion. Between these extremes, less informative
-signals leave posteriors closer to priors and therefore allow prior
-heterogeneity --- and hence polarization --- to contribute more to posterior
-dispersion. This motivates the prediction that the polarization effect is
-larger for more ambiguous auditor-change events.
+The model predicts that polarization effects are larger when audit signals
+are more ambiguous, but the mechanism runs through the perceived-precision
+channel rather than through objective signal informativeness alone.
+
+In the unified framework of Proposition~\ref{prop:unified}, each investor's
+posterior log-odds is $X_i = a(\pi_i) + \tau_i \kappa_i \ell$, where
+$\ell = \log(p_H/p_L)$ is the objective log-likelihood ratio and $\tau_i$,
+$\kappa_i$ capture investor $i$'s trust in and perceived precision of the
+disclosure. When the objective signal is highly informative (large $\ell$),
+the common likelihood ratio dominates the update and posterior beliefs
+converge regardless of heterogeneity in $\tau_i$ and $\kappa_i$. When the
+signal is ambiguous (small $\ell$), the subjective components $\tau_i$ and
+$\kappa_i$ carry relatively more weight: investors who differ in their
+politically-shaped trust and perceived precision of the disclosure will
+form substantially different posteriors even from the same objective filing.
+Formally, the cross-group gap $|X_D - X_R|$ is increasing in
+$|\tau_D \kappa_D - \tau_R \kappa_R|$ and this subjective heterogeneity
+contributes more to posterior dispersion when $\ell$ is small
+(Proposition~\ref{prop:precision}). Ambiguous signals therefore \emph{shift
+the locus of disagreement} from the objective likelihood to investors'
+subjective assessments --- precisely where political identity shapes belief
+formation.
 
 In our setting, signal ambiguity varies systematically across auditor-change
 events. An auditor departure following a disclosed disagreement over accounting
-estimates or a qualified opinion is more informationally salient---and therefore
-less ambiguous---than a routine rotation. A switch from a non-Big-4 to a Big-4
-auditor carries a clear quality connotation; a Big-4-to-Big-4 lateral move is
-harder to evaluate. Events with no stated reason for the change, or where the
-disclosed rationale is generic (e.g., ``to reduce costs''), leave investors
-with greater interpretive latitude. We construct a \texttt{high\_ambiguity}
-indicator from observable filing characteristics and interact it with the
-polarization measure in our main specifications (Section~\ref{sec:design}).
+estimates or a qualified opinion leaves investors with less interpretive
+latitude: the filing itself provides guidance about fault and severity.
+A Big-4-to-Big-4 lateral move with a generic or absent stated reason provides
+little objective information; investors must rely more heavily on their
+subjective assessment of what the change portends, a judgment shaped by their
+trust in auditors and the PCAOB as institutions. We construct a
+\texttt{high\_ambiguity} indicator from observable filing characteristics
+(Section~\ref{sec:design}) and interact it with the polarization measure.
 The ambiguity amplification prediction is a testable restriction of the model:
 it requires not just a polarization main effect but a
 polarization\,$\times$\,ambiguity interaction with positive sign.
@@ -530,33 +521,35 @@ contain.
 \end{hyp}
 
 \noindent\textbf{Exploratory Prediction (Event Type).}
-The formal model does not explicitly parameterize event stakes, so this
-prediction is not directly derived from the theoretical framework. We
-nonetheless examine whether the polarization effect is stronger for
-higher-stakes auditor changes --- specifically, auditor dismissals.
-Dismissals are initiated by the client, often amid concerns about financial
-reporting or accounting judgments, making them more informationally
-consequential than routine resignations. Higher stakes amplify whatever
-interpretation investors form: more is riding on the outcome, so
-polarization-induced divergence in interpretation translates into larger
-disagreement and more extreme reactions. This is a salience and stakes
-conjecture, not an ambiguity prediction --- dismissals need not be more
-ambiguous than resignations to generate stronger polarization effects; they
-need only be more consequential. We treat this as an auxiliary empirical
+The formal model does not parameterize event type, so this prediction is not
+derived from the theoretical framework. We nonetheless examine whether the
+polarization effect differs between auditor resignations and client-initiated
+dismissals, motivated by the ambiguity logic of Section~\ref{sec:ambiguity}.
+Resignations --- where the auditor terminates the engagement --- are
+informationally less clear-cut than dismissals: the filing does not assign
+obvious blame, the reasons are often generic or unstated, and investors must
+infer whether the departure reflects a routine decision or serious underlying
+disagreement. Dismissals, in contrast, assign initiative to the client, which
+itself provides interpretive guidance even when the stated reason is sparse.
+The ambiguity channel therefore predicts that polarization effects are larger
+for resignations than for dismissals. We treat this as an auxiliary empirical
 exercise (Table~\ref{tab:hetero}) rather than a core hypothesis.
 
 \begin{hyp}
     \label{h2}
     The polarization effect on abnormal trading volume and absolute returns is
     stronger for auditor changes that carry more ambiguous signals --- events
-    where the informativeness of the disclosure ($p_H - p_L$) is lower.
-    Per Section~\ref{sec:ambiguity}, ambiguity amplifies the role of prior
-    heterogeneity in determining posterior dispersion. This hypothesis is
-    formally derived from the model and is the primary cross-sectional test
+    where the filing leaves greater interpretive latitude about fault, severity,
+    or implications for reporting quality. Per Section~\ref{sec:ambiguity},
+    when objective signal content is limited, investors rely more heavily on
+    their subjective trust and perceived precision of the disclosure, both of
+    which vary with political identity. Ambiguity therefore amplifies the
+    relative contribution of politically-shaped belief heterogeneity to
+    posterior dispersion. This hypothesis is the primary cross-sectional test
     of the interpretation channel. It is distinct from the exploratory
-    event-type prediction above: that prediction concerns the stakes of the
-    event; this hypothesis concerns how much interpretive latitude the
-    disclosure leaves investors.
+    event-type prediction above: that prediction classifies events by
+    auditor-change type; this hypothesis concerns how much objective
+    informational guidance the filing itself provides.
 \end{hyp}
 
 % ── 5. Empirical Design ───────────────────────────────────────────────────────
@@ -598,8 +591,8 @@ date, using at least 100 non-missing trading days to estimate parameters:
 \end{equation}
 The window begins 252 days before the event to capture a full trading year
 of pre-event returns and ends 46 days before to avoid contamination from
-information leakage in the run-up period. $CAR_e = \sum_{t=-1}^{+1} AR_{e,t}$
-and $|CAR_e|$ is the primary dependent variable. We use the CRSP
+information leakage in the run-up period. $CAR_e[-1,+1] = \sum_{t=-1}^{+1} AR_{e,t}$
+and $|CAR_e[-1,+1]|$ is the primary dependent variable. We use the CRSP
 value-weighted return as the market return and include delisting returns
 following \citet{beaver2007}.
 
@@ -789,7 +782,7 @@ The unit of observation is an auditor change event $e$. We estimate:
     + \gamma' X_{e,\,t(e)-1}
     + \tau_{t(e)} + \delta_{j(e)} + \varepsilon_e,
 \end{equation}
-where $Y_e$ is $|CAR_e|$ or $AbVol_e$; $\textit{Pol}_{s(e),t(e)}$ is the
+where $Y_e$ is $|CAR_e[-1,+1]|$ or $AbVol_e$; $\textit{Pol}_{s(e),t(e)}$ is the
 standardized state political polarization measure for the headquarters state
 $s(e)$ of the event's firm in event year $t(e)$ --- a reduced-form proxy
 for the polarization of the political environment in which the disclosure is
@@ -815,7 +808,11 @@ The intended channel runs through the local stakeholder environment
 surrounding the firm: employees, customers, local media, and --- critically
 --- retail investors, who are more geographically concentrated than
 institutional investors and more likely to anchor their beliefs to local
-political norms. For smaller and less nationally prominent firms, the
+political norms. A well-established local equity bias means that retail
+investors overweight geographically proximate firms in their portfolios
+\citep{coval1999}, so the headquarters state's political composition
+is a meaningful, if imperfect, proxy for the political composition of the
+firm's marginal retail investor base. For smaller and less nationally prominent firms, the
 marginal trader is more likely to be a local retail investor whose
 interpretation of an auditor change is shaped by the surrounding political
 environment. For larger firms with globally dispersed institutional ownership,
@@ -895,7 +892,7 @@ optimistic relative to the regressor's level of variation.
 \subsection{Descriptive Statistics}
 
 Table~\ref{tab:summary} presents descriptive statistics for the 678 auditor-change
-events in the estimation sample. The mean $|CAR(-1,+1)|$ is 5.0\% with a standard
+events in the estimation sample. The mean $|CAR[-1,+1]|$ is 5.0\% with a standard
 deviation of 6.7\%, consistent with prior event studies of auditor changes
 \citep{defond2014}. Abnormal trading volume averages 0.11 units above normal,
 reflecting the information content of the disclosures. The mean partisan margin ($|D-R|$, the inverse of the primary competitiveness
@@ -909,7 +906,7 @@ the elevated distress common in this sample.
 
 \subsection{Main Results}
 
-Table~\ref{tab:main} reports the baseline results. Columns (1)--(2) use $|CAR(-1,+1)|$
+Table~\ref{tab:main} reports the baseline results. Columns (1)--(2) use $|CAR[-1,+1]|$
 as the dependent variable; columns (3)--(4) use abnormal volume. Odd columns include
 year fixed effects only; even columns add industry fixed effects and the full set of
 firm controls. Across all four specifications, the coefficient on \textit{Competitiveness}
@@ -1098,6 +1095,9 @@ $\bar\pi$ fixed requires:
     \pi_R' = \pi_R - s_D \epsilon,
 \]
 so that $s_D \pi_D' + s_R \pi_R' = s_D \pi_D + s_R \pi_R = \bar\pi$.
+We restrict $\epsilon$ to be small enough that $\pi_D' \in (0,1)$ and
+$\pi_R' \in (0,1)$; such $\epsilon > 0$ exists because $\pi_D, \pi_R \in
+(0,1)$ strictly.
 
 Since $\phi$ is strictly increasing:
 \[
@@ -1179,7 +1179,10 @@ $\tau$. $\square$
 Let each investor have posterior $\mu_g = \sigma(X_g)$, where the latent
 log-odds index $X_g = a(\pi_g) + \tau_g \kappa_g \ell$ may differ across
 groups through any combination of heterogeneous priors $\pi_g$, trust $\tau_g$,
-or perceived precision $\kappa_g$. Then:
+or perceived precision $\kappa_g$. Note that when $\tau_g = \kappa_g = 1$
+for all groups, $\sigma(X_g) = \phi(\pi_g)$, the Bayesian posterior of
+Equation~\eqref{eq:bayes} in the main text, so Propositions~\ref{prop:trust}--\ref{prop:unified}
+nest the main model as a special case. Then:
 \[
     \mathrm{Var}(\mu_g) = s_D s_R \bigl[\sigma(X_D) - \sigma(X_R)\bigr]^2,
 \]

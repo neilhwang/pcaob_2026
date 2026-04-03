@@ -1,0 +1,348 @@
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\setstretch{1.08}
+\setlength{\parskip}{0.55em}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Report on Theoretical Correctness, Notation Consistency, and Theory--Empirics Alignment}}\\[0.4em]
+{\normalsize Based on the current \texttt{draft.tex} uploaded by the author}
+\end{center}
+
+\section*{Overall assessment}
+
+The draft has a promising core idea, and the formal proposition in the appendix is close to correct as a \emph{two-group comparative static on posterior-belief dispersion}. However, the surrounding text currently makes several claims that are stronger than what the model actually proves. The main technical problem is not the algebra in the appendix; it is the set of interpretive steps that move from the proposition to prices, ambiguity, and the empirical design. Those links are currently uneven.
+
+My bottom-line assessment is:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item The proof of Proposition~1 is basically correct \emph{conditional on the proposition's narrow statement}.
+    \item The draft overstates what follows from that proposition for prices and absolute returns.
+    \item There are several important notation and design inconsistencies that will make careful readers doubt whether the paper's final empirical objects are the same ones the theory is about.
+    \item The paper can be repaired without abandoning the current structure, but the repair requires disciplining the theory section, aligning the hypotheses with the actual empirical tests, and choosing a single, consistent empirical polarization measure for the baseline.
+\end{enumerate}
+
+\section*{1. Proof audit}
+
+\subsection*{1.1 What is correct}
+
+The appendix proof of Proposition~1 is mathematically correct for the stated two-group setup.
+
+The proposition states that if there are two groups $D$ and $R$ with shares $s_D,s_R>0$, common likelihoods $(p_H,p_L)$, and different priors $(\pi_D,\pi_R)$, then posterior beliefs after observing $s=1$ are $\phi(\pi_D)$ and $\phi(\pi_R)$, where
+\[
+\phi(\pi)=\frac{p_H\pi}{p_H\pi+p_L(1-\pi)}.
+\]
+The variance formula
+\[
+\mathrm{Var}_i[\phi(\pi_i)] = s_D s_R \bigl(\phi(\pi_D)-\phi(\pi_R)\bigr)^2
+\]
+is correct for a two-point distribution. The proof's second step is also correct: if one performs a feasible mean-preserving spread of priors while holding the group shares fixed, then strict monotonicity of $\phi$ implies that the posterior gap widens, and hence the posterior variance rises strictly.
+
+So, as written, the proof supports exactly the following statement:
+
+\begin{quote}
+Holding the average prior fixed, widening the gap between the two groups' priors increases posterior-belief dispersion after a common signal realization.
+\end{quote}
+
+That is a valid and useful comparative static.
+
+\subsection*{1.2 Small technical qualification missing from the proof}
+
+The proof should explicitly restrict the perturbation $\epsilon$ to preserve admissible priors:
+\[
+\pi_D'=\pi_D+s_R\epsilon,\qquad \pi_R'=\pi_R-s_D\epsilon,
+\]
+must satisfy $\pi_D',\pi_R'\in(0,1)$. As written, the proof silently assumes $\epsilon$ is small enough. This is easy to fix by adding one sentence:
+
+\begin{quote}
+For any $\epsilon>0$ small enough that $\pi_D',\pi_R'\in(0,1)$, the mean-preserving spread is feasible.
+\end{quote}
+
+This is a minor issue, not a substantive flaw.
+
+\subsection*{1.3 First major overstatement: the price claim does not follow}
+
+The draft currently says that a mean-preserving spread of priors ``leaves $P^*$ unchanged in expectation'' while increasing posterior dispersion. That statement is not established by the model and is generally false under the current setup.
+
+The reason is simple. For the positive-signal posterior mapping
+\[
+\phi(\pi)=\frac{p_H\pi}{p_H\pi+p_L(1-\pi)},
+\]
+the function is strictly increasing \emph{and concave} in $\pi$ when $p_H>p_L>0$. Under a mean-preserving spread of priors, concavity implies
+\[
+\mathbb{E}[\phi(\pi_i)] \le \phi(\mathbb{E}[\pi_i]),
+\]
+with strict inequality in nondegenerate cases. So even under equal weights, the average posterior generally changes under a mean-preserving spread; it does \emph{not} stay fixed. If portfolio weights $w_i$ also vary with priors, even less can be said.
+
+This matters because several downstream claims in the theory section rely on a ``dispersion rises but mean stays fixed'' interpretation. That interpretation is not available from the current model.
+
+\textbf{Actionable fix.} Replace the current price discussion with one of the following two options:
+
+\textbf{Option A (cleanest):} drop any claim that the current formal model yields a sharp prediction for prices, and present the proposition as a microfoundation for abnormal trading volume only. Treat absolute returns as a motivated but auxiliary empirical outcome.
+
+\textbf{Option B (harder):} add explicit assumptions on market clearing, demand schedules, and symmetric/no-short-selling frictions that make larger posterior dispersion translate into larger absolute price movements. This would require a genuine equilibrium pricing subsection, not the current reduced-form sentence.
+
+\subsection*{1.4 Second major overstatement: the ``convexity of Bayesian updating'' sentence is wrong}
+
+The remark after the proposition states that the monotonicity extends to richer prior distributions ``by the convexity of Bayesian updating when likelihoods are well-separated.'' In the current setup, this is the wrong curvature sign for the positive-signal posterior map: $\phi$ is concave, not convex.
+
+That sentence should be removed. If the author wants a broader generalization statement, it should be phrased more cautiously, for example:
+
+\begin{quote}
+The two-group result captures the core mechanism transparently. Extension to richer prior distributions is plausible but would require separate assumptions and is not proved here.
+\end{quote}
+
+\subsection*{1.5 Third major overstatement: the ambiguity derivative is not established as written}
+
+The draft states that
+\[
+\phi'(\pi_i)=\frac{p_Hp_L}{\left[p_H\pi_i+p_L(1-\pi_i)\right]^2}
+\]
+is decreasing in $p_H-p_L$, and then uses that claim to motivate the ambiguity interaction. The economic intuition is reasonable, but the mathematical statement is not proved under the current parameterization.
+
+Why? Because ``increasing $p_H-p_L$'' is not a unique operation. It could mean increasing $p_H$, decreasing $p_L$, or both. The sign of the derivative of $\phi'(\pi)$ with respect to ``informativeness'' depends on what is held fixed. Without specifying a one-parameter family of signals, the monotonicity claim is not well-defined.
+
+\textbf{Actionable fix.} Choose one of these:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Introduce a one-parameter informativeness structure, for example
+    \[
+    p_H=q+\Delta/2,\qquad p_L=q-\Delta/2,
+    \]
+    with $q$ fixed and $\Delta>0$, then prove that $\phi'(\pi)$ falls in $\Delta$.
+    \item Or, much simpler, keep the ambiguity intuition verbal and remove the derivative-based formal claim.
+\end{enumerate}
+
+For a conference draft, the second route is probably better unless the author wants to invest in a more complete theoretical treatment.
+
+\subsection*{1.6 The model conditions on one signal realization only}
+
+The theory works with posterior beliefs \emph{after observing $s=1$}. But empirically the sample is all auditor-change filings, which include heterogeneous event content, not just one signal realization. The model therefore does not map cleanly onto the event-study design unless $s=1$ is interpreted as ``the arrival of an auditor-change disclosure,'' with heterogeneity coming from the market's interpretation of that event. As written, the signal notation suggests something more like ``bad signal versus good signal,'' which is not exactly what is tested.
+
+\textbf{Actionable fix.} Clarify one of the following:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Either define $s=1$ as \emph{the disclosure event itself}, with valuation consequences depending on investors' posterior assessment of what the event means;
+    \item or define a richer signal $z$ indexing disclosed severity / fault / ambiguity, and let the event-study sample contain different realizations of $z$.
+\end{enumerate}
+
+The current notation blurs these two interpretations.
+
+\section*{2. Consistency of notation and claims}
+
+\subsection*{2.1 Polarization measure is not consistently defined}
+
+This is the most visible notation/design inconsistency in the paper.
+
+Different parts of the draft describe the baseline polarization measure differently:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item the abstract and introduction refer to \emph{presidential electoral competitiveness};
+    \item another introduction passage refers to a state-level proxy built from MIT Election Lab county-level presidential returns;
+    \item the empirical design section defines the baseline measure as an \emph{Esteban--Ray index applied to U.S. House election returns at the district level, aggregated to the state level};
+    \item later sections introduce DW-NOMINATE and ANES affective polarization as additional proxies.
+\end{itemize}
+
+These are not small wording variations. They are different empirical objects.
+
+\textbf{Actionable fix.} Pick one baseline measure and describe it the same way everywhere. My recommendation is:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Choose one baseline proxy for the main tables.
+    \item State in the abstract, introduction, and design sections exactly the same definition.
+    \item Move all other polarization measures to explicitly labeled robustness / triangulation sections.
+\end{enumerate}
+
+\subsection*{2.2 Event-type moderator is internally inconsistent}
+
+The draft currently gives contradictory statements about which event type should show stronger effects:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item the abstract says effects are concentrated in \emph{auditor resignations};
+    \item Hypothesis~2 predicts stronger effects for \emph{auditor dismissals};
+    \item the rationale for Hypothesis~2 is a \emph{stakes/salience} story;
+    \item the theory section's ambiguity discussion naturally points toward \emph{resignations or weakly explained changes} if those are more ambiguous.
+\end{itemize}
+
+A careful reader will see this immediately as a post hoc or moving-target concern.
+
+\textbf{Actionable fix.} The paper must choose one of two structures:
+
+\textbf{Structure 1:} Keep the formal moderator as \emph{ambiguity}. Then the event-type split should be used only if the author can defend which event type is actually more ambiguous.
+
+\textbf{Structure 2:} Keep a separate stakes/salience hypothesis, but then do \emph{not} describe those results as confirmation of the ambiguity channel.
+
+Right now the paper mixes the two.
+
+\subsection*{2.3 Outcome notation is inconsistent}
+
+The draft alternates among:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item $|CAR(-1,+1)|$,
+    \item $|CAR[-1,+1]|$,
+    \item $|CAR_i|$,
+    \item and verbal references to ``absolute abnormal returns.''
+\end{itemize}
+
+Similarly, $AbVol$ is described in the theory section as turnover scaled by a benchmark, but in the empirical section it is defined as the event-window mean of log raw volume minus the estimation-window mean. Those are not the same object.
+
+\textbf{Actionable fix.} Standardize notation as follows:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item define once: $CAR_i[-1,+1]=\sum_{t=-1}^{+1}AR_{i,t}$;
+    \item use $|CAR_i[-1,+1]|$ everywhere;
+    \item define $AbVol_i[-1,+1]$ once, and make sure the theory section describes the same object actually used in the data.
+\end{itemize}
+
+\subsection*{2.4 Sample period is inconsistent}
+
+The abstract says the sample runs from 2001 to 2023. The empirical design says 2001 to 2024. This must be reconciled before submission.
+
+\subsection*{2.5 The results section still contains placeholders that conflict with stated findings}
+
+The introduction and abstract already report coefficient magnitudes, significance levels, and subgroup findings. The results section still contains placeholders. This creates a credibility problem because the paper reads as if the narrative has outrun the actual tables.
+
+\textbf{Actionable fix.} Either complete the results section fully or strip all numerical claims from the introduction and abstract until the tables are final.
+
+\section*{3. Logical gaps between theory and empirics}
+
+\subsection*{3.1 The theory most cleanly predicts volume, not absolute returns}
+
+This is the central theory--empirics alignment issue.
+
+The proposition proves that polarization increases posterior-belief dispersion. Under the disagreement-trading literature, that supports a clean prediction for abnormal trading volume. The same proposition does \emph{not} by itself establish that absolute returns must rise. The draft partly recognizes this in Prediction~2, but other sections still present both outcomes as equally direct theoretical implications.
+
+\textbf{Recommendation.} Recast the paper's hierarchy of outcomes:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item \textbf{Primary theory-backed outcome:} abnormal trading volume.
+    \item \textbf{Secondary empirical outcome:} absolute abnormal returns, motivated by disagreement plus frictions, but not the main formal implication.
+\end{enumerate}
+
+That change would materially improve credibility.
+
+\subsection*{3.2 The theory uses priors; the empirics use headquarters-state political environment}
+
+The model's polarization variable is directly about investor priors or belief heterogeneity. The empirics use headquarters-state political measures as a noisy reduced-form proxy. The draft acknowledges this, which is good, but the current version still slides too quickly from theory language (investors' priors) to empirical language (firm headquarters state).
+
+This does not invalidate the design, but it does require sharper framing.
+
+\textbf{Actionable fix.} Add a short paragraph explicitly stating:
+
+\begin{quote}
+The empirical proxy should be interpreted as a feature of the firm's surrounding political-information environment, not as a literal measurement of the beliefs of the marginal traders who set price.
+\end{quote}
+
+Then explain that the empirical test is deliberately reduced-form: if local political environments correlate with the broader interpretive environment around the firm, the sign prediction should still appear.
+
+\subsection*{3.3 The theory is about common public signals; the empirics pool heterogeneous event content}
+
+The model works best when investors observe the \emph{same signal}. But auditor-change disclosures vary materially in content: resignation versus dismissal, disagreement disclosures, Big-4 direction, stated reasons, and so on. Pooling all events in the baseline makes the empirical object more heterogeneous than the theoretical object.
+
+That is not fatal, but it means the paper should lean more heavily on the ambiguity and event-content analyses, because those are the places where theory and empirics come closest.
+
+\textbf{Actionable fix.} Explicitly present the pooled baseline as an average-effect test, then frame the ambiguity and event-content splits as the sharper tests of the interpretation mechanism.
+
+\subsection*{3.4 The ambiguity construct needs tighter theory and tighter empirical definition}
+
+The theory says polarization effects should be larger when signals are less informative. That is sensible. But the draft currently mixes several notions of ambiguity:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item no disclosed reason,
+    \item generic reason,
+    \item Big-4 direction,
+    \item disagreement disclosure,
+    \item resignation versus dismissal.
+\end{itemize}
+
+These are not obviously interchangeable.
+
+\textbf{Actionable fix.} Build a single ambiguity construct with a short conceptual rule, for example:
+
+\begin{quote}
+An event is high-ambiguity if the filing leaves unusual interpretive latitude about fault, severity, or implications for reporting quality.
+\end{quote}
+
+Then justify each coding rule against that principle. Otherwise readers will suspect the ambiguity measure was reverse-engineered to fit whichever subgroup worked.
+
+\section*{4. Suggested revision strategy to close the gaps}
+
+\subsection*{4.1 Minimal-revision strategy (recommended)}
+
+This is the most practical route for a strong conference draft.
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Keep Proposition~1 and its proof, but state clearly that it is a result about \emph{posterior-belief dispersion}.
+    \item Remove the claim that the model implies unchanged average price effects under a mean-preserving spread.
+    \item Present abnormal trading volume as the primary theoretical prediction.
+    \item Present absolute returns as a secondary outcome requiring additional market-friction intuition.
+    \item Replace the current ambiguity derivative claim with a verbal argument unless a formal one-parameter informativeness structure is added.
+    \item Choose one baseline polarization proxy and make all other proxies robustness checks.
+    \item Resolve the resignation-versus-dismissal inconsistency before presenting subgroup results.
+\end{enumerate}
+
+\subsection*{4.2 Stronger theory revision (optional)}
+
+If the author wants the theory section to do more work, then the paper should add a small but explicit pricing environment. For example:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item CARA or mean-variance investors,
+    \item linear demands in posterior beliefs,
+    \item either short-sale constraints or limited arbitrage,
+    \item and a comparative static showing that greater posterior dispersion can increase absolute price responses under those frictions.
+\end{itemize}
+
+That would allow the paper to defend the $|CAR|$ result formally. Without this addition, the safer route is to avoid over-claiming on returns.
+
+\subsection*{4.3 Stronger empirical revision (also advisable)}
+
+The empirics would better match the theory if the paper made one of the following improvements:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Use a cleaner ambiguity coding scheme and make that interaction a central test.
+    \item Add more direct proxies for investor disagreement when available (for example, bid--ask spreads, order imbalance, or analyst-dispersion style controls if feasible).
+    \item Show that the polarization effect is weaker when the filing itself is unusually informative, not merely when certain event labels are present.
+\end{enumerate}
+
+\section*{5. Bottom-line judgment by category}
+
+\begin{center}
+\begin{tabular}{p{0.33\textwidth}p{0.18\textwidth}p{0.39\textwidth}}
+\toprule
+\textbf{Category} & \textbf{Assessment} & \textbf{Comment} \\
+\midrule
+Proof of Proposition~1 & Mostly correct & Correct as a two-group comparative static; add feasibility restriction on $\epsilon$. \\
+Curvature / price claims & Not correct as written & Mean-preserving spread does not generally leave average posterior or price unchanged. \\
+Ambiguity comparative static & Not established & Economic intuition is plausible, but the mathematical monotonicity claim needs a proper parameterization or should be softened. \\
+Notation consistency & Needs work & Polarization proxy, event type moderator, outcome notation, and sample period are not fully consistent. \\
+Theory--empirics fit & Moderate but repairable & Strongest for volume, weaker for absolute returns, and currently blurred by measurement inconsistencies. \\
+Submission readiness on these dimensions & Not yet & The paper needs one disciplined revision pass to align claims, notation, and formal scope. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{Final recommendation}
+
+The draft should \emph{not} throw away the theory section. The proposition is useful and salvageable. But the paper should narrow the formal claims to what is actually proved, clean up the notation, and present the empirical tests in a way that respects the distinction between:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item what the model proves directly,
+    \item what the model suggests indirectly,
+    \item and what the data proxy only imperfectly.
+\end{enumerate}
+
+If those distinctions are made explicit, the paper will read as substantially more rigorous and much more trustworthy to a careful accounting audience.
+
+\end{document}
