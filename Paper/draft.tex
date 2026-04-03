@@ -99,7 +99,7 @@ information asymmetry: polarization does not change what is disclosed, only
 how it is processed.
 
 Empirically, we measure political polarization using the \citet{esteban1994}
-index applied to U.S. House election returns from 2000 to 2024. The index is
+index applied to U.S. House election returns from 2000 to 2022. The index is
 computed at the congressional district level and then aggregated to the state
 level by weighting each district by its share of state-wide two-party votes.
 Because investor-level political identity is not directly observable, the
@@ -575,11 +575,13 @@ exercise (Table~\ref{tab:hetero}) rather than a core hypothesis.
 
 \textbf{Auditor change events.} We identify auditor changes using Form 8-K
 filings disclosing a change in the registrant's certifying accountant (Item
-4.01), obtained from SEC EDGAR for 2001--2024.\footnote{We end the sample in
-2024 because DW-NOMINATE ideological scores for the 119th Congress (which
-began January 2025) are not yet available in final form from Voteview. The
-Esteban-Ray polarization measure is unaffected, as the 2024 U.S. House
-election results are available from the MIT Election Lab.} We retain only
+4.01), obtained from SEC EDGAR for 2001--2023.\footnote{We end the sample in
+2023, the last full year for which DW-NOMINATE ideological scores are
+available in final form from Voteview. Scores for the 119th Congress (which
+began January 2025) have not yet been finalized at the time of writing. The
+Esteban-Ray electoral measure covers the same period, as MIT Election Lab
+House returns are available through the 2022 midterm election, which is
+forward-filled to cover calendar years 2023 and 2024.} We retain only
 original 8-K filings matched to a CRSP PERMNO and require at least 100
 non-missing trading days in the estimation window. The final sample consists
 of [N] auditor change events for [N] unique firms. We exclude financial firms
@@ -729,7 +731,7 @@ Cumulative Data File. The ANES asks respondents to rate political parties on
 a 0--100 feeling-thermometer scale, where higher values indicate warmer
 feelings. Let $T^D_i$ and $T^R_i$ denote respondent $i$'s feeling-thermometer
 rating of the Democratic and Republican parties, respectively. In each survey
-year with available data (2000, 2004, 2008, 2012, 2016, 2020, 2024), we compute:
+year with available data (2000, 2004, 2008, 2012, 2016, 2020), we compute:
 \begin{equation}
     \label{eq:ap}
     AP_t = \frac{1}{2}\left[
@@ -758,7 +760,7 @@ alone. We therefore identify its role through interaction with a
 time-invariant state-level \emph{exposure} variable: the long-run average
 absolute Republican presidential vote margin,
 $\text{Exposure}_s = \overline{|R\text{-share}_{s,t} - 0.5|}$, averaged
-over all presidential elections from 2000 to 2024. High-exposure states
+over all presidential elections from 2000 to 2020. High-exposure states
 (e.g., Wyoming, Massachusetts) consistently vote lopsidedly; low-exposure
 states (e.g., Pennsylvania, Wisconsin) are genuine swing states. The
 identifying variation is thus $AP_t \times \text{Exposure}_s$: the
