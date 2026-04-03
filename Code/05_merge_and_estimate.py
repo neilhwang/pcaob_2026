@@ -12,6 +12,7 @@ INPUTS:
     Data/Processed/affective_polarization.parquet   (from 08_build_affective_polarization.py)
     Data/Processed/pol_presidential.parquet         (from 02b_build_presidential_polarization.py)
     Data/Processed/analysis_sample_county.parquet  (from 10_build_county_polarization.py)
+    Data/Processed/ibes_dispersion.parquet          (from 11_build_ibes.py)
 
 OUTPUTS:
     Output/Tables/tab01_summary_stats.tex
@@ -21,6 +22,7 @@ OUTPUTS:
     Output/Tables/tab05_robustness.tex
     Output/Tables/tab06_affective.tex
     Output/Tables/tab07_permutation.tex           (permutation test, 5,000 draws)
+    Output/Tables/tab08_dispersion_interaction.tex (analyst dispersion mechanism test)
     Data/Processed/analysis_sample.parquet        (merged estimation sample)
 
 SPECIFICATION:
@@ -62,6 +64,7 @@ EXPOSURE_FILE  = PROC / "state_partisan_exposure.parquet"
 AP_FILE        = PROC / "affective_polarization.parquet"
 PRES_POL_FILE  = PROC / "pol_presidential.parquet"
 SAMPLE_FILE    = PROC / "analysis_sample.parquet"
+IBES_FILE      = PROC / "ibes_dispersion.parquet"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -843,12 +846,116 @@ def run_affective_test(df: pd.DataFrame) -> None:
     )
 
 
+# ── Step 10: Analyst dispersion mechanism test (Table 8) ─────────────────────
+
+def run_dispersion_interaction_test(df: pd.DataFrame) -> None:
+    """
+    Mechanism test using analyst forecast dispersion and coverage from IBES.
+
+    The interpretation channel predicts that polarization amplifies disagreement
+    specifically when investors face more uncertainty about how to interpret the
+    disclosure.  Analyst forecast dispersion (stdev / |meanest|) is a pre-event,
+    firm-level proxy for uncertainty about the firm's earnings trajectory — one
+    dimension of the broader informational environment investors must interpret.
+    Analyst coverage (numest) proxies for information supply.
+
+    If the polarization effect operates via disagreement in interpretation rather
+    than generic salience / attention, we expect:
+      - Larger polarization effects among high-dispersion firms (investors already
+        disagree about fundamentals; ambiguous disclosure amplifies this further).
+      - Larger polarization effects among low-coverage firms (less pre-existing
+        consensus about firm quality; disclosure harder to evaluate).
+
+    Salience / attention stories make no prediction about heterogeneity across
+    dispersion or coverage groups, conditional on event controls.
+
+    Specifications:
+      (1) Baseline with IBES subsample (for comparability)
+      (2) Polarization × High-Dispersion interaction
+      (3) Polarization × Low-Coverage interaction
+      (4) Both interactions simultaneously
+      (5) AbVol outcome, both interactions
+    """
+    ctrl = " + ".join(CONTROLS)
+    fe   = "C(year_str) + C(sic2_str)"
+
+    ibes_df = df.dropna(subset=["high_disp", "low_coverage"]).copy()
+    log.info("Dispersion test sample: %d events (%d with both IBES measures)",
+             len(df), len(ibes_df))
+
+    specs = {
+        "m1": run_ols(
+            f"absCar ~ competitive_std + {ctrl} + {fe}", ibes_df
+        ),
+        "m2": run_ols(
+            f"absCar ~ competitive_std + high_disp + competitive_std:high_disp"
+            f" + {ctrl} + {fe}", ibes_df
+        ),
+        "m3": run_ols(
+            f"absCar ~ competitive_std + low_coverage + competitive_std:low_coverage"
+            f" + {ctrl} + {fe}", ibes_df
+        ),
+        "m4": run_ols(
+            f"absCar ~ competitive_std + high_disp + competitive_std:high_disp"
+            f" + low_coverage + competitive_std:low_coverage + {ctrl} + {fe}", ibes_df
+        ),
+        "m5": run_ols(
+            f"abvol ~ competitive_std + high_disp + competitive_std:high_disp"
+            f" + low_coverage + competitive_std:low_coverage + {ctrl} + {fe}", ibes_df
+        ),
+    }
+
+    for k, m in specs.items():
+        for param in ["competitive_std",
+                      "competitive_std:high_disp",
+                      "competitive_std:low_coverage"]:
+            if param in m.params:
+                log.info("Dispersion %s [%s]: coef=%.4f p=%.3f",
+                         k, param, m.params[param], m.pvalues[param])
+
+    coef_map = {
+        "competitive_std":                  r"\textit{Polarization}",
+        "high_disp":                        r"High Dispersion",
+        "competitive_std:high_disp":        r"\textit{Polarization} $\times$ High Disp.",
+        "low_coverage":                     r"Low Coverage",
+        "competitive_std:low_coverage":     r"\textit{Polarization} $\times$ Low Coverage",
+    }
+    dep_labels = [
+        r"$|CAR|$\newline Baseline",
+        r"$|CAR|$\newline $\times$ Disp.",
+        r"$|CAR|$\newline $\times$ Cov.",
+        r"$|CAR|$\newline Both",
+        r"AbVol\newline Both",
+    ]
+    extra_rows = {
+        "Year + Industry FE": ["Yes"] * 5,
+        "Controls":           ["Yes"] * 5,
+    }
+    reg_table(
+        list(specs.values()), dep_labels, coef_map,
+        caption=(
+            r"Analyst Dispersion and Coverage: Mechanism Test. "
+            r"\textit{High Dispersion} equals one if the firm's pre-event analyst "
+            r"forecast dispersion (standard deviation divided by the absolute value "
+            r"of the mean EPS forecast) exceeds the sample median. "
+            r"\textit{Low Coverage} equals one if the number of analyst forecasts "
+            r"(numest) is below the sample median. "
+            r"Both indicators are constructed from the IBES annual consensus "
+            r"as of the most recent statpers before the event date, "
+            r"for the fiscal year ending in the year prior to the event."
+        ),
+        label="tab:dispersion",
+        out_path=OUT_TABS / "tab08_dispersion_interaction.tex",
+        extra_rows=extra_rows,
+    )
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
     log.info("=== 05_merge_and_estimate.py  start ===")
 
-    # Check inputs exist
+    # Check required inputs exist (IBES file is optional — tested separately below)
     for f in [CRSP_FILE, POL_FILE, COMP_FILE, DW_FILE, EXPOSURE_FILE, AP_FILE, PRES_POL_FILE]:
         if not f.exists():
             raise FileNotFoundError(
@@ -906,6 +1013,41 @@ def main() -> None:
     df["ap_x_exp_x_amb"] = df["ap_x_exposure"] * df["high_ambiguity"]
     log.info("AP x Exposure non-null: %d", df["ap_x_exposure"].notna().sum())
 
+    # IBES analyst dispersion and coverage (optional; from 11_build_ibes.py).
+    # Merge on gvkey × comp_year (comp_year = event_year - 1, already in df).
+    # If the file does not exist, dispersion columns are NaN and the
+    # dispersion test is skipped rather than raising an error.
+    if IBES_FILE.exists():
+        ibes = pd.read_parquet(IBES_FILE)
+        df = df.merge(ibes, on=["gvkey", "comp_year"], how="left")
+        n_ibes = df["analyst_coverage"].notna().sum()
+        log.info("IBES merge: %d / %d events matched (coverage non-null)",
+                 n_ibes, len(df))
+
+        # Construct above/below-median indicators on the estimation sample.
+        # Use the subsample that has non-missing values for the median calculation
+        # so that the 50th percentile is well-defined.
+        med_disp = df["disp_scaled"].median()
+        med_cov  = df["analyst_coverage"].median()
+        df["high_disp"]    = (df["disp_scaled"]       > med_disp).astype(float)
+        df["low_coverage"] = (df["analyst_coverage"]   < med_cov ).astype(float)
+        # Keep indicators as NaN where the underlying IBES measure is missing
+        df.loc[df["disp_scaled"].isna(),       "high_disp"]    = np.nan
+        df.loc[df["analyst_coverage"].isna(),  "low_coverage"] = np.nan
+
+        log.info("IBES: median disp_scaled=%.4f  median coverage=%.1f",
+                 med_disp, med_cov)
+        log.info("IBES: high_disp N=%d  low_coverage N=%d",
+                 df["high_disp"].notna().sum(), df["low_coverage"].notna().sum())
+    else:
+        df["analyst_coverage"] = np.nan
+        df["disp_raw"]         = np.nan
+        df["disp_scaled"]      = np.nan
+        df["high_disp"]        = np.nan
+        df["low_coverage"]     = np.nan
+        log.warning("ibes_dispersion.parquet not found; run 11_build_ibes.py "
+                    "to enable the dispersion mechanism test (Table 8).")
+
     # Save analysis sample
     df.to_parquet(SAMPLE_FILE, index=False)
     log.info("Analysis sample saved: %s  (%d events, %d unique firms)",
@@ -945,6 +1087,13 @@ def main() -> None:
     # Affective polarization supplementary test — Table 6
     log.info("Running Table 6: Affective polarization validation")
     run_affective_test(df)
+
+    # Analyst dispersion mechanism test — Table 8
+    if df["high_disp"].notna().any():
+        log.info("Running Table 8: Analyst dispersion mechanism test")
+        run_dispersion_interaction_test(df)
+    else:
+        log.warning("Skipping Table 8 (no IBES data). Run 11_build_ibes.py first.")
 
     log.info("=== done — tables written to %s ===", OUT_TABS)
 

@@ -61,11 +61,10 @@ regulatory relationships, and management credibility
 varies substantially across otherwise similar events, and the sources of that
 cross-sectional variation are not completely understood. This paper identifies one
 systematic and previously undocumented source: the political environment in which
-investors are embedded. We show that investor interpretation of the same mandatory
-audit-related disclosure varies with the degree of political division in the firm's
-headquarters state, generating larger capital-market reactions where investors
-are more likely to hold heterogeneous priors about audit credibility and
-regulatory oversight.
+investors are embedded. We find that market reactions to the same mandatory audit-related disclosure
+are larger where the firm's headquarters state is more politically divided,
+consistent with investors holding more heterogeneous priors about audit
+credibility and regulatory oversight.
 
 Auditor-change disclosures are well-suited for studying heterogeneous investor
 interpretation for three reasons. First, they are standardized and public ---
@@ -138,23 +137,30 @@ two-way clustering of standard errors by firm and state; alternative proxies
 based on DW-NOMINATE roll-call scores are directionally consistent but less
 precisely estimated.
 
-This paper makes three contributions. First, we provide new evidence that
-capital-market reactions to auditor-change disclosures are stronger in more
-politically polarized states. Prior work establishes that these events are
-informative on average \citep{firth1978, dodd1984, defond2014}; we show that
-the magnitude of the market reaction varies with the political-information
-environment in which investors receive the disclosure. Second, we provide
-evidence that this cross-sectional variation is concentrated in
-more ambiguous events --- auditor resignations and filings with limited
-interpretive guidance --- consistent with the interpretation channel rather
-than a generic salience story. This connects to the growing literature on how
-political environments shape investor behavior \citep{kempf2024} and extends
-it to mandatory audit disclosures, where institutional trust is central to
-signal interpretation. Third, our evidence suggests that the informativeness
-of mandatory audit disclosure depends on the political-information environment
-in which investors interpret it, not only on the content of the filing itself,
-with implications for how disclosure-based regulation performs across
-heterogeneous investor populations.
+This paper makes three contributions. First, we document a previously
+unexamined channel through which political polarization shapes capital-market
+outcomes: the interpretation of mandatory audit-related disclosures. A
+substantial literature already establishes that political identity influences
+investor behavior and market outcomes broadly \citep{kempf2024}; our
+contribution is to show that this extends to the mandatory audit-disclosure
+setting, where institutional trust in auditors and the PCAOB is central to
+how investors translate the same public filing into beliefs about firm quality.
+Prior work establishes that auditor-change disclosures are informative on
+average \citep{firth1978, dodd1984, defond2014}; we show that the magnitude
+of market reactions varies systematically with the political-information
+environment in which investors receive the disclosure --- a source of
+cross-sectional variation not previously documented in the auditing literature.
+Second, we provide evidence that this variation is concentrated in
+disclosures that carry less objective guidance about the auditor's reason for
+leaving --- auditor resignations and filings without explicit attribution ---
+consistent with an interpretation channel rather than a generic salience story.
+This heterogeneity test distinguishes politically shaped interpretation of
+audit signals from a simpler account in which polarization merely amplifies
+investor attention to any salient corporate event. Third, our evidence
+suggests that the informativeness of mandatory audit disclosure depends on the
+political-information environment in which investors interpret it, not only on
+the content of the filing itself, with implications for how disclosure-based
+regulation performs across heterogeneous investor populations.
 
 These findings bear on the design of mandatory audit disclosure requirements.
 A common motivation for expanded audit reporting --- including critical audit
@@ -540,29 +546,37 @@ The formal model does not parameterize event type, so this prediction is not
 derived from the theoretical framework. We nonetheless examine whether the
 polarization effect differs between auditor resignations and client-initiated
 dismissals, motivated by the ambiguity logic of Section~\ref{sec:ambiguity}.
-The prior accounting literature generally characterizes auditor resignations as
-worse-news signals on average, reflecting auditor risk-management responses to
-deteriorating client quality, rather than as inherently more ambiguous events
-than dismissals \citep{beneish2005, johnson1990}. Our claim is specifically
-about \emph{per-filing} informational content, not event-level signal quality.
-\citet{beneish2005} document that approximately three-quarters of auditor
-resignation announcements use standard boilerplate language without attributing
-the departure to any accounting disagreement or internal-control concern; these
-unexplained filings generate no significant market reaction for former clients,
-because they provide no incremental information beyond what investors had already
-inferred from prior observable deterioration. Only the one-quarter of resignations
-accompanied by explicit attribution generate large negative returns. In terms of
-the ambiguity definition in Section~\ref{sec:ambiguity}, unexplained resignation
-filings represent the higher-interpretive-latitude class: they leave investors
-without objective guidance about the specific cause, making politically shaped
-priors and trust in the auditor as an institution relatively more important for
-forming assessments. Dismissals, in contrast, assign initiative to the client
-regardless of how sparse the stated reason is, providing directional information
-about the nature of the separation. The interpretation channel therefore predicts
-that polarization effects are larger for resignations as a class, because a
-greater fraction of those filings leave investors without objective informational
-guidance. We treat this as an auxiliary empirical exercise
-(Table~\ref{tab:event_type}) rather than a core hypothesis.
+The prior accounting literature characterizes auditor resignations as worse-news
+signals on average, reflecting auditor risk-management responses to deteriorating
+client quality: resignation clients face higher subsequent incidence of litigation,
+internal-control problems, and delisting \citep{ghosh2015}, and resignations
+signal hidden client risk that goes beyond what public information reveals
+\citep{beneish2005}. This event-level signal quality is not, however, the source
+of our cross-sectional prediction. Our claim is specifically about
+\emph{per-filing} informational content. Although SEC rules require registrants
+to disclose specified disagreements and reportable events surrounding an auditor
+resignation, they do not require a complete narrative of all underlying reasons;
+moreover, professional standards generally restrict the predecessor auditor from
+disclosing confidential client information without client consent, even though
+with such consent the predecessor auditor is expected to respond fully to a
+successor auditor's reasonable inquiries. Consequently, most resignation 8-Ks contain only
+standard boilerplate language: \citet{beneish2005} document that approximately
+three-quarters of resignation announcements carry no attribution to any accounting
+disagreement or internal-control concern, and \citet{boone2001} find that the
+resignation announcement does not reduce information asymmetry subsequent to
+filing --- the 8-K halts the pre-announcement increase in adverse selection but
+does not resolve it. In this setting, the implications of the resignation
+announcement are explicitly \emph{subject to interpretation} \citep{boone2001}:
+investors must draw their own inferences about what the departure implies, relying
+on their priors about auditor credibility and the regulatory environment rather
+than on what the filing itself discloses. Dismissals, in contrast, assign
+initiative to the client regardless of how sparse the stated reason is, providing
+directional information about the nature of the separation even in the absence of
+explicit explanation. The interpretation channel therefore predicts that
+polarization effects are larger for resignations as a class, because a greater
+fraction of those filings leave investors without objective informational guidance.
+We treat this as an auxiliary empirical exercise (Table~\ref{tab:event_type})
+rather than a core hypothesis.
 
 \begin{hyp}
     \label{h2}
@@ -797,7 +811,7 @@ states (e.g., Pennsylvania, Wisconsin) are genuine swing states. The
 identifying variation is thus $AP_t \times \text{Exposure}_s$: the
 differential response of firms in high-partisan-intensity states as national
 affective polarization rises over time. We present this as a supplementary
-validation in Table~\ref{tab:affective}, not as a coequal baseline
+validation in Appendix Table~\ref{tab:affective}, not as a coequal baseline
 specification, because the national AP series cannot be assigned to states
 without the exposure interaction.
 
@@ -839,7 +853,12 @@ political norms. A well-established local equity bias means that retail
 investors overweight geographically proximate firms in their portfolios
 \citep{coval1999}, so the headquarters state's political composition
 is a meaningful, if imperfect, proxy for the political composition of the
-firm's marginal retail investor base. For smaller and less nationally prominent firms, the
+firm's marginal retail investor base. Consistent with this channel,
+\citet{boone2001} find that auditor resignation announcements generate
+significant abnormal trading activity among individual investors but not
+among institutional investors, suggesting that it is retail investors ---
+who are more geographically concentrated and more dependent on SEC-mandated
+disclosure --- who respond to the informational content of the 8-K filing. For smaller and less nationally prominent firms, the
 marginal trader is more likely to be a local retail investor whose
 interpretation of an auditor change is shaped by the surrounding political
 environment. For larger firms with globally dispersed institutional ownership,
@@ -949,16 +968,21 @@ political geography is not merely proxying for firm characteristics.
 
 \subsection{Heterogeneity by Event Type}
 
-Table~\ref{tab:event_type} presents split-sample regressions by auditor-change type.
+Table~\ref{tab:event_type} provides a first mechanism test. Under a generic
+attention or salience story, polarization should amplify investor response to any
+auditor-change event regardless of its type. Under the interpretation channel,
+the effect should be larger for the class of filings that provides less objective
+guidance about the nature of the change, because that is where politically shaped
+priors matter most. The split-sample results support the latter.
 The effect is concentrated in auditor resignations: $\beta = 0.012$,
 $p = 0.043$. Among dismissals --- where the client terminates the auditor and the
 adversarial nature of the separation is more transparent --- the coefficient is
 $\beta = 0.003$ and statistically indistinguishable from zero ($p = 0.203$). This
 asymmetry is consistent with the mechanism: most resignation filings use
 boilerplate language without specific attribution and thus provide limited
-objective guidance about the cause of the change \citep{beneish2005}, leaving
-investors to rely more heavily on their politically shaped priors and
-institutional trust when forming assessments. Splits by
+objective guidance about the cause of the change \citep{beneish2005,
+boone2001}, leaving investors to rely more heavily on their politically shaped
+priors and institutional trust when forming assessments. Splits by
 quality direction (Big-4 departures and non-Big-4 upgrades) are also reported but
 are individually insignificant, likely due to small subsamples.
 
@@ -966,7 +990,13 @@ are individually insignificant, likely due to small subsamples.
 
 \subsection{Signal Ambiguity}
 
-Table~\ref{tab:ambiguity} splits the sample into high- and low-ambiguity events.
+Table~\ref{tab:ambiguity} provides the primary mechanism test distinguishing
+the interpretation channel from alternative explanations. Under a generic
+salience story, polarization effects should be proportional to the severity
+or newsworthiness of the disclosure. Under the interpretation channel, effects
+should be larger when the filing leaves more room for politically shaped
+inference --- that is, when the objective informational content of the disclosure
+is lowest. We split the sample into high- and low-ambiguity events.
 High-ambiguity events are those with no formally disclosed disagreement and no clear
 quality change (lateral auditor-to-auditor switches or changes classified as unknown),
 comprising 120 of the 678 sample observations. The $|CAR|$ coefficient in the
@@ -975,10 +1005,11 @@ estimate, but does not reach conventional significance at $N = 120$; the low-amb
 coefficient ($\beta = 0.003$, $p = 0.209$) is smaller and also insignificant. For
 abnormal volume, the pattern reverses: the low-ambiguity subsample drives the result
 ($\beta = 0.114$, $p = 0.008$), while the high-ambiguity volume coefficient is
-imprecise ($p = 0.422$). We interpret the volume finding as evidence that events
-carrying clear quality signals (disclosed disagreements, auditor quality changes)
-generate more polarization-driven heterogeneous trading in more polarized states, where
-investors with opposing political priors disagree about the severity of the event.
+imprecise ($p = 0.422$). We interpret the volume finding as consistent with polarization amplifying
+disagreement about the severity and implications of events that carry
+identifiable quality signals: when the disclosure is specific enough for
+investors to form views, those with opposing political priors disagree more
+about how seriously to weigh it.
 The $|CAR|$ pattern is directionally consistent with the ambiguity hypothesis but
 remains underpowered given the small high-ambiguity subsample.
 
@@ -1039,27 +1070,6 @@ Table~\ref{tab:permutation} reports the full permutation test results.
 
 \input{../Output/Tables/tab07_permutation}
 
-\subsection{Supplementary Affective Polarization Test}
-
-Table~\ref{tab:affective} reports the supplementary affective polarization test.
-Column (1) repeats the baseline ideological result ($\beta = 0.005$, $p = 0.040$).
-Column (2) adds the $AP \times \text{Exposure}$ interaction; the affective term is
-near zero and statistically insignificant ($\beta = 0.000$, $p = 0.879$), while the
-ideological coefficient is unchanged. Columns (3) and (4) add the ambiguity
-interactions; the ideological coefficient attenuates toward zero once the
-interaction term absorbs variation, but neither the affective main effect nor the
-triple interaction reaches significance (all $p > 0.40$). Column (5) repeats the
-full specification for abnormal volume: the ideological polarization coefficient
-is larger and highly significant ($\beta = 0.130$, $p = 0.003$), while the affective
-terms remain indistinguishable from zero. Taken together, Table~\ref{tab:affective}
-provides no evidence that national affective polarization, interacted with state
-partisan exposure, incrementally explains market reactions to auditor changes beyond
-what ideological polarization captures. The results are consistent with state-level
-ideological heterogeneity --- rather than the temporal rise in affective polarization
---- being the operative mechanism.
-
-\input{../Output/Tables/tab06_affective}
-
 % ── 7. Conclusion ─────────────────────────────────────────────────────────────
 
 \section{Conclusion}
@@ -1076,6 +1086,13 @@ amplifying disagreement most when investors must rely on their own priors
 rather than the filing's content. For abnormal volume, the effect is strongest
 in the low-ambiguity subsample, where clear quality signals give investors with
 opposing political priors concrete grounds for disagreement about severity.
+
+As a reduced-form study, we cannot rule out all alternative mechanisms;
+the concentration of effects in filings with limited objective guidance ---
+rather than those with the most newsworthy or severe content --- is, however,
+difficult to reconcile with generic attention amplification or salience stories,
+since those would predict effects proportional to news severity rather than to
+filing-level informational structure.
 
 The findings suggest one limit to disclosure-based regulation in
 credibility-sensitive settings: when investors differ in their assessments of
@@ -1271,5 +1288,29 @@ increasing in $|X_D-X_R|$. Any widening of the gap in a single component
 widens $|X_D-X_R|$ and therefore widens $|\sigma(X_D)-\sigma(X_R)|$.
 $\square$
 \end{proof}
+
+% ── Appendix B: Affective Polarization Supplementary Test ─────────────────────
+
+\section{Supplementary Affective Polarization Test}
+\label{app:affective}
+
+Table~\ref{tab:affective} reports the supplementary affective polarization test.
+Column (1) repeats the baseline ideological result ($\beta = 0.005$, $p = 0.040$).
+Column (2) adds the $AP \times \text{Exposure}$ interaction; the affective term is
+near zero and statistically insignificant ($\beta = 0.000$, $p = 0.879$), while the
+ideological coefficient is unchanged. Columns (3) and (4) add the ambiguity
+interactions; the ideological coefficient attenuates toward zero once the
+interaction term absorbs variation, but neither the affective main effect nor the
+triple interaction reaches significance (all $p > 0.40$). Column (5) repeats the
+full specification for abnormal volume: the ideological polarization coefficient
+is larger and highly significant ($\beta = 0.130$, $p = 0.003$), while the affective
+terms remain indistinguishable from zero. Taken together, Table~\ref{tab:affective}
+provides no evidence that national affective polarization, interacted with state
+partisan exposure, incrementally explains market reactions to auditor changes beyond
+what ideological polarization captures. The results are consistent with state-level
+ideological heterogeneity --- rather than the temporal rise in affective polarization
+--- being the operative mechanism.
+
+\input{../Output/Tables/tab06_affective}
 
 \end{document}

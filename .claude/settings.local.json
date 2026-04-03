@@ -24,7 +24,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(powershell.exe -File sync_overleaf.ps1)"
+      "Bash(powershell.exe -File sync_overleaf.ps1)",
+      "Bash(del:*)"
     ]
   }
 }
