@@ -2,28 +2,28 @@
 \centering
 \caption{Robustness Tests}
 \label{tab:robustness}
-\begin{tabular}{lccccccc}
+\begin{tabular}{lcccccccc}
 \toprule
- & (1) & (2) & (3) & (4) & (5) & (6) & (7) \\
- & $|CAR|$\newline Compete. & $|CAR|$\newline Pres. ER & $|CAR|$\newline House ER & $|CAR|$\newline DW State & $|CAR|$\newline DW Natl & $|CAR|$\newline +State FE & $|CAR|$\newline State Clust \\
+ & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) \\
+ & $|CAR|$\newline Compete. & $|CAR|$\newline Pres. ER & $|CAR|$\newline House ER & $|CAR|$\newline DW State & $|CAR|$\newline DW Natl & $|CAR|$\newline +State FE & $|CAR|$\newline State Clust & $|CAR|$\newline 2-Way Clust \\
 \midrule
-Competitiveness (baseline) & 0.005** &  &  &  &  & 0.012 & 0.005** \\
- & (0.002) &  &  &  &  & (0.008) & (0.002) \\
-Pres. ER Polarization &  & 0.003 &  &  &  &  &  \\
- &  & (0.002) &  &  &  &  &  \\
-House ER Polarization &  &  & 0.000 &  &  &  &  \\
- &  &  & (0.003) &  &  &  &  \\
-DW-NOMINATE (state gap) &  &  &  & 0.002 &  &  &  \\
- &  &  &  & (0.003) &  &  &  \\
-DW-NOMINATE (national gap) &  &  &  &  & -0.009* &  &  \\
- &  &  &  &  & (0.005) &  &  \\
+Competitiveness (baseline) & 0.005** &  &  &  &  & 0.012 & 0.005** & 0.005** \\
+ & (0.002) &  &  &  &  & (0.008) & (0.002) & (0.002) \\
+Pres. ER Polarization &  & 0.003 &  &  &  &  &  &  \\
+ &  & (0.002) &  &  &  &  &  &  \\
+House ER Polarization &  &  & 0.000 &  &  &  &  &  \\
+ &  &  & (0.003) &  &  &  &  &  \\
+DW-NOMINATE (state gap) &  &  &  & 0.002 &  &  &  &  \\
+ &  &  &  & (0.003) &  &  &  &  \\
+DW-NOMINATE (national gap) &  &  &  &  & -0.009* &  &  &  \\
+ &  &  &  &  & (0.005) &  &  &  \\
 \midrule
-Year + Industry FE & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
-State FE & No & No & No & No & No & Yes & No \\
-Cluster & Firm & Firm & Firm & Firm & Firm & Firm & State \\
-Controls & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
-N & 678 & 678 & 674 & 631 & 673 & 678 & 678 \\
-$R^2$ & 0.172 & 0.170 & 0.168 & 0.173 & 0.167 & 0.212 & 0.172 \\
+Year + Industry FE & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
+State FE & No & No & No & No & No & Yes & No & No \\
+Cluster & Firm & Firm & Firm & Firm & Firm & Firm & State & Firm$\times$State \\
+Controls & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
+N & 678 & 678 & 674 & 631 & 673 & 678 & 678 & 678 \\
+$R^2$ & 0.172 & 0.170 & 0.168 & 0.173 & 0.167 & 0.212 & 0.172 & 0.172 \\
 \bottomrule
 \end{tabular}
 \begin{flushleft}

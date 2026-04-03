@@ -292,7 +292,7 @@ def to_latex_table(df: pd.DataFrame, caption: str, label: str,
 
 def run_ols(formula: str, df: pd.DataFrame,
             cluster_var: str = "gvkey_str") -> object:
-    """OLS with firm-clustered standard errors.
+    """OLS with one-way clustered standard errors.
 
     statsmodels drops NaN rows silently; use patsy to recover which rows
     survive so the cluster variable has the same length as the model data.
@@ -305,6 +305,58 @@ def run_ols(formula: str, df: pd.DataFrame,
     return smf.ols(formula, data=df).fit(
         cov_type="cluster", cov_kwds={"groups": groups}
     )
+
+
+class _TwoWayResults:
+    """Thin wrapper exposing statsmodels-like attributes with two-way clustered SEs."""
+    def __init__(self, base, V_2way):
+        from scipy import stats as _sp
+        self.params   = base.params
+        self.nobs     = base.nobs
+        self.rsquared = base.rsquared
+        self._V       = V_2way
+        n, k          = int(self.nobs), len(self.params)
+        self.bse      = pd.Series(np.sqrt(np.diag(V_2way.values)),
+                                  index=self.params.index)
+        tstat         = self.params / self.bse
+        self.pvalues  = pd.Series(
+            2 * _sp.t.sf(np.abs(tstat), df=n - k),
+            index=self.params.index,
+        )
+
+    def cov_params(self):
+        return self._V
+
+
+def run_ols_twoway(formula: str, df: pd.DataFrame,
+                   var1: str = "gvkey_str",
+                   var2: str = "state_str") -> _TwoWayResults:
+    """OLS with two-way clustered SEs (Cameron, Gelbach & Miller 2011).
+
+    V = V_{var1} + V_{var2} - V_{var1 × var2}
+
+    Because firm HQ state is fixed (firms are nested within states), the
+    intersection clusters equal the firm clusters, so V_2way = V_state in
+    expectation; the CGM formula makes this explicit.
+    """
+    import patsy
+    from statsmodels.stats.sandwich_covariance import cov_cluster
+
+    _, X = patsy.dmatrices(formula, data=df, return_type="dataframe",
+                           NA_action="drop")
+    keep_idx = X.index
+    df_k = df.loc[keep_idx]
+    g1  = df_k[var1].values
+    g2  = df_k[var2].values
+    g12 = (df_k[var1].astype(str) + "||" + df_k[var2].astype(str)).values
+
+    base = smf.ols(formula, data=df).fit()
+    V1   = cov_cluster(base, g1)
+    V2   = cov_cluster(base, g2)
+    V12  = cov_cluster(base, g12)
+    V_2w = pd.DataFrame(V1 + V2 - V12,
+                        index=base.params.index, columns=base.params.index)
+    return _TwoWayResults(base, V_2w)
 
 
 def fmt(x, digits=3):
@@ -541,6 +593,8 @@ def run_robustness(df: pd.DataFrame) -> None:
         # (7) State-level clustered SEs (pol measure varies at state x year level)
         "m7": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df,
                       cluster_var="state_str"),
+        # (8) Two-way clustered SEs: firm × state (Cameron, Gelbach & Miller 2011)
+        "m8": run_ols_twoway(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
     }
 
     for k, m in specs.items():
@@ -550,6 +604,9 @@ def run_robustness(df: pd.DataFrame) -> None:
         if pol_param:
             log.info("Robustness %s: %s coef=%.4f p=%.3f",
                      k, pol_param, m.params[pol_param], m.pvalues[pol_param])
+    log.info("(m8 two-way: competitive_std coef=%.4f p=%.3f)",
+             specs["m8"].params["competitive_std"],
+             specs["m8"].pvalues["competitive_std"])
 
     coef_map = {
         "competitive_std":  r"Competitiveness (baseline)",
@@ -564,12 +621,13 @@ def run_robustness(df: pd.DataFrame) -> None:
                   r"$|CAR|$\newline DW State",
                   r"$|CAR|$\newline DW Natl",
                   r"$|CAR|$\newline +State FE",
-                  r"$|CAR|$\newline State Clust"]
+                  r"$|CAR|$\newline State Clust",
+                  r"$|CAR|$\newline 2-Way Clust"]
     extra_rows = {
-        "Year + Industry FE": ["Yes"] * 7,
-        "State FE":           ["No", "No", "No", "No", "No", "Yes", "No"],
-        "Cluster":            ["Firm"] * 6 + ["State"],
-        "Controls":           ["Yes"] * 7,
+        "Year + Industry FE": ["Yes"] * 8,
+        "State FE":           ["No", "No", "No", "No", "No", "Yes", "No", "No"],
+        "Cluster":            ["Firm"] * 6 + ["State", "Firm$\\times$State"],
+        "Controls":           ["Yes"] * 8,
     }
     reg_table(
         list(specs.values()), dep_labels, coef_map,

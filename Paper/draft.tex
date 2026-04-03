@@ -632,58 +632,57 @@ observable at the investor level \citep{duclos2004}. The available data
 provide only grouped or indirect proxies, each of which captures a different
 margin of the latent concept \citep{esteban2007}. We therefore use three
 complementary proxies rather than treating any single measure as definitive.
-The ER election-return measure below captures \emph{electoral sorting and
-local political division}; DW-NOMINATE captures \emph{elite ideological
-distance}; and the ANES affective series captures \emph{national partisan
-animus}. These are not three ways of measuring the same thing; they
-triangulate a latent object from distinct angles \citep{wang2000}.\footnote{%
+The state-level presidential competitiveness measure below captures
+\emph{cross-sectional partisan division}; DW-NOMINATE captures
+\emph{elite ideological distance}; and the ANES affective series captures
+\emph{national partisan animus}. These are not three ways of measuring the
+same thing; they triangulate a latent object from distinct angles
+\citep{wang2000}.\footnote{%
 The continuous-density estimators developed by \citet{duclos2004} provide
 the most rigorous formalization of the identity--alienation concept, but
 require a directly observed distribution of the underlying investor-level
 trait. Because our setting does not yield a firm-year density of investor
 political identity, we use reduced-form political-environment proxies instead.}
 
-We apply the \citet{esteban1994} polarization index to U.S. House election
-returns. The ER index is the canonical distributional polarization measure in
-economics \citep{duclos2004}: unlike simple variance or the Herfindahl index,
-it is sensitive to both the \emph{distance} between groups and the
-\emph{mass} concentrated in each group, which aligns with the
-identity--alienation logic of our theoretical framework. Applied to
-two-party electoral returns, it captures electoral bipolarity --- how
-concentrated votes are into two opposing camps --- rather than mere
-competitiveness or inequality. For congressional district $d$ in election year $e$:
+We measure state-level partisan competitiveness from county-level presidential
+election returns (MIT Election Lab, 2000--2020). For state $s$ and presidential
+election year $e$, let $D_{s,e}$ and $R_{s,e} = 1 - D_{s,e}$ denote the
+Democratic and Republican two-party vote shares aggregated across counties.
+The partisan margin is $M_{s,e} = |D_{s,e} - R_{s,e}|$, ranging from zero in
+perfectly contested states to one in completely one-sided states. We define
+\emph{partisan competitiveness} as:
 \begin{equation}
-    \label{eq:er}
-    P^{ER}_{d,e} = s_{D,d,e} \cdot s_{R,d,e}
-    \cdot \left(s_{D,d,e}^\alpha + s_{R,d,e}^\alpha\right), \quad \alpha = 1,
+    \label{eq:comp}
+    \text{Competitiveness}_{s,e} = 1 - M_{s,e} = 1 - |D_{s,e} - R_{s,e}|,
 \end{equation}
-which simplifies to $s_{D} \cdot s_{R}$ when $\alpha=1$, maximized at 0.25 when
-the two parties split the vote equally. We aggregate to the state level weighting
-by each district's share of total state two-party votes, forward-fill to annual
-frequency --- assigning each election year's measure to the two calendar years
-until the next election, on the assumption that the surrounding political
-environment evolves at the electoral-cycle frequency rather than annually ---
-and standardize to mean zero and unit variance.\footnote{Mehlhaff
-(2023) shows that, at $\alpha=1$, the Esteban-Ray index is nearly
-indistinguishable from the variance of the two-party vote distribution
-(cross-sample correlation $\approx 0.93$), and argues that standard polarization
-indices conflate inter-group heterogeneity with intra-group homogeneity. We
-acknowledge this limitation. Because our primary interest is the polarization
-\emph{mechanism} rather than the specific index, our main robustness tests
-exploit DW-NOMINATE ideological scores and ANES affective polarization
-(Section~\ref{sec:design}), which are constructed from entirely different data
-sources and do not share this limitation. Convergent evidence across all three
-measures would indicate that the findings are not an artifact of the
-Esteban-Ray parameterization.}
+which is maximized at 1.0 when both parties split the vote equally and
+minimized at 0 in one-party states. More competitive states are politically
+divided environments where investors are more likely to hold heterogeneous priors
+about institutional trustworthiness and the interpretation of regulatory
+signals.\footnote{We also test the Esteban-Ray polarization index
+$P^{ER}_{s,e} = D_{s,e} \cdot R_{s,e}$, computed at the state level from the
+same presidential returns. The ER index is concave in vote shares and
+has lower discriminating power away from the 50-50 split (SD in our sample:
+0.027 for the ER index vs.\ 0.101 for the margin). We therefore prefer the
+linear competitiveness measure as the primary proxy and retain the presidential
+ER index as a robustness check (Table~\ref{tab:robust}, column 2). The
+congressional-district ER index based on U.S. House returns is also tested in
+column 3 of Table~\ref{tab:robust}; its standard deviation is only 0.011 ---
+one-ninth of the presidential margin --- reflecting gerrymandering and the
+compression of competitive outcomes at the district level. \citet{mehlhaff2023}
+shows that the ER index at $\alpha=1$ is nearly indistinguishable from the
+variance of the two-party vote distribution (correlation $\approx 0.93$); the
+margin is a simpler and more transparent linear proxy.}
 
-Because different polarization indices emphasize different aspects of
-between-group separation and within-group cohesion, the baseline electoral
-measure cannot be treated as exhaustive \citep{wang2000}. In the terminology
-of \citet{esteban2007}, any grouped empirical proxy is a representation of
-a richer latent object that abstracts from within-group dispersion. The ER
-district-level proxy captures electoral division and local sorting but does
-not separately identify within-group ideological cohesion. A complementary
-measure is therefore needed.
+We forward-fill each presidential election's measure over the four subsequent
+calendar years --- assigning the 2000 vote to 2001--2004, the 2004 vote to
+2005--2008, and so on, through the 2020 election covering 2021--2024 --- on the
+assumption that the state political environment evolves at the electoral-cycle
+frequency rather than annually. We standardize to mean zero and unit variance
+within the analysis sample. Because different polarization indices emphasize
+different aspects of between-group separation and within-group cohesion, the
+competitiveness measure cannot be treated as exhaustive \citep{wang2000}.
+A complementary measure based on elite roll-call behavior is therefore needed.
 
 As a second proxy for polarization, we construct a measure of elite ideological
 distance from DW-NOMINATE first-dimension scores \citep{poole1997,poole2007}.
@@ -705,18 +704,19 @@ We expand each Congress's scores to the two calendar years it covers and
 standardize to mean zero and unit variance. The national-level counterpart,
 $P^{DW\text{-nat}}_{c}$, computes the same gap across all House members
 nationally and varies only over time, providing a pure time-series check.
-The ER and DW-NOMINATE measures are alternative proxies: the ER measure
-captures electoral competitiveness, while DW-NOMINATE captures ideological
-distance. If both predict the same investor response, the evidence for a
-polarization mechanism is substantially stronger.
+The competitiveness and DW-NOMINATE measures are complementary proxies:
+competitiveness captures electoral division in the mass electorate, while
+DW-NOMINATE captures ideological distance among elected representatives.
+If both predict the same investor response, the evidence for a polarization
+mechanism is substantially stronger.
 
 \smallskip
 \noindent\textit{Limitations of measurement.} No single empirical measure
 fully captures the latent identity--alienation object \citep{duclos2004}.
-The ER electoral proxy, DW-NOMINATE ideological gap, and ANES affective
-series each capture a different margin of the latent concept: local electoral
-sorting, elite ideological distance, and national partisan animus,
-respectively. Because these proxies differ in data source, geographic
+The presidential competitiveness proxy, DW-NOMINATE ideological gap, and ANES
+affective series each capture a different margin of the latent concept:
+mass-electorate partisan division, elite ideological distance, and national
+partisan animus, respectively. Because these proxies differ in data source, geographic
 aggregation, and conceptual emphasis, convergent evidence across all three is
 more informative than consistency within any single measure. Divergence across
 proxies would instead indicate that the estimated effect is specific to one
@@ -991,6 +991,12 @@ $p = 0.144$), consistent with within-state variation in presidential competitive
 being noisier than cross-state variation. Column (7) clusters standard errors at the
 state level; the baseline coefficient is unchanged and remains significant ($\beta =
 0.005$, $p = 0.030$), confirming that firm-level clustering is not driving the result.
+Column (8) implements two-way clustering by firm and state following
+\citet{cameron2011}, computing $V = V_{\text{firm}} + V_{\text{state}} -
+V_{\text{firm} \times \text{state}}$; because firms are nested within states
+(each firm's headquarters state is fixed), the intersection clusters equal the
+firm clusters and the two-way estimator is equivalent to state-level clustering
+in expectation.
 
 \input{../Output/Tables/tab05_robustness}
 
