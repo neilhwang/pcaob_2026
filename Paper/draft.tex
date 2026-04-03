@@ -29,11 +29,14 @@ must draw their own inferences about which it is. Using 678 Form~8-K Item~4.01
 filings from 2001 to 2023, we examine how the political environment in which
 investors are embedded shapes their interpretation of this mandatory audit-related
 signal. Exploiting cross-state variation in presidential electoral competitiveness
-as a proxy for investor belief heterogeneity, we find that absolute abnormal
-returns are 0.47 percentage points larger and abnormal trading volume is 0.11
-units higher around auditor-change disclosures in more politically competitive
-states ($p = 0.040$ and $p = 0.010$, respectively). Effects are concentrated in
-auditor resignations --- the more informationally ambiguous class of changes ---
+as a proxy for the political-information environment surrounding the disclosure,
+we find that auditor-change disclosures trigger larger market reactions in more
+politically competitive states: a one-standard-deviation increase in competitiveness
+is associated with a 0.47 percentage point increase in absolute abnormal returns
+relative to a sample mean of 5.0\% ($p = 0.040$), and a 0.11-unit increase in
+abnormal trading volume relative to its event-window baseline ($p = 0.010$).
+Effects are concentrated in auditor resignations --- the more informationally
+ambiguous class of changes ---
 consistent with polarization amplifying investor disagreement most when the
 disclosure provides less inherent guidance about fault or severity. These findings
 suggest that the effectiveness of mandatory audit-related disclosure as an
@@ -102,12 +105,14 @@ outcomes are driven by broad national partisan forces rather than candidate-
 or district-specific factors --- making them a cleaner proxy for the partisan
 belief environment \citep{vertz1987, abramowitz2016, moskowitz2021}.
 More competitive states --- where the presidential electorate is more evenly
-divided --- serve as a proxy for investor environments with greater belief
-heterogeneity. We acknowledge a key limitation of this proxy: institutional
+divided --- capture political-information environments in which investors may
+be more likely to hold divergent priors about institutional credibility and
+the interpretation of regulatory signals. We acknowledge a key limitation of this proxy: institutional
 investors are geographically dispersed and need not share the political
 characteristics of the firm's headquarters state. We treat headquarters-state
-competitiveness as a noisy reduced-form proxy for the investor belief environment
-rather than a precise measure of individual investor beliefs; measurement error
+competitiveness as a noisy reduced-form proxy for the political-information
+environment surrounding the disclosure, not a precise measure of individual
+investor beliefs; measurement error
 of this kind attenuates estimated coefficients toward zero, so our findings are
 likely conservative. Our sample consists of 678 Form~8-K Item~4.01 filings from
 2001 to 2023, matched to CRSP daily return and volume data and Compustat firm
@@ -132,23 +137,22 @@ ideological gap, presidential Esteban-Ray index, county-level competitiveness)
 and survives two-way clustering of standard errors by firm and state.
 
 This paper makes three contributions. First, we provide new evidence that
-capital-market reactions to mandatory auditor-change disclosures vary
-systematically with the political environment in which investors are embedded.
-Prior work establishes that auditor changes are informative on average
-\citep{firth1978, dodd1984, defond2014}; we show that the magnitude of the
-market reaction depends on how divided that investor environment is, not only
-on the content of the disclosure. Second, we identify political polarization as
-a determinant of investor interpretation heterogeneity in an auditing setting.
-Existing work on the political economy of capital markets focuses on asset
-allocation, partisan trading behavior, and analyst forecasts \citep{kempf2024};
-we show that polarization also shapes how investors process mandatory audit
-disclosures, a setting where institutional trust is unusually central to signal
-interpretation. Third, we connect to the literature on the effectiveness of
-mandatory disclosure: our evidence suggests that the informational consequences
-of a required filing depend not only on its content but on the social and
-political environment in which investors interpret it, a finding with implications
-for how disclosure-based regulation performs across heterogeneous investor
-populations.
+capital-market reactions to auditor-change disclosures are stronger in more
+politically competitive states. Prior work establishes that these events are
+informative on average \citep{firth1978, dodd1984, defond2014}; we show that
+the magnitude of the market reaction varies with the political-information
+environment in which investors receive the disclosure. Second, we provide
+evidence that this cross-sectional variation is concentrated in
+more ambiguous events --- auditor resignations and filings with limited
+interpretive guidance --- consistent with the interpretation channel rather
+than a generic salience story. This connects to the growing literature on how
+political environments shape investor behavior \citep{kempf2024} and extends
+it to mandatory audit disclosures, where institutional trust is central to
+signal interpretation. Third, our evidence suggests that the informativeness
+of mandatory audit disclosure depends on the political-information environment
+in which investors interpret it, not only on the content of the filing itself,
+with implications for how disclosure-based regulation performs across
+heterogeneous investor populations.
 
 These findings bear on the design of mandatory audit disclosure requirements.
 A common motivation for expanded audit reporting --- including critical audit
@@ -429,7 +433,9 @@ subjective assessments --- precisely where political identity shapes belief
 formation.
 
 In our setting, signal ambiguity varies systematically across auditor-change
-events. An auditor departure following a disclosed disagreement over accounting
+events. We define signal ambiguity as the degree of interpretive latitude left
+by the filing regarding the severity, source, or implications of the auditor
+change. An auditor departure following a disclosed disagreement over accounting
 estimates or a qualified opinion leaves investors with less interpretive
 latitude: the filing itself provides guidance about fault and severity.
 A Big-4-to-Big-4 lateral move with a generic or absent stated reason provides
@@ -437,10 +443,13 @@ little objective information; investors must rely more heavily on their
 subjective assessment of what the change portends, a judgment shaped by their
 trust in auditors and the PCAOB as institutions. We construct a
 \texttt{high\_ambiguity} indicator from observable filing characteristics
-(Section~\ref{sec:design}) and interact it with the polarization measure.
-The ambiguity amplification prediction is a testable restriction of the model:
-it requires not just a polarization main effect but a
-polarization\,$\times$\,ambiguity interaction with positive sign.
+(Section~\ref{sec:design}) that maps directly to this definition: high-ambiguity
+events are those where the filing leaves the greatest interpretive latitude about
+the nature, fault, and consequences of the change. This indicator is interacted
+with the polarization measure in P3 below. The amplification prediction is a
+testable restriction of the model: it requires a positive and significant
+polarization\,$\times$\,ambiguity interaction above and beyond any
+polarization main effect.
 
 \subsection{Testable Predictions}
 
@@ -528,8 +537,12 @@ Resignations --- where the auditor terminates the engagement --- are
 informationally less clear-cut than dismissals: the filing does not assign
 obvious blame, the reasons are often generic or unstated, and investors must
 infer whether the departure reflects a routine decision or serious underlying
-disagreement. Dismissals, in contrast, assign initiative to the client, which
-itself provides interpretive guidance even when the stated reason is sparse.
+disagreement. In terms of the ambiguity definition in Section~\ref{sec:ambiguity},
+resignations represent the higher-ambiguity event class: they leave greater
+interpretive latitude regarding the severity, source, and implications of the
+change than dismissals do. Dismissals, in contrast, assign initiative to the
+client, providing interpretive guidance about the direction of the separation
+even when the stated reason is sparse.
 The ambiguity channel therefore predicts that polarization effects are larger
 for resignations than for dismissals. We treat this as an auxiliary empirical
 exercise (Table~\ref{tab:event_type}) rather than a core hypothesis.
@@ -1024,10 +1037,11 @@ ideological heterogeneity --- rather than the temporal rise in affective polariz
 \section{Conclusion}
 \label{sec:conclusion}
 
-Political polarization affects how investors interpret auditor signals, with
-implications for market efficiency and audit regulation. The same class of mandatory auditor-change disclosures
-generates larger absolute returns and higher trading volume in more
-politically competitive environments. For absolute returns, effects are concentrated in auditor resignations --- the more
+This paper provides evidence that market reactions to auditor-change disclosures
+are stronger in more politically competitive states, consistent with heterogeneous
+interpretation of an ambiguous mandatory audit-related signal. The same
+auditor-change disclosures generate larger absolute returns and higher trading
+volume where the surrounding political environment is more divided. For absolute returns, effects are concentrated in auditor resignations --- the more
 ambiguous event type --- consistent with polarization amplifying disagreement most
 when fault and severity are unclear. For abnormal volume, the effect is strongest
 in the low-ambiguity subsample, where clear quality signals give investors with
