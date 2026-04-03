@@ -235,7 +235,7 @@ def make_summary_stats(df: pd.DataFrame) -> pd.DataFrame:
         "absCar":       "|CAR(-1,+1)|",
         "car":          "CAR(-1,+1)",
         "abvol":        "Abn. Volume",
-        "margin":         "Partisan Margin ($|D-R|$)",
+        "margin":         "Partisan Margin $|D-R|$ (= 1 $-$ Competitiveness)",
         "size":         "Size (log assets)",
         "leverage":     "Leverage",
         "roa":          "ROA",
