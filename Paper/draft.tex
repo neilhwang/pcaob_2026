@@ -213,10 +213,11 @@ Our paper examines a different and largely unexplored dimension: the
 \emph{investor side} of the audit signal. This mechanism is particularly
 salient in the context of PCAOB oversight, whose authority and credibility
 as a regulatory body may not be assessed uniformly across investor groups.
-Investors who are more skeptical of regulatory institutions --- a tendency
-documented to vary systematically with political identity \citep{kempf2024}
---- may discount the credibility of auditor disclosures differently from
-investors who trust regulatory oversight. This mechanism is orthogonal to
+Investors who are more skeptical of regulatory institutions --- consistent
+with evidence that political identity systematically shapes financial
+attitudes and behavior \citep{kempf2024} --- may discount the credibility
+of auditor disclosures differently from investors who trust regulatory
+oversight. This mechanism is orthogonal to
 the auditor-side political economy literature and complements it: even if
 political pressures leave auditor behavior unchanged, polarization in the
 investor population can amplify the capital-market consequences of those
@@ -247,7 +248,7 @@ over into nonpolitical settings --- employment decisions, commercial
 transactions, and interpersonal trust --- even when the domain has no direct
 political content. This nonpolitical spillover makes it plausible that
 affective polarization also shapes how investors assess the credibility of
-institution-dependent disclosures such as auditor changes.
+disclosures whose credibility depends on trust in the certifying institution, such as auditor changes.
 
 For measurement, \citet{tyler2023} evaluate the robustness of the ANES
 feeling-thermometer series as an indicator of affective polarization. They
@@ -283,7 +284,9 @@ informativeness of the auditor's signal; an investor who perceives lower signal
 precision effectively flattens the likelihood function. Either way, the
 formal result is the same increase in posterior dispersion. The model therefore provides a microfoundation for the broader mechanism
 described in the introduction, not a claim that priors are the only operative
-channel. In the affective-polarization literature \citep{iyengar2012,
+channel.
+
+In the affective-polarization literature \citep{iyengar2012,
 iyengar2019}, partisan identity and out-party distrust shape how individuals
 evaluate the credibility of information and the institutions that produce it.
 In the present setting, these forces can be interpreted as widening the
@@ -309,7 +312,7 @@ prior beliefs $\pi_i \equiv P_i(\theta = 1) \in (0,1)$.
 
 \textbf{Source of prior heterogeneity.} We model investors as belonging to
 ideological groups indexed by political affiliation $g \in \{D, R\}$, with
-population shares $s_D$ and $s_R = 1 - s_D$. Individual investor $i$ belongs
+population shares $\omega_D$ and $\omega_R = 1 - \omega_D$. Individual investor $i$ belongs
 to group $g(i)$, so $\pi_i \equiv \pi_{g(i)}$; the subscript $i$ indexes
 individuals and $g$ indexes groups throughout. Group-level priors reflect
 differential trust in auditors and regulatory institutions: $\pi_D \neq \pi_R$.
@@ -339,12 +342,12 @@ formal sense in which polarization amplifies disagreement.
 
 \begin{proposition}[Polarization and belief dispersion]
     \label{prop:dispersion}
-    Fix population shares $s_D, s_R > 0$ with $s_D + s_R = 1$ and mean prior
-    $\bar{\pi} = s_D \pi_D + s_R \pi_R$. The variance of posterior beliefs
+    Fix population shares $\omega_D, \omega_R > 0$ with $\omega_D + \omega_R = 1$ and mean prior
+    $\bar{\pi} = \omega_D \pi_D + \omega_R \pi_R$. The variance of posterior beliefs
     across investor groups is
     \[
         \mathrm{Var}_i[\phi(\pi_i)]
-        = s_D s_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2.
+        = \omega_D \omega_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2.
     \]
     For any increase in $|\pi_D - \pi_R|$ that holds $\bar{\pi}$ fixed,
     $\mathrm{Var}_i[\phi(\pi_i)]$ strictly increases.
@@ -356,7 +359,7 @@ formal sense in which polarization amplifies disagreement.
 \noindent\textbf{Remark.} Proposition~\ref{prop:dispersion} isolates the
 mechanism through which polarization enters the model. The key condition is
 a \emph{mean-preserving spread} of priors: polarization shifts the two groups
-farther apart while leaving the population-average prior $\bar\pi$ unchanged.
+farther apart while leaving the population-average prior $\bar{\pi}$ unchanged.
 This rules out the alternative that polarization merely correlates with
 aggregate pessimism or optimism about firm quality. Under this condition, the
 posterior variance increases strictly --- more polarized priors generate more
@@ -379,11 +382,11 @@ Trading volume is increasing in posterior belief dispersion
 \end{equation}
 
 By Proposition~\ref{prop:dispersion}, polarization strictly increases
-posterior belief dispersion. The formally derived prediction is therefore for
-abnormal trading volume: more dispersed posteriors generate more investor
+posterior belief dispersion. Trading volume is the outcome most directly
+linked to this result: more dispersed posteriors generate more investor
 pairs with divergent beliefs and hence mutually beneficial trading
 opportunities, raising aggregate volume even in the absence of private
-information. This is the primary theoretical implication of the model.
+information.
 
 Absolute price movements are a secondary and less formally established
 implication. Equilibrium prices aggregate beliefs; when polarized investors
@@ -490,7 +493,7 @@ widens the cross-group gap $|X_D - X_R|$---whether through divergent priors,
 divergent trust, or divergent perceived precision---the logistic map
 $\sigma(\cdot)$ is strictly increasing, so $|\mu_D - \mu_R|$ increases
 strictly. It follows that
-posterior variance $s_D s_R (\mu_D - \mu_R)^2$ increases under any channel
+posterior variance $\omega_D \omega_R (\mu_D - \mu_R)^2$ increases under any channel
 (see Appendix~\ref{app:proofs}). The core prediction is therefore
 channel-agnostic: polarization amplifies disagreement-sensitive market
 outcomes regardless of which specific mechanism predominates. The ambiguity
@@ -563,7 +566,7 @@ available in final form from Voteview. Scores for the 119th Congress (which
 began January 2025) have not yet been finalized at the time of writing. The
 Esteban-Ray electoral measure covers the same period, as MIT Election Lab
 House returns are available through the 2022 midterm election, which is
-forward-filled to cover calendar years 2023 and 2024.} We retain only
+forward-filled to cover calendar years through 2023.} We retain only
 original 8-K filings matched to a CRSP PERMNO and require at least 100
 non-missing trading days in the estimation window.\footnote{Of the 8,621
 auditor-change events identified from EDGAR, 1,720 are 8-K/A amendments and
@@ -572,7 +575,7 @@ matched to a CRSP/Compustat security and are dropped, and a further 40 are
 excluded for insufficient trading-day coverage in the estimation window.
 The unmatched filings are predominantly firms not listed on major exchanges
 or not covered by CRSP/Compustat.} The final sample consists
-of 678 auditor change events for 456 unique firms. We exclude financial firms
+of 678 auditor-change events for 456 unique firms. We exclude financial firms
 (SIC 6000--6999) and utilities (SIC 4900--4999).
 
 \subsection{Dependent Variables}
@@ -622,21 +625,21 @@ political identity, we use reduced-form political-environment proxies instead.}
 
 We measure state-level partisan competitiveness from county-level presidential
 election returns (MIT Election Lab, 2000--2020). For state $s$ and presidential
-election year $e$, let $D_{s,e}$ and $R_{s,e} = 1 - D_{s,e}$ denote the
+election year $t^{*}$, let $D_{s,t^{*}}$ and $R_{s,t^{*}} = 1 - D_{s,t^{*}}$ denote the
 Democratic and Republican two-party vote shares aggregated across counties.
-The partisan margin is $M_{s,e} = |D_{s,e} - R_{s,e}|$, ranging from zero in
+The partisan margin is $M_{s,t^{*}} = |D_{s,t^{*}} - R_{s,t^{*}}|$, ranging from zero in
 perfectly contested states to one in completely one-sided states. We define
 \emph{partisan competitiveness} as:
 \begin{equation}
     \label{eq:comp}
-    \text{Competitiveness}_{s,e} = 1 - M_{s,e} = 1 - |D_{s,e} - R_{s,e}|,
+    \text{Competitiveness}_{s,t^{*}} = 1 - M_{s,t^{*}} = 1 - |D_{s,t^{*}} - R_{s,t^{*}}|,
 \end{equation}
 which is maximized at 1.0 when both parties split the vote equally and
 minimized at 0 in one-party states. More competitive states are politically
 divided environments where investors are more likely to hold heterogeneous priors
 about institutional trustworthiness and the interpretation of regulatory
 signals.\footnote{We also test the Esteban-Ray polarization index
-$P^{ER}_{s,e} = D_{s,e} \cdot R_{s,e}$, computed at the state level from the
+$P^{ER}_{s,t^{*}} = D_{s,t^{*}} \cdot R_{s,t^{*}}$, computed at the state level from the
 same presidential returns. The ER index is concave in vote shares and
 has lower discriminating power away from the 50-50 split (SD in our sample:
 0.027 for the ER index vs.\ 0.101 for the margin). We therefore prefer the
@@ -698,17 +701,16 @@ If both predict the same investor response, the evidence for a polarization
 mechanism is substantially stronger.
 
 \smallskip
-\noindent\textit{Limitations of measurement.} No single empirical measure
-fully captures the latent identity--alienation object \citep{duclos2004}.
-The presidential competitiveness proxy, DW-NOMINATE ideological gap, and ANES
-affective series each capture a different margin of the latent concept:
-mass-electorate partisan division, elite ideological distance, and national
-partisan animus, respectively. Because these proxies differ in data source, geographic
-aggregation, and conceptual emphasis, convergent evidence across all three is
-more informative than consistency within any single measure. Divergence across
-proxies would instead indicate that the estimated effect is specific to one
-dimension of polarization, a finding that would itself be informative about
-the operative channel.
+\noindent\textit{Limitations of measurement.} Each proxy is subject to
+known limitations. The presidential competitiveness measure assigns equal
+weight to all counties within a state regardless of firm location, and
+forward-filling assumes no within-cycle variation. The state-level DW-NOMINATE
+gap may reflect party sorting rather than genuine ideological movement, and
+is available only at biennial frequency. The ANES affective series is national,
+requires interpolation between survey years, and is sensitive to survey-mode
+changes after 2016. Because these failure modes are largely independent, a
+finding that survives across all three proxies is more credible than one that
+depends on any single measurement choice.
 
 \subsection{Supplementary Affective Polarization Measure}
 
@@ -771,12 +773,12 @@ without the exposure interaction.
 
 \subsection{Empirical Specification}
 
-The unit of observation is an auditor change event $e$. We estimate:
+The unit of observation is an auditor-change event $e$. We estimate:
 \begin{equation}
     \label{eq:main}
     Y_e = \alpha + \beta\,\textit{Pol}_{s(e),\,t(e)}
     + \gamma' X_{e,\,t(e)-1}
-    + \tau_{t(e)} + \delta_{j(e)} + \varepsilon_e,
+    + \lambda_{t(e)} + \delta_{j(e)} + \varepsilon_e,
 \end{equation}
 where $Y_e$ is $|CAR_e[-1,+1]|$ or $AbVol_e$; $\textit{Pol}_{s(e),t(e)}$ is the
 standardized state political polarization measure for the headquarters state
@@ -785,7 +787,7 @@ for the polarization of the political environment in which the disclosure is
 received, not a direct measure of investor political identity;
 $X_{e,t(e)-1}$ is a vector of firm controls measured in the fiscal year prior
 to the event (size, leverage, ROA, book-to-market, loss indicator, and sales
-growth); $\tau_{t(e)}$ are event-year fixed effects; and $\delta_{j(e)}$ are
+growth); $\lambda_{t(e)}$ are event-year fixed effects; and $\delta_{j(e)}$ are
 two-digit SIC industry fixed effects. Standard errors are clustered at the firm
 level. The coefficient of interest is $\beta$.
 
@@ -794,9 +796,8 @@ level. The coefficient of interest is $\beta$.
 The paper identifies whether auditor-change disclosures are interpreted
 differently in more polarized political environments --- not whether any
 specific type of investor trades more. Because investor-level political
-identity is unobserved, the empirical design uses the headquarters-state
-political environment as a reduced-form proxy for the polarization of the
-context in which the disclosure is received.
+identity is unobserved, the empirical design uses headquarters-state
+competitiveness as the operational proxy throughout.
 
 \subsubsection*{Why headquarters-state polarization is informative}
 
@@ -834,13 +835,10 @@ across election cycles. Third, the DW-NOMINATE and ANES affective
 specifications use entirely different data sources and produce variation that
 is not driven by the headquarters-state aggregation choice. Convergent
 findings across all three proxies would indicate that the result is not an
-artifact of the ER state-level aggregation. Fourth, the county-level
-polarization robustness check (online appendix) provides a finer-grained
-alternative using MIT Election Lab county presidential returns matched to
-firm headquarters counties via Compustat zip codes.\footnote{County-level
-matching sharpens geographic identification but has its own limitations:
-county presidential returns are available only quadrennially, and
-congressional district boundaries do not align with county boundaries.}
+artifact of the ER state-level aggregation. Fourth, a county-level polarization check using MIT Election Lab county
+presidential returns matched to firm headquarters counties via Compustat
+zip codes provides a finer-grained geographic alternative (available upon
+request).
 
 \subsubsection*{State-level confounds and inference}
 
@@ -849,7 +847,7 @@ cross-state differences in the partisan environment of presidential elections,
 and time-series changes in that environment across electoral cycles. Year
 fixed effects absorb aggregate macroeconomic and political conditions common
 to all firms. Industry fixed effects absorb sector-level differences in
-auditor change frequency and investor base composition. The key identifying
+auditor-change frequency and investor base composition. The key identifying
 assumption is that, conditional on these controls, a firm's headquarters-state
 polarization at the time of the event is uncorrelated with unobserved
 determinants of the market's reaction to that specific auditor change.
@@ -862,8 +860,9 @@ state fixed effects, which absorb the time-invariant component of clientele
 composition. \emph{Local media ecosystems}: more polarized states may have
 more polarized local media that amplifies any corporate news event, not just
 auditor changes. If so, the polarization effect should appear equally for
-non-audit events; the Item~5.02 placebo design (executive departures) tests
-this directly. \emph{State business and regulatory environments}: states with
+non-audit events; the ambiguity heterogeneity results (Table~\ref{tab:ambiguity})
+partially address this by showing the effect is concentrated in events with
+audit-specific informational content. \emph{State business and regulatory environments}: states with
 more polarized electorates may also have different securities litigation
 climates or governance norms that independently affect how auditor changes
 are processed. State fixed effects absorb time-invariant components; the
@@ -890,13 +889,14 @@ optimistic relative to the regressor's level of variation.
 Table~\ref{tab:summary} presents descriptive statistics for the 678 auditor-change
 events in the estimation sample. The mean $|CAR[-1,+1]|$ is 5.0\% with a standard
 deviation of 6.7\%, consistent with prior event studies of auditor changes
-\citep{defond2014}. Abnormal trading volume averages 0.11 units above normal,
-reflecting the information content of the disclosures. The mean partisan margin ($|D-R|$, the inverse of the primary competitiveness
+\citep{defond2014}. Abnormal trading volume averages 0.11 units above the estimation-window
+baseline, indicating that auditor-change events generate measurable
+abnormal trading activity. The mean partisan margin ($|D-R|$, the inverse of the primary competitiveness
 measure) is 0.13 (SD 0.10), spanning from near-zero for highly competitive
 states to 0.40 for strongly one-party states; equivalently, mean competitiveness
 is 0.87. The median firm has log assets of 4.97 and leverage
 of 17\%; 45\% report a loss in the year preceding the auditor change, reflecting
-the elevated distress common in this sample.
+the high loss incidence in this sample.
 
 \input{../Output/Tables/tab01_summary_stats}
 
@@ -919,7 +919,7 @@ political geography is not merely proxying for firm characteristics.
 
 \subsection{Heterogeneity by Event Type}
 
-Table~\ref{tab:event_type} presents split-sample regressions by auditor change type.
+Table~\ref{tab:event_type} presents split-sample regressions by auditor-change type.
 The effect is concentrated in non-dismissals (auditor resignations): $\beta = 0.012$,
 $p = 0.043$. Among dismissals --- where the client terminates the auditor and the
 adversarial nature of the separation is more transparent --- the coefficient is
@@ -954,13 +954,9 @@ remains underpowered given the small high-ambiguity subsample.
 
 \subsection{Robustness and Measurement Triangulation}
 
-Table~\ref{tab:robust} serves a dual purpose: it addresses conventional
-robustness concerns and provides measurement triangulation across the three
-conceptually distinct polarization proxies described in
-Section~\ref{sec:design}. No single proxy fully captures the latent
-identity--alienation object \citep{duclos2004}; convergent evidence across
-proxies that differ in their data source, construction, and conceptual
-emphasis is therefore more informative than stability within a single measure.
+Table~\ref{tab:robust} addresses conventional robustness concerns and
+provides measurement triangulation across the three conceptually distinct
+polarization proxies described in Section~\ref{sec:design}.
 
 Table~\ref{tab:robust} presents eight robustness columns. Column (1) repeats the
 baseline for reference ($\beta = 0.005$, $p = 0.040$). Column (2) substitutes the
@@ -1019,17 +1015,17 @@ ideological heterogeneity --- rather than the temporal rise in affective polariz
 \label{sec:conclusion}
 
 Political polarization affects how investors interpret auditor signals, with
-implications for market efficiency and audit regulation. Identical disclosures
-generate more extreme market reactions --- larger absolute returns and higher
-trading volume --- in more polarized political environments. These effects are
-stronger for ambiguous signals, consistent with a model in which polarization
-widens disagreement in interpretation by amplifying the role of prior heterogeneity.
+implications for market efficiency and audit regulation. The same class of mandatory auditor-change disclosures
+generates larger absolute returns and higher trading volume in more
+politically competitive environments. Effects are concentrated in auditor resignations --- the more ambiguous event type ---
+with abnormal volume effects strongest for low-ambiguity events, consistent with
+polarization widening disagreement in interpretation most when signals are harder to read.
 
 The findings suggest one limit to disclosure-based regulation in
 credibility-sensitive settings: when investors differ in their assessments of
-institutional trustworthiness, more disclosure does not eliminate disagreement. As
-polarization has increased persistently over the past two decades, its effect
-on audit signal interpretation may be growing. We study auditor changes as an
+institutional trustworthiness, more disclosure does not eliminate disagreement. As political polarization has increased persistently over the past two
+decades \citep{iyengar2019, mason2015}, its effect on audit signal
+interpretation may be growing. We study auditor changes as an
 initial tractable setting, but the mechanism should operate wherever disclosure
 interpretation depends on trust in regulated gatekeepers. Future research
 should examine whether these patterns extend to critical audit matters, going
@@ -1051,8 +1047,8 @@ investors assess the credibility of institution-dependent disclosures.
 \label{app:proofs}
 
 \noindent\textbf{Setup.} Let there be two investor groups, $D$ and $R$, with
-population shares $s_D, s_R > 0$ and $s_D + s_R = 1$. Group $g$ holds prior
-$\pi_g \in (0,1)$. The mean prior is $\bar{\pi} = s_D \pi_D + s_R \pi_R$.
+population shares $\omega_D, \omega_R > 0$ and $\omega_D + \omega_R = 1$. Group $g$ holds prior
+$\pi_g \in (0,1)$. The mean prior is $\bar{\pi} = \omega_D \pi_D + \omega_R \pi_R$.
 After observing signal $s=1$, investor $i$ in group $g$ holds posterior
 $\phi(\pi_g)$, where the Bayesian updating function is
 \[
@@ -1064,53 +1060,53 @@ The function $\phi$ is strictly increasing and continuous on $(0,1)$.
 \medskip
 \noindent\textbf{Step 1: Variance formula.}
 The posterior beliefs across groups follow a two-point distribution placing
-mass $s_D$ at $\phi(\pi_D)$ and mass $s_R$ at $\phi(\pi_R)$. The population
-mean posterior is $\bar{\phi} = s_D \phi(\pi_D) + s_R \phi(\pi_R)$. A
+mass $\omega_D$ at $\phi(\pi_D)$ and mass $\omega_R$ at $\phi(\pi_R)$. The population
+mean posterior is $\bar{\phi} = \omega_D \phi(\pi_D) + \omega_R \phi(\pi_R)$. A
 standard calculation gives:
 \begin{align*}
     \mathrm{Var}_i[\phi(\pi_i)]
-    &= s_D\bigl(\phi(\pi_D) - \bar\phi\bigr)^2
-     + s_R\bigl(\phi(\pi_R) - \bar\phi\bigr)^2 \\
-    &= s_D (s_R)^2 \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2
-     + s_R (s_D)^2 \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2 \\
-    &= s_D s_R (s_D + s_R) \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2 \\
-    &= s_D s_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2,
+    &= \omega_D\bigl(\phi(\pi_D) - \bar\phi\bigr)^2
+     + \omega_R\bigl(\phi(\pi_R) - \bar\phi\bigr)^2 \\
+    &= \omega_D (\omega_R)^2 \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2
+     + \omega_R (\omega_D)^2 \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2 \\
+    &= \omega_D \omega_R (\omega_D + \omega_R) \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2 \\
+    &= \omega_D \omega_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2,
 \end{align*}
-where the second equality uses $\phi(\pi_D) - \bar\phi = s_R(\phi(\pi_D) -
-\phi(\pi_R))$ and $\phi(\pi_R) - \bar\phi = -s_D(\phi(\pi_D) - \phi(\pi_R))$,
-and the last equality uses $s_D + s_R = 1$. This establishes the variance
+where the second equality uses $\phi(\pi_D) - \bar\phi = \omega_R(\phi(\pi_D) -
+\phi(\pi_R))$ and $\phi(\pi_R) - \bar\phi = -\omega_D(\phi(\pi_D) - \phi(\pi_R))$,
+and the last equality uses $\omega_D + \omega_R = 1$. This establishes the variance
 formula in Proposition~\ref{prop:dispersion}.
 
 \medskip
 \noindent\textbf{Step 2: Monotonicity in $|\pi_D - \pi_R|$.}
 Without loss of generality, assume $\pi_D > \pi_R$. A mean-preserving
 spread that increases $|\pi_D - \pi_R|$ by $\epsilon > 0$ while holding
-$\bar\pi$ fixed requires:
+$\bar{\pi}$ fixed requires:
 \[
-    \pi_D' = \pi_D + s_R \epsilon, \qquad
-    \pi_R' = \pi_R - s_D \epsilon,
+    \pi_D' = \pi_D + \omega_R \epsilon, \qquad
+    \pi_R' = \pi_R - \omega_D \epsilon,
 \]
-so that $s_D \pi_D' + s_R \pi_R' = s_D \pi_D + s_R \pi_R = \bar\pi$.
+so that $\omega_D \pi_D' + \omega_R \pi_R' = \omega_D \pi_D + \omega_R \pi_R = \bar{\pi}$.
 We restrict $\epsilon$ to be small enough that $\pi_D' \in (0,1)$ and
 $\pi_R' \in (0,1)$; such $\epsilon > 0$ exists because $\pi_D, \pi_R \in
 (0,1)$ strictly.
 
 Since $\phi$ is strictly increasing:
 \[
-    \phi(\pi_D') = \phi(\pi_D + s_R\epsilon) > \phi(\pi_D),
+    \phi(\pi_D') = \phi(\pi_D + \omega_R\epsilon) > \phi(\pi_D),
     \qquad
-    \phi(\pi_R') = \phi(\pi_R - s_D\epsilon) < \phi(\pi_R).
+    \phi(\pi_R') = \phi(\pi_R - \omega_D\epsilon) < \phi(\pi_R).
 \]
 Therefore:
 \[
     \phi(\pi_D') - \phi(\pi_R')
     > \phi(\pi_D) - \phi(\pi_R) > 0.
 \]
-Since $s_D s_R > 0$ is unchanged, we conclude:
+Since $\omega_D \omega_R > 0$ is unchanged, we conclude:
 \[
     \mathrm{Var}_i[\phi(\pi_i')]
-    = s_D s_R \bigl(\phi(\pi_D') - \phi(\pi_R')\bigr)^2
-    > s_D s_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2
+    = \omega_D \omega_R \bigl(\phi(\pi_D') - \phi(\pi_R')\bigr)^2
+    > \omega_D \omega_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2
     = \mathrm{Var}_i[\phi(\pi_i)]. \qquad \square
 \]
 
@@ -1138,7 +1134,7 @@ trust parameter $\tau_i \in [0,1]$, so that posterior beliefs are
 $m(\tau_i) = \sigma(a(\pi) + \tau_i \ell)$. For two groups $D, R$ with trust
 levels $\tau_D, \tau_R$:
 \[
-    \mathrm{Var}(m(\tau_g)) = s_D s_R \bigl[\sigma(a(\pi)+\tau_D\ell)
+    \mathrm{Var}(m(\tau_g)) = \omega_D \omega_R \bigl[\sigma(a(\pi)+\tau_D\ell)
     - \sigma(a(\pi)+\tau_R\ell)\bigr]^2.
 \]
 Any increase in $|\tau_D - \tau_R|$ strictly increases $\mathrm{Var}(m(\tau_g))$.
@@ -1159,7 +1155,7 @@ trust but differ in perceived signal precision, scaling their effective
 log-likelihood ratio by $\kappa_i > 0$: posterior beliefs are
 $q(\kappa_i) = \sigma(a(\pi) + \kappa_i \ell)$. For two groups $D, R$:
 \[
-    \mathrm{Var}(q(\kappa_g)) = s_D s_R \bigl[\sigma(a(\pi)+\kappa_D\ell)
+    \mathrm{Var}(q(\kappa_g)) = \omega_D \omega_R \bigl[\sigma(a(\pi)+\kappa_D\ell)
     - \sigma(a(\pi)+\kappa_R\ell)\bigr]^2.
 \]
 Any increase in $|\kappa_D - \kappa_R|$ strictly increases $\mathrm{Var}(q(\kappa_g))$.
@@ -1180,7 +1176,7 @@ for all groups, $\sigma(X_g) = \phi(\pi_g)$, the Bayesian posterior of
 Equation~\eqref{eq:bayes} in the main text, so Propositions~\ref{prop:trust}--\ref{prop:unified}
 nest the main model as a special case. Then:
 \[
-    \mathrm{Var}(\mu_g) = s_D s_R \bigl[\sigma(X_D) - \sigma(X_R)\bigr]^2,
+    \mathrm{Var}(\mu_g) = \omega_D \omega_R \bigl[\sigma(X_D) - \sigma(X_R)\bigr]^2,
 \]
 and any increase in $|X_D - X_R|$ strictly increases $\mathrm{Var}(\mu_g)$.
 In particular, if polarization widens the cross-group gap in any one of the
