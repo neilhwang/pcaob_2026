@@ -346,6 +346,31 @@ the two parties split the vote equally. We aggregate to the state level weightin
 by each district's share of total state two-party votes, forward-fill to annual
 frequency, and standardize to mean zero and unit variance.
 
+As a second proxy for polarization, we construct a measure of elite ideological
+distance from DW-NOMINATE first-dimension scores \citep{poole1997,poole2007}.
+DW-NOMINATE scores capture legislators' revealed ideological positions from
+roll-call voting records, rather than electoral outcomes, and thus measure
+\emph{ideological} polarization directly. For each state $s$ and Congress $c$,
+we compute:
+\begin{equation}
+    \label{eq:dw}
+    P^{DW}_{s,c} = \overline{\text{dim1}}_{R,s,c}
+    - \overline{\text{dim1}}_{D,s,c},
+\end{equation}
+where $\overline{\text{dim1}}_{R,s,c}$ and $\overline{\text{dim1}}_{D,s,c}$
+are the mean first-dimension DW-NOMINATE scores among House Republicans and
+Democrats from state $s$ in Congress $c$, respectively. Because the first
+dimension captures the liberal--conservative continuum, $P^{DW}_{s,c}$ is
+always positive and increasing in ideological distance between the parties.
+We expand each Congress's scores to the two calendar years it covers and
+standardize to mean zero and unit variance. The national-level counterpart,
+$P^{DW\text{-nat}}_{c}$, computes the same gap across all House members
+nationally and varies only over time, providing a pure time-series check.
+The ER and DW-NOMINATE measures are alternative proxies: the ER measure
+captures electoral competitiveness, while DW-NOMINATE captures ideological
+distance. If both predict the same investor response, the evidence for a
+polarization mechanism is substantially stronger.
+
 \subsection{Empirical Specification}
 
 The unit of observation is an auditor change event $i$. We estimate:
@@ -413,9 +438,17 @@ Hypothesis~\ref{h3}.]
 
 \subsection{Robustness}
 
-[PLACEHOLDER: Table 5 — alternative polarization measures ($\alpha = 0.8$,
-$\alpha = 1.2$), alternative event windows ($[-2,+2]$), dropping single-district
-states.]
+[PLACEHOLDER: Table 5 — robustness tests with seven columns. Columns (1)--(3)
+vary the ER sensitivity parameter ($\alpha = 1, 0.8, 1.2$). Columns (4)--(5)
+replace the ER measure with DW-NOMINATE: column (4) uses the state-level
+cross-party ideological gap $P^{DW}_{s,t}$; column (5) uses the national
+DW-NOMINATE gap $P^{DW\text{-nat}}_t$. Column (6) augments the baseline
+specification with state fixed effects (absorbing time-invariant cross-state
+differences in investor base and auditor market structure). Column (7) repeats
+the baseline with standard errors clustered at the state level rather than
+the firm level, since the polarization measure varies at the state$\times$year
+level. Consistency of the coefficient across all seven columns addresses concerns
+about functional form, measure construction, and clustering choice.]
 
 % ── 7. Conclusion ─────────────────────────────────────────────────────────────
 

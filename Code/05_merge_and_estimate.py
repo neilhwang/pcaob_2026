@@ -4,9 +4,10 @@
 Merge all processed datasets and run the main regressions.
 
 INPUTS:
-    Data/Processed/crsp_event_window.parquet      (from 03_build_crsp_sample.py)
-    Data/Processed/polarization_state_year.parquet (from 02_build_polarization.py)
-    Data/Processed/compustat_controls.parquet      (from 04_build_compustat_controls.py)
+    Data/Processed/crsp_event_window.parquet        (from 03_build_crsp_sample.py)
+    Data/Processed/polarization_state_year.parquet  (from 02_build_polarization.py)
+    Data/Processed/compustat_controls.parquet       (from 04_build_compustat_controls.py)
+    Data/Processed/dw_nominate_polarization.parquet (from 06_build_dw_nominate.py)
 
 OUTPUTS:
     Output/Tables/tab01_summary_stats.tex
@@ -49,6 +50,7 @@ OUT_TABS.mkdir(parents=True, exist_ok=True)
 CRSP_FILE = PROC / "crsp_event_window.parquet"
 POL_FILE  = PROC / "polarization_state_year.parquet"
 COMP_FILE = PROC / "compustat_controls.parquet"
+DW_FILE   = PROC / "dw_nominate_polarization.parquet"
 SAMPLE_FILE = PROC / "analysis_sample.parquet"
 
 logging.basicConfig(
@@ -69,10 +71,12 @@ def load_and_merge() -> pd.DataFrame:
     crsp = pd.read_parquet(CRSP_FILE)
     pol  = pd.read_parquet(POL_FILE)
     comp = pd.read_parquet(COMP_FILE)
+    dw   = pd.read_parquet(DW_FILE)
 
     log.info("CRSP events: %d", len(crsp))
     log.info("Polarization panel: %d rows", len(pol))
     log.info("Compustat controls: %d rows", len(comp))
+    log.info("DW-NOMINATE panel: %d rows", len(dw))
 
     # Derive event year from event date
     crsp["event_year"] = pd.to_datetime(crsp["event_date"]).dt.year
@@ -95,6 +99,18 @@ def load_and_merge() -> pd.DataFrame:
     crsp = crsp.merge(pol_merge, on=["event_year", "state"], how="left")
     log.info("After polarization merge: %d rows, %d with pol measure",
              len(crsp), crsp["pol_er_alpha10"].notna().sum())
+
+    # ── Merge DW-NOMINATE ─────────────────────────────────────────────────────
+    # dw_cross_party_gap: state-level R-D ideological gap (alternative pol proxy)
+    # dw_national_gap:    national-level time-series (same for all states/year)
+    # state_abbr in DW file → renamed to state to match merge key convention
+    dw_merge = dw[["year", "state_abbr", "dw_cross_party_gap",
+                    "dw_national_gap"]].rename(
+        columns={"year": "event_year", "state_abbr": "state"}
+    )
+    crsp = crsp.merge(dw_merge, on=["event_year", "state"], how="left")
+    log.info("After DW-NOMINATE merge: %d rows, %d with dw_cross_party_gap",
+             len(crsp), crsp["dw_cross_party_gap"].notna().sum())
 
     # ── Merge Compustat controls ───────────────────────────────────────────────
     # Match to fiscal year ending in the calendar year prior to the event
@@ -141,6 +157,7 @@ def load_and_merge() -> pd.DataFrame:
     crsp["sic2_str"]  = crsp["sic2"].fillna(-1).astype(int).astype(str)
     crsp["year_str"]  = crsp["event_year"].astype(str)
     crsp["gvkey_str"] = crsp["gvkey"].astype(str)
+    crsp["state_str"] = crsp["state"].fillna("MISSING").astype(str)
 
     log.info("Analysis sample: %d events", len(crsp))
     return crsp
@@ -427,10 +444,11 @@ def run_ambiguity(df: pd.DataFrame) -> None:
 # ── Step 7: Robustness (Table 5) ──────────────────────────────────────────────
 
 def run_robustness(df: pd.DataFrame) -> None:
-    ctrl = " + ".join(CONTROLS)
-    fe   = "C(year_str) + C(sic2_str)"
+    ctrl  = " + ".join(CONTROLS)
+    fe    = "C(year_str) + C(sic2_str)"
+    fe_st = "C(year_str) + C(sic2_str) + C(state_str)"
 
-    # pol_std_a08 and pol_std_a12 are already standardized in main() before this runs.
+    # All polarization columns are already standardized in main() before this runs.
 
     specs = {
         # (1) Baseline (repeat for comparison)
@@ -439,25 +457,44 @@ def run_robustness(df: pd.DataFrame) -> None:
         "m2": run_ols(f"absCar ~ pol_std_a08 + {ctrl} + {fe}", df),
         # (3) α = 1.2
         "m3": run_ols(f"absCar ~ pol_std_a12 + {ctrl} + {fe}", df),
-        # (4) Wider event window [-2,+2]
-        "m4": run_ols(f"absCar_wide ~ pol_std + {ctrl} + {fe}",
-                      df.assign(absCar_wide=df["car_m2p2"].abs()))
-              if "car_m2p2" in df.columns else
-              run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", df),
+        # (4) DW-NOMINATE: state-level cross-party gap (alternative pol proxy)
+        "m4": run_ols(f"absCar ~ dw_std + {ctrl} + {fe}", df),
+        # (5) DW-NOMINATE: national gap (time-series pol variation)
+        "m5": run_ols(f"absCar ~ dw_national_std + {ctrl} + {fe}", df),
+        # (6) Add state FEs to baseline spec (absorbs cross-state confounders)
+        "m6": run_ols(f"absCar ~ pol_std + {ctrl} + {fe_st}", df),
+        # (7) State-level clustered SEs (pol measure varies at state x year level)
+        "m7": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", df,
+                      cluster_var="state_str"),
     }
 
+    for k, m in specs.items():
+        pol_param = next((p for p in ["pol_std", "pol_std_a08", "pol_std_a12",
+                                       "dw_std", "dw_national_std"]
+                          if p in m.params), None)
+        if pol_param:
+            log.info("Robustness %s: %s coef=%.4f p=%.3f",
+                     k, pol_param, m.params[pol_param], m.pvalues[pol_param])
+
     coef_map = {
-        "pol_std":     r"Polarization (baseline, $\alpha=1$)",
-        "pol_std_a08": r"Polarization ($\alpha=0.8$)",
-        "pol_std_a12": r"Polarization ($\alpha=1.2$)",
+        "pol_std":          r"ER Polarization (baseline, $\alpha=1$)",
+        "pol_std_a08":      r"ER Polarization ($\alpha=0.8$)",
+        "pol_std_a12":      r"ER Polarization ($\alpha=1.2$)",
+        "dw_std":           r"DW-NOMINATE (state gap)",
+        "dw_national_std":  r"DW-NOMINATE (national gap)",
     }
-    dep_labels = [r"$|CAR|$\newline Baseline",
+    dep_labels = [r"$|CAR|$\newline ER Base",
                   r"$|CAR|$\newline $\alpha=0.8$",
                   r"$|CAR|$\newline $\alpha=1.2$",
-                  r"$|CAR(-2,+2)|$\newline Baseline"]
+                  r"$|CAR|$\newline DW State",
+                  r"$|CAR|$\newline DW Natl",
+                  r"$|CAR|$\newline +State FE",
+                  r"$|CAR|$\newline State Clust"]
     extra_rows = {
-        "Year + Industry FE": ["Yes"] * 4,
-        "Controls":           ["Yes"] * 4,
+        "Year + Industry FE": ["Yes"] * 7,
+        "State FE":           ["No", "No", "No", "No", "No", "Yes", "No"],
+        "Cluster":            ["Firm"] * 6 + ["State"],
+        "Controls":           ["Yes"] * 7,
     }
     reg_table(
         list(specs.values()), dep_labels, coef_map,
@@ -474,7 +511,7 @@ def main() -> None:
     log.info("=== 05_merge_and_estimate.py  start ===")
 
     # Check inputs exist
-    for f in [CRSP_FILE, POL_FILE, COMP_FILE]:
+    for f in [CRSP_FILE, POL_FILE, COMP_FILE, DW_FILE]:
         if not f.exists():
             raise FileNotFoundError(
                 f"Missing input: {f}\n"
@@ -487,14 +524,19 @@ def main() -> None:
 
     # Standardize polarization measures on the final estimation sample (mean=0, sd=1).
     # Done after filtering so the coefficient is interpretable as a 1-SD effect.
-    for alpha_col, std_col in [
+    for raw_col, std_col in [
         ("pol_er_alpha10", "pol_std"),
         ("pol_er_alpha08", "pol_std_a08"),
         ("pol_er_alpha12", "pol_std_a12"),
+        ("dw_cross_party_gap", "dw_std"),
+        ("dw_national_gap",    "dw_national_std"),
     ]:
-        mu  = df[alpha_col].mean()
-        sig = df[alpha_col].std()
-        df[std_col] = (df[alpha_col] - mu) / sig
+        if raw_col in df.columns and df[raw_col].notna().sum() > 0:
+            mu  = df[raw_col].mean()
+            sig = df[raw_col].std()
+            df[std_col] = (df[raw_col] - mu) / sig
+        else:
+            df[std_col] = np.nan
 
     # Save analysis sample
     df.to_parquet(SAMPLE_FILE, index=False)

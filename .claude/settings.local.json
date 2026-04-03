@@ -11,7 +11,8 @@
       "Bash(python3 -c \":*)",
       "Bash(ls:*)",
       "Bash(grep -E \"\\\\.py$\")",
-      "Bash(grep -E \"\\\\.md$|\\\\.txt$\")"
+      "Bash(grep -E \"\\\\.md$|\\\\.txt$\")",
+      "Bash(tasklist)"
     ]
   }
 }
