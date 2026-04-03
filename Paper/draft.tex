@@ -6,7 +6,7 @@
 \usepackage{booktabs}
 \usepackage{hyperref}
 
-\title{Political Polarization and the Interpretation of Auditor Signals}
+\title{Political Polarization and Market Reactions to Auditor-Change Disclosures}
 \author{Neil Hwang\\
         \small Bronx Community College, CUNY}
 \date{\today}
@@ -394,7 +394,18 @@ returns. For congressional district $d$ in election year $e$:
 which simplifies to $s_{D} \cdot s_{R}$ when $\alpha=1$, maximized at 0.25 when
 the two parties split the vote equally. We aggregate to the state level weighting
 by each district's share of total state two-party votes, forward-fill to annual
-frequency, and standardize to mean zero and unit variance.
+frequency, and standardize to mean zero and unit variance.\footnote{Mehlhaff
+(2023) shows that, at $\alpha=1$, the Esteban-Ray index is nearly
+indistinguishable from the variance of the two-party vote distribution
+(cross-sample correlation $\approx 0.93$), and argues that standard polarization
+indices conflate inter-group heterogeneity with intra-group homogeneity. We
+acknowledge this limitation. Because our primary interest is the polarization
+\emph{mechanism} rather than the specific index, our main robustness tests
+exploit DW-NOMINATE ideological scores and ANES affective polarization
+(Section~\ref{sec:design}), which are constructed from entirely different data
+sources and do not share this limitation. Convergent evidence across all three
+measures would indicate that the findings are not an artifact of the
+Esteban-Ray parameterization.}
 
 As a second proxy for polarization, we construct a measure of elite ideological
 distance from DW-NOMINATE first-dimension scores \citep{poole1997,poole2007}.

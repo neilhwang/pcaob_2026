@@ -49,7 +49,7 @@ import pandas as pd
 # ── Configuration ──────────────────────────────────────────────────────────────
 ALPHA_BASELINE  = 1.0
 ALPHA_ROBUST    = [0.8, 1.2]   # robustness specifications
-RAW_FILE   = Path(__file__).resolve().parent.parent / "Data/Raw/mit_house_elections.tab"
+RAW_FILE   = Path(__file__).resolve().parent.parent / "Data/Raw/1976-2024-house.tab"
 OUT_FILE   = Path(__file__).resolve().parent.parent / "Data/Processed/polarization_state_year.parquet"
 
 logging.basicConfig(

@@ -1,0 +1,193 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\setstretch{1.2}
+
+\title{Five-Iteration Review Memo for \texttt{draft.tex}}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Overall diagnosis}
+I reviewed the draft in five passes focused on: (i) high-level logic and contribution, (ii) theory, propositions, and proofs, (iii) theory-to-empirics mapping, (iv) hypothesis structure and internal consistency, and (v) final proof, notation, and submission-readiness checks.
+
+The central conclusion is that the draft has a strong core idea, but the current version still has a \textbf{theory-to-empirics mismatch}: the formal model most cleanly supports \textbf{belief dispersion and abnormal trading volume}, while the paper's headline empirical claim leans heavily on \textbf{absolute cumulative abnormal returns}. That is the single most important issue to fix before polishing anything else.
+
+\section*{Iteration 1: high-level logic and contribution}
+
+\subsection*{What works}
+\begin{itemize}[leftmargin=1.5em]
+    \item The draft now has a clearer thesis than earlier versions: polarization affects the \emph{interpretation} of auditor disclosures, not the disclosures themselves.
+    \item Item 4.01 is a plausible setting because the disclosure is standardized, public, and often hard to interpret.
+    \item The distinction between ideological and affective polarization improves the conceptual framing.
+\end{itemize}
+
+\subsection*{Main logical gaps}
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.75em]
+    \item \textbf{The contribution still promises more than the data deliver.} The introduction and theory discuss both ideological and affective polarization, but the empirics only implement ideological proxies. That creates a framing gap.
+    \item \textbf{The paper sometimes slides between ``investors'' and ``the firm's political environment.''} The actual proxy is headquarters-state polarization, not investor-level polarization. So the paper is not directly measuring the political composition of the marginal trader.
+    \item \textbf{The draft sometimes treats Item 4.01 as uniquely ideal, when it is really just a good first setting.} That overstates the setting choice.
+\end{enumerate}
+
+\subsection*{Specific, actionable suggestions}
+\begin{itemize}[leftmargin=1.5em]
+    \item In the introduction, change the contribution claim from broad references to ``polarization'' to a narrower statement such as: \emph{``state-level ideological polarization as a proxy for the political environment in which auditor disclosures are interpreted.''}
+    \item Add one sentence early in the empirical-design section: \emph{``Because investor-level political identity is not directly observable in our setting, the empirical design uses the firm's headquarters-state political environment as a reduced-form proxy for the polarization of the investor and stakeholder context in which the disclosure is received.''}
+    \item In the introduction and conclusion, stop implying the paper already distinguishes ideological from affective polarization empirically. Instead say: \emph{``The current design tests the ideological-polarization channel directly and interprets affective polarization as an important conceptual extension for future work.''}
+\end{itemize}
+
+\section*{Iteration 2: theory, propositions, and proofs}
+
+\subsection*{What works}
+\begin{itemize}[leftmargin=1.5em]
+    \item Proposition 1 is valid as stated.
+    \item The proof of posterior-dispersion monotonicity is broadly fine.
+    \item The model is simple enough for an accounting audience.
+\end{itemize}
+
+\subsection*{Main theoretical problems}
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.75em]
+    \item \textbf{The theory proves dispersion, but not absolute CAR.} The model cleanly shows that polarization increases posterior disagreement and, through disagreement, supports an abnormal-volume prediction. But nothing in the current model shows that greater disagreement must increase absolute price reactions.
+    \item \textbf{The trading-volume equation is too strong.} A proportionality statement is stronger than needed and stronger than the formal setup justifies.
+    \item \textbf{The ambiguity section is underproved.} The text states that when the signal is less informative, the posterior is more sensitive to the prior, but this is not shown with a precise informativeness ordering.
+    \item \textbf{The model mixes three channels in prose, but only one in the formal setup.} The prose invokes heterogeneous priors, institutional trust, and perceived precision, while the formal model only contains heterogeneous priors.
+\end{enumerate}
+
+\subsection*{Specific, actionable suggestions}
+\begin{itemize}[leftmargin=1.5em]
+    \item Make \textbf{abnormal volume} the main theory prediction and demote \( |CAR| \) to a secondary empirical outcome unless a stronger price-formation mechanism is added.
+    \item Replace a statement of the form
+    \[
+    V \propto \mathrm{Var}_i[\phi(\pi_i)]
+    \]
+    with the weaker and more defensible claim
+    \[
+    V \text{ is increasing in } \mathrm{Var}_i[\phi(\pi_i)].
+    \]
+    \item Rewrite the main predictions along the following lines:
+    \begin{enumerate}[label=(\roman*), leftmargin=1.5em]
+        \item Polarization increases abnormal trading volume around auditor-change disclosures.
+        \item Polarization may increase absolute returns when disagreement interacts with demand imbalance, limits to arbitrage, or heterogeneous directional interpretations.
+        \item These effects are stronger for more ambiguous signals.
+    \end{enumerate}
+    \item Add a short lemma for ambiguity. For example, define informativeness using the likelihood ratio \(p_H/p_L\), and show that as the signal becomes less informative, \(\phi(\pi)\) converges toward \(\pi\), so posterior dispersion approaches prior dispersion instead of collapsing.
+    \item Add one explicit sentence clarifying the mapping between theory and prose: \emph{``The formal model operationalizes heterogeneity through priors; institutional trust and perceived precision should be interpreted as reduced-form sources of prior-like heterogeneity unless modeled explicitly.''}
+    \item If absolute CAR is to remain equally central, add an extra mechanism---for example short-sale constraints, asymmetric demand, or a noisy rational-expectations demand system. Without that, the theory does not fully carry the price result.
+\end{itemize}
+
+\section*{Iteration 3: theory-to-empirics mapping}
+
+\subsection*{What works}
+\begin{itemize}[leftmargin=1.5em]
+    \item The sample design is coherent.
+    \item The event-study setup is standard.
+    \item The polarization measures are implementable.
+\end{itemize}
+
+\subsection*{Main gaps}
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.75em]
+    \item \textbf{Investor-level theory, state-level proxy.} The model is about investor belief heterogeneity, but the empirical proxy is headquarters-state polarization. That needs to be acknowledged more clearly.
+    \item \textbf{The identification paragraph overclaims.} The text suggests within-state across-cycle identification, but the baseline equation does not appear to include state fixed effects.
+    \item \textbf{Clustering is too weak if only firm-level.} Since the key regressor varies at state\(\times\)year, clustering only at the firm level is optimistic.
+    \item \textbf{Annualizing election-year measures requires justification.} Forward-filling election-year measures to annual frequency is sensible, but the draft should explain and defend it.
+    \item \textbf{Some surrounding prose still sounds like a treatment/non-treatment panel.} The current sample is event-only, and the prose should consistently reflect that.
+\end{enumerate}
+
+\subsection*{Specific, actionable suggestions}
+\begin{itemize}[leftmargin=1.5em]
+    \item Add a short subsection titled \emph{Mapping the theory to the data}. Explain that investor heterogeneity is unobserved, the headquarters-state political environment is a reduced-form proxy, and the paper therefore identifies whether auditor disclosures are interpreted differently in more polarized political environments rather than whether any specific investor type trades more.
+    \item Change the identification discussion from ``within-state, across-cycle variation'' to something more accurate, such as: \emph{``cross-state variation in polarization and time variation across election cycles, with a stronger within-state interpretation obtained in specifications that add state fixed effects.''}
+    \item Make \textbf{state fixed effects} a core robustness check rather than a minor add-on.
+    \item Make \textbf{state-level clustering}, or two-way clustering by firm and state, central rather than relegated to robustness.
+    \item Add a sentence justifying annualization: \emph{``Because House-election polarization is observed in election years, we carry the measure forward until the next election on the assumption that the surrounding political environment evolves at the electoral-cycle frequency.''}
+    \item Consider renaming the main regressor throughout from ``investor polarization'' to ``state political polarization.''
+\end{itemize}
+
+\section*{Iteration 4: hypothesis structure and internal consistency}
+
+\subsection*{What works}
+\begin{itemize}[leftmargin=1.5em]
+    \item The hypotheses are readable.
+    \item The sections follow a standard accounting-paper structure.
+\end{itemize}
+
+\subsection*{Inconsistencies and redundancies}
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.75em]
+    \item \textbf{Hypothesis 2 and Hypothesis 3 are not fully aligned.} If one hypothesis says dismissals should have stronger effects because they are more negative and consequential, while another says more ambiguous signals should have stronger effects, there is a possible tension: some dismissals may be more clearly directional and therefore less ambiguous.
+    \item \textbf{The same triad is repeated too often.} The phrase ``heterogeneous priors, institutional trust, perceived signal precision'' appears repeatedly in very similar form.
+    \item \textbf{The same setting descriptors recur excessively.} Variants of ``standardized, public, institution-dependent'' recur too often.
+    \item \textbf{Certain phrases are reused in near-identical form.} For example, ``clean first setting'' appears repeatedly.
+    \item \textbf{Notation gets overloaded.} The same index notation is used for investors in theory and for firms or events in empirics.
+\end{enumerate}
+
+\subsection*{Specific, actionable suggestions}
+\begin{itemize}[leftmargin=1.5em]
+    \item Recast the dismissal hypothesis to avoid conflict with the ambiguity hypothesis. For example:
+    \begin{quote}
+    The effect of polarization is stronger for auditor dismissals if dismissals are more consequential and more likely to trigger heterogeneous directional interpretation.
+    \end{quote}
+    Or more simply, fold dismissals into the paper's broader ambiguity/salience framework instead of treating them as an entirely separate mechanism.
+    \item Introduce the three-channel phrase once in the introduction, then refer later to \emph{polarization-induced heterogeneity in interpretation} rather than repeating the full list.
+    \item Vary repeated language. For instance, alternate among ``gatekeeper-dependent,'' ``credibility-sensitive,'' and ``oversight-dependent'' instead of repeatedly using ``institution-dependent.''
+    \item Replace recurring uses of ``clean first setting'' with more precise language, such as \emph{tractable setting}, \emph{initial test bed}, or \emph{useful empirical setting}.
+    \item Use \(e\) for events in the empirical section, so that the empirical equation becomes something like
+    \[
+    Y_e = \alpha + \beta \, Pol_{s(e),t(e)} + \cdots,
+    \]
+    which cleanly separates event notation from investor notation in the theory.
+\end{itemize}
+
+\section*{Iteration 5: final pass on proofs, claims, and submission readiness}
+
+\subsection*{Proof check}
+\begin{itemize}[leftmargin=1.5em]
+    \item Proposition 1 appears correct.
+    \item The proof is directionally correct but terse.
+    \item A hidden issue is that the proposition is written for a simple two-group environment, while the prose occasionally sounds as if the result has been shown for a much richer multi-investor setting.
+\end{itemize}
+
+\subsection*{Claims that should be softened}
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.75em]
+    \item \textbf{``Differences in market reactions must arise from differences in interpretation rather than information access.''} This is too strong. Differential attention, liquidity, investor clientele, and media amplification can also matter.
+    \item \textbf{``The same disclosure generates systematically different reactions depending on the political composition of the firm's investor environment.''} The draft does not observe investor political composition directly.
+    \item \textbf{``The effectiveness of disclosure-based regulation therefore depends on the political and institutional context in which investors receive it.''} This may ultimately be true, but it is broader than the draft currently establishes.
+    \item \textbf{Body-text placeholders remain.} If the manuscript still contains placeholder results or placeholder tables in visible text, it is not yet circulation-ready.
+\end{enumerate}
+
+\subsection*{Specific, actionable suggestions}
+\begin{itemize}[leftmargin=1.5em]
+    \item Replace ``must arise'' with softer language such as: \emph{``are more likely to reflect differences in interpretation than differences in disclosure timing or format.''}
+    \item Replace ``firm's investor environment'' with \emph{``firm's surrounding political environment.''}
+    \item Narrow the policy claim to something like: \emph{``The findings suggest one limit to disclosure-based regulation in settings where disclosure interpretation depends heavily on trust in regulated gatekeepers.''}
+    \item Expand the proof section modestly by showing \(\phi'(\pi)>0\), \(\phi''(\pi)<0\) if relevant to the argument, and then giving the variance intuition more explicitly.
+    \item Add a sentence after the main proposition: \emph{``The proposition is stated for a two-group environment for tractability; the same intuition extends to richer distributions of priors under mean-preserving spreads.''}
+    \item Replace body-text placeholders with real prose, or move temporary markers into LaTeX comments so that the visible manuscript reads like a finished draft.
+\end{itemize}
+
+\section*{Priority-ranked revision plan}
+
+\subsection*{Top three priorities}
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=1.75em]
+    \item \textbf{Align the theory with the outcomes.} The current theory most strongly supports volume, not absolute CAR. Either re-theorize price effects or demote \(|CAR|\) from the main theoretical claim.
+    \item \textbf{Tighten the mapping from investor-level theory to state-level data.} Be explicit that the empirical design is a reduced-form political-environment design.
+    \item \textbf{Resolve the ambiguity/dismissal inconsistency.} Right now the dismissal and ambiguity hypotheses risk pulling in slightly different directions.
+\end{enumerate}
+
+\subsection*{Suggested order of execution}
+\begin{enumerate}[label=\textbf{Step \arabic*:}, leftmargin=1.9em]
+    \item Rewrite the abstract and introduction so that abnormal volume is the cleanest formal prediction.
+    \item Revise the theory section to separate: (i) the formal channel of heterogeneous priors and (ii) the broader interpretation involving trust and perceived precision.
+    \item Rewrite the hypotheses so that dismissals are either treated as a salience test or folded into the ambiguity framework.
+    \item Make state-level clustering and state-fixed-effects robustness central rather than peripheral.
+    \item Remove repeated phrases, standardize notation, and eliminate placeholders from the visible text.
+\end{enumerate}
+
+\section*{Bottom line}
+The draft is now much better positioned conceptually than earlier versions, but it still reads like a paper whose theory and empirics were improved on partially different margins. The paper can become substantially tighter and more publishable if it does three things: (i) states more clearly what the formal model actually proves, (ii) narrows claims that exceed the proxy structure in the data, and (iii) removes internal frictions between hypotheses, notation, and repeated framing language.
+
+\end{document}
