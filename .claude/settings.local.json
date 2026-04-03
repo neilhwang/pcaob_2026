@@ -14,7 +14,9 @@
       "Bash(grep -E \"\\\\.md$|\\\\.txt$\")",
       "Bash(tasklist)",
       "Bash(grep -oP '\\\\\\\\cite[tp]?\\\\{[^}]+\\\\}|\\\\\\\\citealp\\\\{[^}]+\\\\}' \"/c/Users/neilh/documents/pcaob_2026/Paper/draft.tex\")",
-      "Bash(grep -oE '\\\\\\\\cite[a-z]*\\\\{[^}]+\\\\}' \"/c/Users/neilh/documents/pcaob_2026/Paper/draft.tex\")"
+      "Bash(grep -oE '\\\\\\\\cite[a-z]*\\\\{[^}]+\\\\}' \"/c/Users/neilh/documents/pcaob_2026/Paper/draft.tex\")",
+      "WebFetch(domain:dataverse.harvard.edu)",
+      "Bash(curl -s -I \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/VOQCHQ\")"
     ]
   }
 }

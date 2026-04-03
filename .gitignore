@@ -39,3 +39,5 @@ Thumbs.db
 *.nav
 *.snm
 *.vrb
+
+Data/Raw/anes_timeseries_cdf_csv_20260205/anes_timeseries_cdf_csv_20260205.csv

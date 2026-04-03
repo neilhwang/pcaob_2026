@@ -421,6 +421,47 @@ captures electoral competitiveness, while DW-NOMINATE captures ideological
 distance. If both predict the same investor response, the evidence for a
 polarization mechanism is substantially stronger.
 
+\subsection{Supplementary Affective Polarization Measure}
+
+Both the ER and DW-NOMINATE measures capture ideological polarization. We
+supplement these with a national affective polarization series to assess
+whether the paper's mechanism is also present when polarization is measured
+through partisan animus rather than issue-position divergence. This is
+important for our institutional-trust channel: affective polarization maps
+more directly onto distrust of out-group institutions than does ideological
+distance \citep{druckmanlevy2021, mason2015}.
+
+We construct the affective polarization series from the ANES Time Series
+Cumulative Data File. In each survey year with available data (2000, 2004,
+2008, 2012, 2016, 2020, 2024), we compute:
+\begin{equation}
+    \label{eq:ap}
+    AP_t = \frac{1}{2}\left[
+        \overline{\Delta_D}_t + \overline{\Delta_R}_t
+    \right],
+\end{equation}
+where $\overline{\Delta_D}_t = \mathbb{E}_t[\text{Dem therm} - \text{Rep
+therm} \mid \text{Dem partisan}]$ and $\overline{\Delta_R}_t =
+\mathbb{E}_t[\text{Rep therm} - \text{Dem therm} \mid \text{Rep partisan}]$
+are the mean in-party minus out-party feeling thermometer differentials among
+partisan identifiers \citep{iyengar2012}. We linearly interpolate between
+survey years to produce an annual series.
+
+Because $AP_t$ is national, it is absorbed by year fixed effects when entered
+alone. We therefore identify its role through interaction with a
+time-invariant state-level \emph{exposure} variable: the long-run average
+absolute Republican presidential vote margin,
+$\text{Exposure}_s = \overline{|R\text{-share}_{s,t} - 0.5|}$, averaged
+over all presidential elections from 2000 to 2024. High-exposure states
+(e.g., Wyoming, Massachusetts) consistently vote lopsidedly; low-exposure
+states (e.g., Pennsylvania, Wisconsin) are genuine swing states. The
+identifying variation is thus $AP_t \times \text{Exposure}_s$: the
+differential response of firms in high-partisan-intensity states as national
+affective polarization rises over time. We present this as a supplementary
+validation in Table~\ref{tab:affective}, not as a coequal baseline
+specification, because the national AP series cannot be assigned to states
+without the exposure interaction.
+
 \subsection{Empirical Specification}
 
 The unit of observation is an auditor change event $i$. We estimate:
@@ -499,6 +540,21 @@ the baseline with standard errors clustered at the state level rather than
 the firm level, since the polarization measure varies at the state$\times$year
 level. Consistency of the coefficient across all seven columns addresses concerns
 about functional form, measure construction, and clustering choice.]
+
+\subsection{Supplementary Affective Polarization Test}
+
+[PLACEHOLDER: Table 6 — five columns. Column (1) repeats the baseline
+ideological-polarization result for comparison. Column (2) adds the
+$AP \times \text{Exposure}$ interaction; a positive coefficient indicates
+that the auditor-change reaction is amplified in high-partisan-intensity
+states when national affective polarization is elevated. Column (3) adds the
+ideological-polarization $\times$ ambiguity interaction. Column (4) is the
+full specification with both ideological and affective terms and their
+interactions with ambiguity. Column (5) repeats column (4) for abnormal
+trading volume. Table note should explain that $AP_t$ is the ANES
+feeling-thermometer differential (standardized) and $\text{Exposure}_s$
+is the state long-run presidential vote margin (standardized); $AP_t$ alone
+is absorbed by year fixed effects and does not appear as a main effect.]
 
 % ── 7. Conclusion ─────────────────────────────────────────────────────────────
 

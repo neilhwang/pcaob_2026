@@ -8,6 +8,8 @@ INPUTS:
     Data/Processed/polarization_state_year.parquet  (from 02_build_polarization.py)
     Data/Processed/compustat_controls.parquet       (from 04_build_compustat_controls.py)
     Data/Processed/dw_nominate_polarization.parquet (from 06_build_dw_nominate.py)
+    Data/Processed/state_partisan_exposure.parquet  (from 07_build_exposure.py)
+    Data/Processed/affective_polarization.parquet   (from 08_build_affective_polarization.py)
 
 OUTPUTS:
     Output/Tables/tab01_summary_stats.tex
@@ -15,6 +17,7 @@ OUTPUTS:
     Output/Tables/tab03_event_type.tex
     Output/Tables/tab04_ambiguity.tex
     Output/Tables/tab05_robustness.tex
+    Output/Tables/tab06_affective.tex
     Data/Processed/analysis_sample.parquet        (merged estimation sample)
 
 SPECIFICATION:
@@ -50,8 +53,10 @@ OUT_TABS.mkdir(parents=True, exist_ok=True)
 CRSP_FILE = PROC / "crsp_event_window.parquet"
 POL_FILE  = PROC / "polarization_state_year.parquet"
 COMP_FILE = PROC / "compustat_controls.parquet"
-DW_FILE   = PROC / "dw_nominate_polarization.parquet"
-SAMPLE_FILE = PROC / "analysis_sample.parquet"
+DW_FILE       = PROC / "dw_nominate_polarization.parquet"
+EXPOSURE_FILE = PROC / "state_partisan_exposure.parquet"
+AP_FILE       = PROC / "affective_polarization.parquet"
+SAMPLE_FILE   = PROC / "analysis_sample.parquet"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -68,15 +73,19 @@ CONTROLS = ["size", "leverage", "roa", "btm", "loss", "sales_growth"]
 
 def load_and_merge() -> pd.DataFrame:
     # Load
-    crsp = pd.read_parquet(CRSP_FILE)
-    pol  = pd.read_parquet(POL_FILE)
-    comp = pd.read_parquet(COMP_FILE)
-    dw   = pd.read_parquet(DW_FILE)
+    crsp     = pd.read_parquet(CRSP_FILE)
+    pol      = pd.read_parquet(POL_FILE)
+    comp     = pd.read_parquet(COMP_FILE)
+    dw       = pd.read_parquet(DW_FILE)
+    exposure = pd.read_parquet(EXPOSURE_FILE)
+    ap       = pd.read_parquet(AP_FILE)
 
     log.info("CRSP events: %d", len(crsp))
     log.info("Polarization panel: %d rows", len(pol))
     log.info("Compustat controls: %d rows", len(comp))
     log.info("DW-NOMINATE panel: %d rows", len(dw))
+    log.info("Partisan exposure: %d states", len(exposure))
+    log.info("Affective polarization: %d years", len(ap))
 
     # Derive event year from event date
     crsp["event_year"] = pd.to_datetime(crsp["event_date"]).dt.year
@@ -111,6 +120,27 @@ def load_and_merge() -> pd.DataFrame:
     crsp = crsp.merge(dw_merge, on=["event_year", "state"], how="left")
     log.info("After DW-NOMINATE merge: %d rows, %d with dw_cross_party_gap",
              len(crsp), crsp["dw_cross_party_gap"].notna().sum())
+
+    # ── Merge partisan exposure (time-invariant, merge on state) ─────────────
+    # exposure_pres = long-run avg |R_share - 0.5| from presidential elections.
+    # Identifies the affective polarization spec via AP_t × Exposure_s.
+    crsp = crsp.merge(
+        exposure[["state_abbr", "exposure_pres"]].rename(
+            columns={"state_abbr": "state"}
+        ),
+        on="state", how="left",
+    )
+    log.info("After exposure merge: %d with exposure_pres",
+             crsp["exposure_pres"].notna().sum())
+
+    # ── Merge national affective polarization (merge on event_year) ──────────
+    # ap_ft = ANES feeling thermometer differential, linearly interpolated.
+    # Absorbed by year FEs alone; enters only as AP × Exposure interaction.
+    crsp = crsp.merge(
+        ap.rename(columns={"year": "event_year"}),
+        on="event_year", how="left",
+    )
+    log.info("After AP merge: %d with ap_ft", crsp["ap_ft"].notna().sum())
 
     # ── Merge Compustat controls ───────────────────────────────────────────────
     # Match to fiscal year ending in the calendar year prior to the event
@@ -505,13 +535,113 @@ def run_robustness(df: pd.DataFrame) -> None:
     )
 
 
+# ── Step 8: Supplementary affective-polarization test (Table 6) ───────────────
+
+def run_affective_test(df: pd.DataFrame) -> None:
+    """
+    Supplementary validation test using national affective polarization (ANES
+    feeling thermometer differential) interacted with state partisan exposure
+    (long-run presidential vote margin).
+
+    Because ap_ft is national (same for all states in a year), it is absorbed
+    by year fixed effects when entered alone. Identification comes from the
+    differential response of firms in high-partisan-exposure states as national
+    affective polarization rises over time.
+
+    Specification (memo Eq. 3):
+        Y_e = α + β1·pol_std + β2·high_ambiguity + β3·pol_std×high_ambiguity
+            + β4·(AP×Exposure) + β5·(AP×Exposure×Ambiguity)
+            + ΓX + year FE + industry FE + ε
+
+    ap_ft and exposure_pres are standardized; their product is the interaction.
+    The triple interaction tests whether the affective mechanism is concentrated
+    in ambiguous signals, as predicted by the paper's mechanism.
+
+    Only events with non-missing AP and exposure data are used.
+    """
+    ctrl = " + ".join(CONTROLS)
+    fe   = "C(year_str) + C(sic2_str)"
+
+    # Restrict to events with affective data (should be nearly all, given
+    # the 2001-2024 AP series and the exposure covering all 50 states + DC)
+    ap_df = df.dropna(subset=["ap_x_exposure"]).copy()
+    log.info("Affective test sample: %d events", len(ap_df))
+
+    specs = {
+        # (1) Ideological pol only (baseline, for comparison)
+        "m1": run_ols(
+            f"absCar ~ pol_std + {ctrl} + {fe}", ap_df
+        ),
+        # (2) Add AP × Exposure (no ambiguity interaction)
+        "m2": run_ols(
+            f"absCar ~ pol_std + ap_x_exposure + {ctrl} + {fe}", ap_df
+        ),
+        # (3) Add ambiguity split for ideological pol
+        "m3": run_ols(
+            f"absCar ~ pol_std + high_ambiguity + pol_std:high_ambiguity"
+            f" + {ctrl} + {fe}", ap_df
+        ),
+        # (4) Full spec: ideological + affective + ambiguity interactions
+        "m4": run_ols(
+            f"absCar ~ pol_std + high_ambiguity + pol_std:high_ambiguity"
+            f" + ap_x_exposure + ap_x_exp_x_amb + {ctrl} + {fe}", ap_df
+        ),
+        # (5) AbVol outcome, full spec
+        "m5": run_ols(
+            f"abvol ~ pol_std + high_ambiguity + pol_std:high_ambiguity"
+            f" + ap_x_exposure + ap_x_exp_x_amb + {ctrl} + {fe}", ap_df
+        ),
+    }
+
+    for k, m in specs.items():
+        for param in ["pol_std", "ap_x_exposure", "ap_x_exp_x_amb"]:
+            if param in m.params:
+                log.info("Affective %s [%s]: coef=%.4f p=%.3f",
+                         k, param, m.params[param], m.pvalues[param])
+
+    coef_map = {
+        "pol_std":                   r"\textit{Ideo. Pol.} (ER)",
+        "high_ambiguity":            r"High Ambiguity",
+        "pol_std:high_ambiguity":    r"\textit{Ideo. Pol.} $\times$ Ambiguity",
+        "ap_x_exposure":             r"$AP \times Exposure$",
+        "ap_x_exp_x_amb":            r"$AP \times Exposure \times$ Ambiguity",
+    }
+    dep_labels = [
+        r"$|CAR|$\newline Ideo. only",
+        r"$|CAR|$\newline +Affective",
+        r"$|CAR|$\newline +Amb. $\times$ Ideo.",
+        r"$|CAR|$\newline Full",
+        r"AbVol\newline Full",
+    ]
+    extra_rows = {
+        "Year + Industry FE": ["Yes"] * 5,
+        "Controls":           ["Yes"] * 5,
+    }
+    reg_table(
+        list(specs.values()), dep_labels, coef_map,
+        caption=(
+            r"Supplementary Affective Polarization Test. "
+            r"$AP \times Exposure$ is the product of the standardized national "
+            r"ANES feeling-thermometer differential and the standardized "
+            r"state long-run presidential vote margin. "
+            r"Because the national AP series is absorbed by year fixed effects, "
+            r"identification comes from the differential response of firms in "
+            r"high-partisan-exposure states as national affective polarization "
+            r"rises over time."
+        ),
+        label="tab:affective",
+        out_path=OUT_TABS / "tab06_affective.tex",
+        extra_rows=extra_rows,
+    )
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
     log.info("=== 05_merge_and_estimate.py  start ===")
 
     # Check inputs exist
-    for f in [CRSP_FILE, POL_FILE, COMP_FILE, DW_FILE]:
+    for f in [CRSP_FILE, POL_FILE, COMP_FILE, DW_FILE, EXPOSURE_FILE, AP_FILE]:
         if not f.exists():
             raise FileNotFoundError(
                 f"Missing input: {f}\n"
@@ -525,11 +655,13 @@ def main() -> None:
     # Standardize polarization measures on the final estimation sample (mean=0, sd=1).
     # Done after filtering so the coefficient is interpretable as a 1-SD effect.
     for raw_col, std_col in [
-        ("pol_er_alpha10", "pol_std"),
-        ("pol_er_alpha08", "pol_std_a08"),
-        ("pol_er_alpha12", "pol_std_a12"),
-        ("dw_cross_party_gap", "dw_std"),
-        ("dw_national_gap",    "dw_national_std"),
+        ("pol_er_alpha10",    "pol_std"),
+        ("pol_er_alpha08",    "pol_std_a08"),
+        ("pol_er_alpha12",    "pol_std_a12"),
+        ("dw_cross_party_gap","dw_std"),
+        ("dw_national_gap",   "dw_national_std"),
+        ("exposure_pres",     "exposure_std"),
+        ("ap_ft",             "ap_std"),
     ]:
         if raw_col in df.columns and df[raw_col].notna().sum() > 0:
             mu  = df[raw_col].mean()
@@ -537,6 +669,14 @@ def main() -> None:
             df[std_col] = (df[raw_col] - mu) / sig
         else:
             df[std_col] = np.nan
+
+    # Affective polarization interaction term: AP_t × Exposure_s.
+    # This is the identifying variation — differential response of firms in
+    # high-exposure states as national affective polarization rises over time.
+    # ap_ft alone is absorbed by year FEs and therefore not entered separately.
+    df["ap_x_exposure"] = df["ap_std"] * df["exposure_std"]
+    df["ap_x_exp_x_amb"] = df["ap_x_exposure"] * df["high_ambiguity"]
+    log.info("AP x Exposure non-null: %d", df["ap_x_exposure"].notna().sum())
 
     # Save analysis sample
     df.to_parquet(SAMPLE_FILE, index=False)
@@ -568,6 +708,10 @@ def main() -> None:
     # Robustness — Table 5
     log.info("Running Table 5: Robustness")
     run_robustness(df)
+
+    # Affective polarization supplementary test — Table 6
+    log.info("Running Table 6: Affective polarization validation")
+    run_affective_test(df)
 
     log.info("=== done — tables written to %s ===", OUT_TABS)
 

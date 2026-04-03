@@ -1,0 +1,265 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{array}
+\usepackage{longtable}
+\setstretch{1.5}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+
+\title{Implementation Memo: A Feasible Affective Polarization Strategy for the Auditor-Change Paper}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Bottom line}
+
+The most feasible path is \textbf{not} to promise a full ideological-versus-affective horse race in the main specification. The paper should keep \textbf{ideological polarization} as the baseline state-year measure and add \textbf{one national affective-polarization series} as a supplementary validation test.
+
+This is the cleanest way to respond to the measurement concern without overpromising data that the current pipeline cannot support. It also respects the real constraint identified by the colleague response: affective polarization is not currently available as a clean state-year panel for the full 2001 onward auditor-change sample.
+
+\section{Why the colleague critique is right}
+
+The colleague's objections imply five practical design constraints.
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Affective polarization is a \textbf{data-availability problem}, not merely a conceptual measurement choice.
+    \item If the paper says it separately measures ideological and affective polarization, but actually runs only electoral or roll-call proxies, reviewers will see a mismatch between claims and data.
+    \item The sample consists only of \textbf{auditor-change events}, so specifications written as if \texttt{AuditSignal} varies within the estimation sample are misspecified for the current design.
+    \item Several ``future version'' ideas --- institutional trust interactions, CAM extensions, going-concern extensions, full affective horse races --- are not immediately implementable in the current build.
+    \item Recommendations must be grounded in what can be merged to the current event file now, not in variables that would require a standalone data-construction project.
+\end{enumerate}
+
+These points imply that the paper should use a more modest, more credible empirical architecture.
+
+\section{Recommended empirical strategy}
+
+\subsection{Main design}
+
+Use \textbf{ideological polarization} as the main state-year measure in the baseline auditor-change event study. This remains the core empirical design.
+
+Let $e$ index auditor-change events. Then the baseline regression should be written as:
+
+\begin{equation}
+Y_e = \alpha + \beta_1 Pol^{ideo}_{s,t} + \beta_2 Ambiguity_e + \beta_3\big(Pol^{ideo}_{s,t} \times Ambiguity_e\big) + \Gamma X_e + \varepsilon_e,
+\end{equation}
+
+where:
+\begin{itemize}[leftmargin=1.5em]
+    \item $Y_e$ is an event-level outcome such as abnormal trading volume or $|CAR|$,
+    \item $Pol^{ideo}_{s,t}$ is the main ideological polarization proxy for headquarters state $s$ and year $t$,
+    \item $Ambiguity_e$ is an event-level ambiguity measure,
+    \item $X_e$ is the vector of event-level controls.
+\end{itemize}
+
+This is the correct architecture for an event-only sample. It avoids the mistake of writing the model as if \texttt{AuditSignal = 0/1} varied within the estimation sample.
+
+\subsection{Affective extension}
+
+Add \textbf{one national affective-polarization series} as a supplementary validation test rather than as a coequal baseline measure.
+
+The idea is simple:
+\begin{itemize}[leftmargin=1.5em]
+    \item ideological polarization remains the main state-year proxy,
+    \item affective polarization is brought in at the national level,
+    \item identification comes through interactions with a cross-sectional exposure variable that varies across firms or states.
+\end{itemize}
+
+This makes the affective extension feasible without building an impossible 2001--2024 state-year affective panel.
+
+\section{Specific affective measure to use}
+
+The most implementable measure is the standard \textbf{feeling-thermometer differential} from ANES.
+
+Define:
+
+\begin{equation}
+AP^{FT}_t = \mathbb{E}_t\left[\text{In-party thermometer} - \text{Out-party thermometer}\right].
+\end{equation}
+
+This should be the \textbf{primary affective-polarization series}. It is transparent, canonical, and directly tied to the core definition of affective polarization as the gap between warmth toward one's own party and hostility or coldness toward the opposing party.
+
+A secondary variant may be added only if readily available in the same survey waves:
+
+\begin{equation}
+AP^{Trust}_t = \mathbb{E}_t\left[\text{Trust own party} - \text{Trust other party}\right].
+\end{equation}
+
+However, the memo recommendation is to start with the thermometer differential only.
+
+\subsection{Why this measure is preferable}
+
+The thermometer series has several advantages:
+\begin{enumerate}[leftmargin=1.5em]
+    \item It is standard in the affective-polarization literature.
+    \item It maps directly to the paper's broader mechanism of distrust, animus, and differential interpretation.
+    \item It is easier to explain to accounting referees than more exotic survey constructs.
+    \item It can be built relatively quickly from public ANES waves.
+\end{enumerate}
+
+The key limitation is that it is \textbf{national}, not state-year. That limitation is real and should be acknowledged explicitly in the draft.
+
+\section{How to merge affective polarization into the current design}
+
+Because $AP_t$ is national, it cannot identify anything in a regression with year fixed effects unless it is interacted with cross-sectional variation.
+
+The recommended specification is:
+
+\begin{equation}
+\begin{aligned}
+Y_e =\; &\alpha + \beta_1 Pol^{ideo}_{s,t} + \beta_2 Ambiguity_e + \beta_3\big(Pol^{ideo}_{s,t}\times Ambiguity_e\big) \\
+&+ \beta_4\big(AP_t \times Exposure_s\big) + \beta_5\big(AP_t \times Exposure_s \times Ambiguity_e\big) \\
+&+ \Gamma X_e + \delta_t + \varepsilon_e,
+\end{aligned}
+\end{equation}
+
+where:
+\begin{itemize}[leftmargin=1.5em]
+    \item $AP_t$ is the interpolated national affective-polarization series,
+    \item $Exposure_s$ is a cross-sectional measure of partisan salience or sorting,
+    \item $\delta_t$ are year fixed effects.
+\end{itemize}
+
+Because $AP_t$ alone is absorbed by year fixed effects, the identifying variation comes from $AP_t \times Exposure_s$ and its interaction with ambiguity.
+
+\section{What should count as the exposure variable}
+
+The exposure variable should be something already feasible with the existing data pipeline or something easy to construct from public political data.
+
+\subsection{Preferred options}
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item \textbf{Long-run partisan intensity of the headquarters state.}
+    
+    A simple version is average absolute presidential vote margin over a fixed pre-period. Another is average absolute distance of the Republican vote share from 50\%.
+
+    \item \textbf{A time-invariant red/blue intensity proxy.}
+    
+    This is less elegant but easy to explain and easy to merge.
+
+    \item \textbf{The existing ideological-polarization proxy itself, treated as an exposure shifter.}
+    
+    This is not ideal conceptually, but it is workable for a first pass.
+\end{enumerate}
+
+\subsection{Interpretation}
+
+The logic is:
+\begin{itemize}[leftmargin=1.5em]
+    \item national affective polarization captures the overall social and emotional temperature of partisan conflict,
+    \item exposure captures where partisan identity is more salient,
+    \item ambiguity captures where interpretive differences should matter most.
+\end{itemize}
+
+That is a realistic way to connect affective polarization to the event sample without pretending to observe local affective polarization directly.
+
+\section{How to assign the affective series to calendar years}
+
+Do \textbf{not} pretend that annual affective polarization is directly observed. Instead, use election-cycle interpolation.
+
+Recommended rule:
+\begin{enumerate}[leftmargin=1.5em]
+    \item Compute $AP^{FT}$ in each ANES survey year.
+    \item Linearly interpolate between adjacent survey years.
+    \item Assign each event year the interpolated value.
+\end{enumerate}
+
+For example:
+\begin{itemize}[leftmargin=1.5em]
+    \item 2001--2003 are interpolated between the 2000 and 2004 ANES values,
+    \item 2005--2007 are interpolated between 2004 and 2008,
+    \item and so forth.
+\end{itemize}
+
+This is not perfect, but it is transparent, defensible, and implementable.
+
+\section{What the paper should and should not claim}
+
+\subsection{What the paper \emph{should} claim}
+
+A credible statement is:
+
+\begin{quote}
+We use state-year ideological polarization as the main empirical proxy, and supplement it with a national affective-polarization series based on partisan warmth/coldness from survey data to assess whether the paper's mechanism is stronger in periods of heightened social polarization.
+\end{quote}
+
+\subsection{What the paper should \emph{not} claim}
+
+Avoid saying:
+\begin{quote}
+We separately measure ideological and affective polarization at the state-year level.
+\end{quote}
+
+That claim would overstate what the current data can support.
+
+\section{How this solves the conceptual problem without overpromising}
+
+This strategy allows the paper to keep the useful conceptual distinction between two types of polarization:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item \textbf{Ideological polarization}: issue or policy distance, captured by electoral or roll-call based measures.
+    \item \textbf{Affective polarization}: warmth toward the in-party versus animus or distrust toward the out-party, captured here with a national survey series.
+\end{enumerate}
+
+But crucially, the paper does \textbf{not} promise a full empirical horse race between equal-quality state-year measures of each type. Instead, it says:
+\begin{itemize}[leftmargin=1.5em]
+    \item ideological polarization is the main measure available at the state-year level,
+    \item affective polarization is brought in through a national validation design,
+    \item the affective exercise is supplementary rather than foundational.
+\end{itemize}
+
+That is a stronger and more honest empirical posture.
+
+\section{Why this helps the paper theoretically}
+
+This design also helps with the mechanism problem. The paper no longer needs to rely exclusively on \emph{heterogeneous prior beliefs}. Instead, the empirical architecture supports a broader claim:
+
+\begin{quote}
+Polarization increases heterogeneity in the interpretation of auditor-originated disclosures through differences in priors, trust in institutions, and the perceived informativeness of the signal.
+\end{quote}
+
+The ideological proxy captures one dimension of political divergence. The national affective series helps test whether disagreement is stronger when the broader political climate is more emotionally charged and identity-salient.
+
+\section{Optional robustness for a later stage}
+
+If time permits after the main draft is stabilized, the best next-step robustness is:
+\begin{itemize}[leftmargin=1.5em]
+    \item use \textbf{CCES state-level feeling thermometers},
+    \item restrict the sample to 2006 onward,
+    \item present it strictly as a post-2006 robustness test.
+\end{itemize}
+
+But this should not be the first build. It is a later-stage extension, not a prerequisite for the 2026 submission path.
+
+\section{Immediate drafting changes recommended}
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Rewrite the measurement section so ideological polarization is the baseline proxy and affective polarization is described as a supplementary national validation series.
+    \item Replace any event-panel equation written with an \texttt{AuditSignal} treatment dummy inside the event-only sample.
+    \item Add one short paragraph explicitly acknowledging that affective polarization is not observed at the state-year level for the full sample period.
+    \item Add one subsection labeled something like \textit{Supplementary affective-polarization test} and describe the ANES thermometer construction and interpolation procedure.
+    \item Remove any promise of a full ideological-versus-affective horse race unless and until the data are actually built.
+\end{enumerate}
+
+\section{Final recommendation}
+
+The best implementable solution is therefore:
+\begin{enumerate}[leftmargin=1.5em]
+    \item keep \textbf{ideological polarization} as the main state-year measure,
+    \item build \textbf{one national ANES affective-polarization series} using the feeling-thermometer differential,
+    \item assign it to event years by interpolation,
+    \item identify its role through interaction with a cross-sectional exposure variable and event ambiguity,
+    \item present it as a \textbf{supplementary validation}, not as a coequal baseline horse race.
+\end{enumerate}
+
+This is the cleanest way to incorporate Druckman-Levendusky style affective polarization into the current paper without creating promises the data cannot keep.
+
+\end{document}
