@@ -81,8 +81,10 @@ def load_and_merge() -> pd.DataFrame:
     # Need HQ state — pull from Compustat (comp has state from comp.company)
     # Use the most recent state observation per gvkey
     state_map = (
-        comp[["gvkey", "state"]].dropna()
+        comp[["gvkey", "fyear", "state"]].dropna(subset=["state"])
+        .sort_values(["gvkey", "fyear"])          # ensure most-recent fyear is last
         .drop_duplicates(subset="gvkey", keep="last")
+        .drop(columns="fyear")
     )
     crsp = crsp.merge(state_map, on="gvkey", how="left")
 

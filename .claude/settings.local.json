@@ -8,7 +8,8 @@
       "Bash(pip install:*)",
       "Bash(mv final_submission_draft.tex submission_ready_draft.tex full_rast_draft.tex theory_section_upgrade.tex introduction_draft.tex hypotheses_draft.tex empirical_design_draft.tex theory_draft.tex _Archive/)",
       "Bash(mv final_refs.bib full_references.bib submission_references.bib _Archive/)",
-      "Bash(python3 -c \":*)"
+      "Bash(python3 -c \":*)",
+      "Bash(ls:*)"
     ]
   }
 }

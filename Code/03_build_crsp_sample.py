@@ -256,9 +256,9 @@ def trading_day_offset(event_date: pd.Timestamp,
     Returns None if out of range.
     """
     idx_arr = trading_days.searchsorted(event_date)
-    # If event_date is not itself a trading day, use the next trading day
-    if idx_arr < len(trading_days) and trading_days.iloc[idx_arr] != event_date:
-        idx_arr = idx_arr  # event date falls on weekend/holiday — use next day
+    # searchsorted returns the insertion point; if event_date is not a trading
+    # day (weekend/holiday), idx_arr already points to the next trading day.
+    # No adjustment needed — the offset is applied from that point.
     target_idx = idx_arr + offset
     if target_idx < 0 or target_idx >= len(trading_days):
         return None

@@ -192,12 +192,15 @@ def build_efts_candidate_set() -> set[str]:
 def fetch_quarter_index(year: int, quarter: int) -> pd.DataFrame | None:
     """
     Download one EDGAR quarterly index file and return 8-K rows.
-    The company.idx format is fixed-width:
-      0–61:  Company Name
-      62–73: Form Type
-      74–85: CIK
-      86–97: Date Filed
-      98+:   Filename
+
+    The company.idx is nominally fixed-width (62 / 12 / 12 / 12 / rest) but
+    the padding varies slightly across years.  The only robust approach is:
+      - Form type:   line[62:74].strip()  (stable; always 8-K or 8-K/A)
+      - CIK:         line[74:86].strip()  (stable)
+      - Date:        regex search for YYYY-MM-DD in line[86:]
+      - Filename:    regex search for edgar/data/... in line[86:]
+      - Company name: line[0:62].strip()
+    This avoids the off-by-a-few-chars date truncation seen in earlier runs.
     """
     url = (
         f"https://www.sec.gov/Archives/edgar/full-index/"
@@ -207,6 +210,9 @@ def fetch_quarter_index(year: int, quarter: int) -> pd.DataFrame | None:
     if resp is None:
         return None
 
+    date_pat     = re.compile(r"(\d{4}-\d{2}-\d{2})")
+    filename_pat = re.compile(r"(edgar/data/\S+)")
+
     rows = []
     for line in resp.text.splitlines():
         if len(line) < 100:
@@ -214,12 +220,15 @@ def fetch_quarter_index(year: int, quarter: int) -> pd.DataFrame | None:
         form_type = line[62:74].strip()
         if form_type not in ("8-K", "8-K/A"):
             continue
+        tail = line[86:]
+        date_m  = date_pat.search(tail)
+        fname_m = filename_pat.search(tail)
         rows.append({
             "company_name": line[0:62].strip(),
             "form_type":    form_type,
             "cik":          line[74:86].strip(),
-            "date_filed":   line[86:98].strip(),
-            "filename":     line[98:].strip(),
+            "date_filed":   date_m.group(1)  if date_m  else "",
+            "filename":     fname_m.group(1) if fname_m else "",
         })
 
     return pd.DataFrame(rows) if rows else None
@@ -289,25 +298,37 @@ def intersect_with_index(
 def build_filing_url(row: pd.Series) -> str:
     """
     Construct the full-submission text URL for a filing.
-    edgarParser (parse_8K.py) expects the full submission .txt file, which
-    contains the COMPANY CONFORMED NAME / CENTRAL INDEX KEY headers it parses,
-    followed by the concatenated 8-K document text.
-    URL format: https://www.sec.gov/Archives/edgar/data/{cik}/{acc_nodash}.txt
+    edgarParser (parse_8K.py) expects the full submission .txt file.
+    EDGAR stores it at: .../edgar/data/{cik}/{acc-with-dashes}.txt
+    The acc_nodash (18 digits) must be converted back to dashed format
+    (XXXXXXXXXX-YY-ZZZZZZ) for the URL to resolve correctly.
     """
     cik    = row["cik"].lstrip("0")
     acc_nd = row["acc_nodash"]
-    return f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc_nd}.txt"
+    # Reconstruct dashed accession: XXXXXXXXXX-YY-ZZZZZZ
+    acc_dashed = f"{acc_nd[:10]}-{acc_nd[10:12]}-{acc_nd[12:]}"
+    return f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc_dashed}.txt"
 
 
 def extract_item401_row(filing_df: pd.DataFrame) -> pd.Series | None:
     """
     Given a DataFrame returned by parse_8k_filing(), return the Item 4.01 row,
     or None if not found.
+
+    Matches both:
+      - "Item 4.01" (post-Dec-2004 format, new Form 8-K rules)
+      - "Item 4"    (pre-2004 format; old Form 8-K used Item 4 for auditor changes)
+    Both patterns refer to auditor change disclosures across our 2001-2023 sample.
     """
     if filing_df is None or filing_df.empty:
         return None
+    # Match "Item 4.01" (new) OR "Item 4" / "Item 4." (old pre-2004).
+    # Negative lookahead (?!\.\d) prevents false matches on "Item 4.02"
+    # (Departure of Directors) and other Item 4.XX sub-items: after consuming
+    # "Item 4" (with empty optional .01), the lookahead fails if the next two
+    # chars are "." followed by a digit — i.e., a different sub-item number.
     mask = filing_df["item"].str.contains(
-        r"4\.01", flags=re.IGNORECASE, na=False
+        r"Item\s+4(?:\.01)?(?!\.\d)", flags=re.IGNORECASE, na=False
     )
     if not mask.any():
         return None
