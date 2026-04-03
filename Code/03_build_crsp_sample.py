@@ -437,13 +437,16 @@ def main() -> None:
     trading_days = get_trading_days(dsf)
     log.info("Computing CARs for %d events ...", len(events_linked))
 
+    # Pre-group DSF by permno so each event lookup is O(1) rather than scanning
+    # the full DSF DataFrame (millions of rows) on every iteration.
+    dsf_by_permno = {int(p): grp.copy() for p, grp in dsf.groupby("permno")}
+
     results = []
     for _, ev_row in events_linked.iterrows():
         permno     = int(ev_row["permno"])
         event_date = ev_row["date_filed"]
 
-        # Subset CRSP to this firm only
-        firm_data = dsf[dsf["permno"] == permno].copy()
+        firm_data = dsf_by_permno.get(permno, pd.DataFrame())
 
         result = compute_car_one_event(
             permno, event_date, firm_data, mkt, trading_days

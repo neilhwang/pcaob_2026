@@ -133,7 +133,6 @@ def fetch_efts_year(year: int) -> list[str]:
     end_dt   = f"{year}-12-31"
     accessions = []
     from_idx   = 0
-    page_size  = 200
 
     first_call = True
     while True:
@@ -527,6 +526,9 @@ def main() -> None:
     clean.to_parquet(OUT_FILE, index=False)
     log.info("Event file written: %s", OUT_FILE)
     log.info("Rows: %d", len(clean))
+    if len(clean) == 0:
+        log.error("Zero events with parse_status=ok. Check EFTS intersection and parser.")
+        return
     log.info(
         "Date range: %s — %s",
         clean["date_filed"].min().date(),

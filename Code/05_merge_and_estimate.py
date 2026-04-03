@@ -37,7 +37,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
-from scipy import stats
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -61,7 +60,6 @@ log = logging.getLogger(__name__)
 
 # ── Controls and fixed effects used throughout ────────────────────────────────
 CONTROLS = ["size", "leverage", "roa", "btm", "loss", "sales_growth"]
-DEPVARS  = {"absCar": "|CAR(-1,+1)|", "abvol": "Abn. Volume"}
 
 
 # ── Step 1: Load and merge ────────────────────────────────────────────────────
@@ -149,7 +147,9 @@ def load_and_merge() -> pd.DataFrame:
 def apply_sample_filters(df: pd.DataFrame) -> pd.DataFrame:
     """Drop observations missing key variables for the main regression."""
     n0 = len(df)
-    df = df.dropna(subset=["absCar", "abvol", "pol_std", "sic2"] + CONTROLS)
+    # Filter on pol_er_alpha10 (the raw measure), not pol_std — pol_std is
+    # created in main() after this function returns (so it doesn't exist here yet).
+    df = df.dropna(subset=["absCar", "abvol", "pol_er_alpha10", "sic2"] + CONTROLS)
     log.info("After dropping missing: %d rows (dropped %d)", len(df), n0 - len(df))
     return df.reset_index(drop=True)
 
@@ -367,8 +367,10 @@ def run_event_type(df: pd.DataFrame) -> None:
                  m.params["pol_std"], m.pvalues["pol_std"])
 
     coef_map = {"pol_std": r"\textit{Polarization}"}
+    # "Resignations" subsample is df[dismissal==0], which includes both
+    # resignations and unclassified events; label accurately as Non-dismissals.
     dep_labels = [r"$|CAR|$\newline Dismissals",
-                  r"$|CAR|$\newline Resignations",
+                  r"$|CAR|$\newline Non-dismissals",
                   r"$|CAR|$\newline Big4$\to$Non",
                   r"$|CAR|$\newline Non$\to$Big4"]
     extra_rows = {
