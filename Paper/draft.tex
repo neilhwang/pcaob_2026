@@ -25,7 +25,7 @@
 Auditor-change disclosures are mandatory, public, and often ambiguous in their
 informational content: a firm may change auditors for routine reasons or in
 response to fundamental disagreement over its financial reporting, and investors
-must form their own assessments of which it is. Using 678 Form~8-K Item~4.01
+must draw their own inferences about which it is. Using 678 Form~8-K Item~4.01
 filings from 2001 to 2023, we examine how the political environment in which
 investors are embedded shapes their interpretation of this mandatory audit-related
 signal. Exploiting cross-state variation in presidential electoral competitiveness
@@ -37,8 +37,9 @@ auditor resignations --- the more informationally ambiguous class of changes ---
 consistent with polarization amplifying investor disagreement most when the
 disclosure provides less inherent guidance about fault or severity. These findings
 suggest that the effectiveness of mandatory audit-related disclosure as an
-information transmission mechanism depends not only on what is disclosed, but on
-the social and political environment in which investors interpret it.
+information transmission mechanism depends on the social and political
+environment in which investors interpret it, not only on the content of
+what is disclosed.
 \end{abstract}
 
 % ── 1. Introduction ───────────────────────────────────────────────────────────
@@ -47,12 +48,13 @@ the social and political environment in which investors interpret it.
 \label{sec:intro}
 
 Auditor-change disclosures are among the most consequential mandatory filings
-in the Form~8-K reporting system. The mandatory filing (Form~8-K Item~4.01) must include the reasons for the
-change and any disagreements between the firm and its outgoing auditor.
+in the Form~8-K reporting system. Form~8-K Item~4.01 requires the firm to
+disclose the reasons for the change and any disagreements with its outgoing
+auditor.
 Prior research establishes that these disclosures are informative: abnormal
 returns around auditor changes reflect assessments of future reporting quality,
 regulatory relationships, and management credibility
-\citep{dodd1984, defond1998, landsman2009}. Yet the magnitude of market reactions
+\citep{johnson1990, dodd1984, defond1998, landsman2009}. Yet the magnitude of market reactions
 varies substantially across otherwise similar events, and the sources of that
 cross-sectional variation are incompletely understood. This paper identifies one
 systematic and previously undocumented source: the political environment in which
@@ -292,10 +294,10 @@ whenever polarization widens the cross-group posterior log-odds index, belief
 dispersion and disagreement-sensitive market outcomes strictly increase. The
 heterogeneous-priors model below should therefore be read as a tractable
 benchmark case of this broader class of polarization mechanisms.
-The model draws on the heterogeneous-priors framework of \citet{kandel1995}.
 
 \subsection{Setting}
 
+The model draws on the heterogeneous-priors framework of \citet{kandel1995}.
 Consider a firm whose true quality $\theta \in \{0, 1\}$ is unknown to
 investors. The firm discloses an auditor-related signal $s \in \{0, 1\}$ (e.g.,
 an auditor change announcement). Signals are informative: $P(s=1 \mid
@@ -441,15 +443,12 @@ polarization\,$\times$\,ambiguity interaction with positive sign.
 
 \begin{itemize}
     \item[\textbf{P1.}] \textit{Polarization and trading volume (primary formal
-    prediction).} Equation~\eqref{eq:volume} and the \citet{kandel1995}
-    mechanism predict that disagreement-driven turnover is increasing in
-    posterior belief variance. Greater polarization generates more investor
-    pairs with divergent posteriors and hence mutually beneficial trading
-    opportunities, raising aggregate volume even in the absence of private
-    information. This prediction follows directly from
-    Proposition~\ref{prop:dispersion}: polarization increases posterior
-    variance, which increases $V$. We test P1 using abnormal trading volume
-    ($AbVol$) as the outcome (defined in Section~\ref{sec:design}).
+    prediction).} By Proposition~\ref{prop:dispersion} and
+    Equation~\eqref{eq:volume}, polarization increases posterior-belief
+    variance, which increases disagreement-driven trading volume. This is
+    the primary formal implication of the model. We test P1 using abnormal
+    trading volume ($AbVol$) as the outcome (defined in
+    Section~\ref{sec:design}).
 
     \item[\textbf{P2.}] \textit{Polarization and absolute returns (secondary
     empirical prediction).} When investors on opposing sides of the prior
@@ -465,36 +464,32 @@ polarization\,$\times$\,ambiguity interaction with positive sign.
     on the state-year polarization measure, with the same controls and fixed
     effects as P1.
 
-    \item[\textbf{P3.}] \textit{Ambiguity amplification.} The signal-sensitivity
-    result (Section~\ref{sec:ambiguity}) predicts that polarization effects
-    are larger when audit signals are more ambiguous---that is, when $p_H -
-    p_L$ is smaller. We operationalize this as an interaction between the
-    polarization measure and a \texttt{high\_ambiguity} indicator constructed
-    from observable filing characteristics. The prediction requires a positive
-    and significant interaction coefficient, above and beyond any polarization
-    main effect. This test is important because it distinguishes the
-    \emph{interpretation channel} from a simpler \emph{salience} story: if
-    polarization merely amplified attention to any salient news, the
-    polarization effect would not be systematically larger for inherently
-    ambiguous events.
+    \item[\textbf{P3.}] \textit{Ambiguity amplification.} Per
+    Section~\ref{sec:ambiguity}, when the objective log-likelihood ratio
+    $\ell$ is small, the subjective trust and perceived-precision components
+    $\tau_i \kappa_i$ dominate investors' posterior log-odds, and political
+    identity shapes these components more than the common objective signal.
+    Polarization effects should therefore be larger for more ambiguous events
+    --- those where the filing leaves greater interpretive latitude. We
+    operationalize this as an interaction between the polarization measure
+    and a \texttt{high\_ambiguity} indicator constructed from observable
+    filing characteristics. The prediction requires a positive and significant
+    interaction coefficient, above and beyond any polarization main effect.
+    This test distinguishes the \emph{interpretation channel} from a simpler
+    \emph{salience} story: if polarization merely amplified attention to any
+    salient news, the effect would not be systematically larger for
+    inherently ambiguous events.
 \end{itemize}
 
 \textbf{Discussion.} The model formalizes one specific channel---heterogeneous
 priors---but the same comparative statics arise under the other two channels
 described in the introduction: heterogeneous institutional trust and
-heterogeneous perceived signal precision. Both can be nested in a unified
-framework. Let investor $i$'s posterior log-odds index be
-\[
-    X_i = a(\pi_i) + \tau_i \kappa_i \ell,
-\]
-where $a(\pi_i) = \log[\pi_i/(1-\pi_i)]$ is the prior log-odds, $\tau_i \in
-[0,1]$ is investor $i$'s trust in the disclosure, $\kappa_i > 0$ is perceived
-signal precision, and $\ell = \log(p_H/p_L) > 0$ is the objective
-log-likelihood ratio. Posterior beliefs are $\mu_i = \sigma(X_i)$, where
-$\sigma(\cdot)$ is the logistic map. Whenever polarization widens the
-cross-group gap $|X_D - X_R|$---whether through divergent priors, divergent
-trust, or divergent perceived precision---the logistic map is strictly
-increasing, so $|\mu_D - \mu_R|$ increases strictly. It follows that
+heterogeneous perceived signal precision. Both are nested in the unified
+log-odds framework of Section~\ref{sec:ambiguity}. Whenever polarization
+widens the cross-group gap $|X_D - X_R|$---whether through divergent priors,
+divergent trust, or divergent perceived precision---the logistic map
+$\sigma(\cdot)$ is strictly increasing, so $|\mu_D - \mu_R|$ increases
+strictly. It follows that
 posterior variance $s_D s_R (\mu_D - \mu_R)^2$ increases under any channel
 (see Appendix~\ref{app:proofs}). The core prediction is therefore
 channel-agnostic: polarization amplifies disagreement-sensitive market
@@ -514,10 +509,11 @@ contain.
 
 \begin{hyp}
     \label{h1}
-    Investor reactions to auditor change disclosures are more extreme in
-    politically polarized environments. Specifically, both the absolute
-    cumulative abnormal return ($|CAR|$) and abnormal trading volume around
-    auditor change events are increasing in political polarization.
+    Investor reactions to auditor-change disclosures are larger in magnitude
+    in more politically competitive environments. Specifically, both the
+    absolute cumulative abnormal return ($|CAR[-1,+1]|$) and abnormal trading
+    volume around auditor-change events are increasing in political
+    polarization.
 \end{hyp}
 
 \noindent\textbf{Exploratory Prediction (Event Type).}
@@ -667,7 +663,7 @@ belief heterogeneity.}
 
 We forward-fill each presidential election's measure over the four subsequent
 calendar years --- assigning the 2000 vote to 2001--2004, the 2004 vote to
-2005--2008, and so on, through the 2020 election covering 2021--2024 --- on the
+2005--2008, and so on, through the 2020 election covering 2021--2023 within our sample period --- on the
 assumption that the state political environment evolves at the electoral-cycle
 frequency rather than annually. We standardize to mean zero and unit variance
 within the analysis sample. Because different polarization indices emphasize
@@ -790,7 +786,7 @@ received, not a direct measure of investor political identity;
 $X_{e,t(e)-1}$ is a vector of firm controls measured in the fiscal year prior
 to the event (size, leverage, ROA, book-to-market, loss indicator, and sales
 growth); $\tau_{t(e)}$ are event-year fixed effects; and $\delta_{j(e)}$ are
-2-digit SIC industry fixed effects. Standard errors are clustered at the firm
+two-digit SIC industry fixed effects. Standard errors are clustered at the firm
 level. The coefficient of interest is $\beta$.
 
 \subsection{Identification}
@@ -849,8 +845,8 @@ congressional district boundaries do not align with county boundaries.}
 \subsubsection*{State-level confounds and inference}
 
 Identification rests on two sources of variation in $\textit{Pol}_{s(e),t(e)}$:
-cross-state differences in the partisan environment of congressional elections,
-and time-series changes in that environment across election cycles. Year
+cross-state differences in the partisan environment of presidential elections,
+and time-series changes in that environment across electoral cycles. Year
 fixed effects absorb aggregate macroeconomic and political conditions common
 to all firms. Industry fixed effects absorb sector-level differences in
 auditor change frequency and investor base composition. The key identifying
@@ -966,7 +962,7 @@ identity--alienation object \citep{duclos2004}; convergent evidence across
 proxies that differ in their data source, construction, and conceptual
 emphasis is therefore more informative than stability within a single measure.
 
-Table~\ref{tab:robust} presents seven robustness columns. Column (1) repeats the
+Table~\ref{tab:robust} presents eight robustness columns. Column (1) repeats the
 baseline for reference ($\beta = 0.005$, $p = 0.040$). Column (2) substitutes the
 quadratic presidential Esteban-Ray index for the linear competitiveness measure;
 the coefficient is directionally consistent but attenuated ($\beta = 0.003$,
