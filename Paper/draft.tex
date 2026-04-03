@@ -46,121 +46,113 @@ the social and political environment in which investors interpret it.
 \section{Introduction}
 \label{sec:intro}
 
-A foundational assumption in capital markets research is that investors interpret
-public disclosures in a broadly consistent manner. Audit reports, in particular,
-are designed to convey a standardized, institution-backed signal about the
-reliability of financial statements. Yet the premise of homogeneous interpretation
-sits uneasily alongside a growing body of evidence that political polarization
-fundamentally reshapes how individuals process information, form beliefs, and
-respond to institutions \citep{kempf2024, bordalo2023}. This paper asks whether
-political polarization affects how investors interpret auditor-related information,
-and provides evidence that it does.
+Auditor-change disclosures are among the most consequential mandatory filings
+in the Form~8-K reporting system. A firm that changes auditors must disclose the
+event within four business days, report any disagreements, and explain the
+reasons for the change. Prior research establishes that these disclosures
+convey significant information to investors: markets react to auditor changes,
+with the direction and magnitude of abnormal returns reflecting assessments
+of future reporting quality, regulatory relationships, and management credibility
+\citep{dodd1984, defond1998, landsman2009}. Yet the magnitude of market reactions
+varies substantially across otherwise similar events, and the sources of that
+cross-sectional variation are incompletely understood. This paper identifies one
+systematic and previously undocumented source: the political environment in which
+investors are embedded. We show that investor interpretation of the same mandatory
+audit-related disclosure varies with the degree of political division in the firm's
+headquarters state, generating larger capital-market reactions where investors
+are more likely to hold heterogeneous priors about audit credibility and
+regulatory oversight.
 
-A key distinction in the political science literature is between
-\emph{ideological} polarization --- divergence in substantive issue positions
---- and \emph{affective} polarization --- out-party animus, distrust, and
-social distance between partisans \citep{iyengar2012, iyengar2019}. Both
-dimensions matter for the interpretation of auditor-originated disclosures.
-Investors may disagree not only because they attach different substantive
-implications to the same auditor change, but also because they differ in
-the extent to which they trust auditors and the oversight institutions that
-regulate them. Indeed, partisan identity can generate negative evaluations
-of institutions perceived as allied with the out-group, even when
-investors hold similar views on the underlying economic facts
-\citep{iyengar2019}. Auditor disclosures --- which are standardized,
-institution-dependent, and often ambiguous about their implications ---
-are therefore especially exposed to both dimensions of polarization.
+Auditor-change disclosures are well-suited for studying heterogeneous investor
+interpretation for three reasons. First, they are standardized and public ---
+all investors receive the same filing simultaneously, via the same EDGAR channel
+--- so differences in reactions across firms cannot be attributed to information
+timing, access, or format differences. Second, the signal is inherently ambiguous:
+a firm may change auditors for routine reasons (fee negotiation, committee rotation
+policy) or for troubling ones (disagreements over accounting estimates, auditor
+resignation under pressure), and the 8-K frequently provides incomplete guidance
+about which. Investors must form their own assessments. Third, auditing is an
+institution-dependent activity: the credibility of the signal depends on investors'
+trust in auditors, the PCAOB, and the broader regulatory infrastructure that
+underwrites audit quality. That trust varies systematically with political identity,
+making the auditor-change setting especially exposed to politically driven
+differences in interpretation.
 
-We study auditor changes disclosed in Form 8-K (Item 4.01). These events are
-well-suited to our question for three reasons. First, they are public, standardized
-disclosures that all investors observe simultaneously, so differences in market
-reactions are more likely to reflect differences in interpretation than
-differences in disclosure timing, format, or information access. Second, the signal is inherently ambiguous: a firm can change auditors for
-benign reasons (e.g., audit committee rotation policy) or for troubling ones (e.g.,
-disagreements over accounting estimates), and investors must form their own
-assessments. Third, auditing is a regulated, institution-dependent activity, making
-trust in regulatory infrastructure --- which is precisely what polarization erodes
---- central to how investors evaluate the disclosure.
+Our theoretical framework builds on \citet{kandel1995}: investors observe the
+same public audit signal but form different posteriors depending on their priors
+about firm quality, auditor credibility, and the reliability of regulatory oversight.
+Political polarization amplifies this heterogeneity. Polarized investors diverge
+not only in their substantive interpretations of an auditor change --- whether
+it signals earnings manipulation risk or routine governance --- but also in
+their assessments of whether auditors and the PCAOB are credible certifiers
+of financial reporting quality. This divergence is distinct from information
+asymmetry: polarization does not change what is disclosed, only how investors
+with different priors process it. Under standard belief-driven trading models
+\citep{harris1993}, greater posterior dispersion translates into higher abnormal
+volume and larger absolute price movements around the disclosure.
 
-Our theoretical framework builds on the heterogeneous-priors model of
-\citet{kandel1995}. Investors observe a public audit signal but differ in how
-they interpret it. This heterogeneity can arise through at least three
-channels: differences in prior beliefs about firm quality and audit
-credibility, differences in institutional trust --- particularly trust in
-auditors, the PCAOB, and regulatory oversight more broadly --- and differences
-in perceived signal precision, where some investors treat the disclosure as
-highly diagnostic while others discount it as noisy or strategically motivated.
-Political polarization amplifies all three channels. The recent political
-science literature distinguishes \emph{ideological} polarization (divergence
-in issue positions) from \emph{affective} or \emph{social} polarization
-(partisan animus, distrust, and identity-driven bias that can intensify even
-when policy views are moderate; \citealp{mason2015, druckmanlevy2021}).
-Auditor disclosures are likely affected by both: ideological polarization may
-drive divergent substantive interpretations of the same event, while affective
-polarization may drive divergent assessments of whether auditors and
-regulators are credible. Under standard models of belief-driven trading
-\citep{harris1993}, greater posterior dispersion translates into more trading
-volume and larger absolute price movements. The mechanism is distinct from
-information asymmetry: polarization does not change what is disclosed, only
-how it is processed.
-
-Empirically, we measure political polarization using the \citet{esteban1994}
-index applied to U.S. House election returns from 2000 to 2022. The index is
-computed at the congressional district level and then aggregated to the state
-level by weighting each district by its share of state-wide two-party votes.
-Because investor-level political identity is not directly observable, the
-firm's headquarters-state polarization serves as a reduced-form proxy for
-the political environment surrounding the disclosure. Our primary
-specifications test the ideological-polarization channel directly; we treat
-the current empirical design as
-an initial test of the broader mechanism, with affective polarization
-examined as a supplementary validation rather than a separately identified
-channel. Our main specification regresses abnormal trading volume and absolute
-cumulative abnormal returns (CARs) over the $[-1, +1]$ window around auditor
-change disclosures on the state-level polarization measure at the time of the
-event, controlling for firm characteristics and including year and industry
-fixed effects.
+We identify this effect using cross-state variation in presidential electoral
+competitiveness. Our primary polarization proxy is one minus the absolute
+two-party presidential vote margin at the state level, constructed from MIT
+Election Lab county-level returns and forward-filled to annual frequency.
+More competitive states --- where the presidential electorate is more evenly
+divided --- serve as a proxy for investor environments with greater belief
+heterogeneity. We acknowledge a key limitation of this proxy: institutional
+investors are geographically dispersed and need not share the political
+characteristics of the firm's headquarters state. We treat headquarters-state
+competitiveness as a noisy reduced-form proxy for the investor belief environment
+rather than a precise measure of individual investor beliefs; measurement error
+of this kind attenuates estimated coefficients toward zero, so our findings are
+likely conservative. Our sample consists of 678 Form~8-K Item~4.01 filings from
+2001 to 2023, matched to CRSP daily return and volume data and Compustat firm
+characteristics. Our main specification regresses $|CAR(-1,+1)|$ and abnormal
+trading volume on standardized state competitiveness, controlling for firm size,
+leverage, profitability, and book-to-market ratio, with year and industry
+fixed effects throughout.
 
 We find that firms headquartered in more politically competitive states experience
 significantly larger absolute abnormal returns and abnormal trading volume around
 auditor-change disclosures. A one-standard-deviation increase in state partisan
-competitiveness is associated with a 0.47 percentage point increase in $|CAR(-1,+1)|$
-($\beta = 0.005$, $p = 0.040$) and a 0.11-unit increase in abnormal volume
-($\beta = 0.111$, $p = 0.010$), controlling for firm characteristics, year fixed effects,
-and industry fixed effects.
-These effects are concentrated in auditor resignations rather than client-initiated
-dismissals ($\beta = 0.012$, $p = 0.043$ vs.\ $\beta = 0.003$, $p = 0.203$),
-consistent with the prediction that polarization amplifies investor disagreement
-when the signal is inherently ambiguous about auditor--client fault.
+competitiveness is associated with a 0.47 percentage point increase in
+$|CAR(-1,+1)|$ ($\beta = 0.005$, $p = 0.040$) and a 0.11-unit increase in
+abnormal volume ($\beta = 0.111$, $p = 0.010$), controlling for firm
+characteristics, year fixed effects, and industry fixed effects. These effects
+are concentrated in auditor resignations rather than client-initiated dismissals
+($\beta = 0.012$, $p = 0.043$ vs.\ $\beta = 0.003$, $p = 0.203$), consistent
+with the prediction that polarization amplifies investor disagreement most when
+the disclosure provides less inherent guidance about fault or severity. The
+main coefficient is stable across alternative polarization proxies (DW-NOMINATE
+ideological gap, presidential Esteban-Ray index) and survives two-way clustering
+of standard errors by firm and state.
 
-This paper makes three contributions. First, we contribute to the auditing and
-capital markets literature by documenting that the market response to audit signals
-depends on the political environment in which investors are embedded. Prior work
-establishes that audit reports and auditor-related events convey information to
-markets \citep{firth1978, dodd1984, defond2014}; we show that the same disclosure
-generates more extreme reactions in more politically polarized surrounding
-environments. Second, we contribute to the growing literature on political economy and
-capital markets \citep{kempf2024}. Existing work focuses primarily on asset
-allocation, partisan trading behavior, and analyst forecasts; we show that
-political polarization also shapes how investors interpret mandatory audit
-disclosures, a setting where institutional trust plays an unusually central
-role. Third,
-we contribute to the theoretical literature on heterogeneous beliefs and trading
-\citep{harris1993, kandel1995, hong2007} by providing an empirical setting where
-the source of belief heterogeneity --- political polarization --- is plausibly
-exogenous to firm-level reporting decisions and varies in well-defined ways over
-time.
+This paper makes three contributions. First, we provide new evidence that
+capital-market reactions to mandatory auditor-change disclosures vary
+systematically with the political environment in which investors are embedded.
+Prior work establishes that auditor changes are informative on average
+\citep{firth1978, dodd1984, defond2014}; we show that the magnitude of the
+market reaction depends on how divided that investor environment is, not only
+on the content of the disclosure. Second, we identify political polarization as
+a determinant of investor interpretation heterogeneity in an auditing setting.
+Existing work on the political economy of capital markets focuses on asset
+allocation, partisan trading behavior, and analyst forecasts \citep{kempf2024};
+we show that polarization also shapes how investors process mandatory audit
+disclosures, a setting where institutional trust is unusually central to signal
+interpretation. Third, we connect to the literature on the effectiveness of
+mandatory disclosure: our evidence suggests that the informational consequences
+of a required filing depend not only on its content but on the social and
+political environment in which investors interpret it, a finding with implications
+for how disclosure-based regulation performs across heterogeneous investor
+populations.
 
-Our findings have implications for audit standard-setters and regulators. A common
-motivation for expanded audit reporting requirements (e.g., critical audit matters
-under PCAOB AS 3101) is that richer disclosures will reduce investor uncertainty
-and improve market efficiency. Our results suggest a limit to this logic: when
-investors differ in their assessments of institutional credibility, additional
-disclosure may amplify rather than resolve disagreement. Although we study
-auditor changes as an initial tractable setting, the mechanism may operate
-wherever disclosure interpretation depends on trust in regulated gatekeepers ---
-including critical audit matters, going-concern opinions, and internal control
-reports.
+These findings bear on the design of mandatory audit disclosure requirements.
+A common motivation for expanded audit reporting --- including critical audit
+matters under PCAOB AS~3101 --- is that richer disclosures reduce investor
+uncertainty and improve market efficiency. Our evidence suggests a limit to
+this logic: when investors differ systematically in their assessments of
+institutional credibility, the same disclosure may generate more, not less,
+disagreement. This is not an argument against disclosure, but it does suggest
+that the effectiveness of disclosure-based regulation depends on the
+interpretive environment, not only on the information provided.
 
 The remainder of the paper proceeds as follows. Section~\ref{sec:lit} reviews
 the related literature. Section~\ref{sec:theory} develops the theoretical
