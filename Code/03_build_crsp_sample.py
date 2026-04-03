@@ -96,14 +96,16 @@ def connect_wrds():
 
 def build_cik_permno_link(conn, ciks: list[str]) -> pd.DataFrame:
     """
-    CIK → gvkey via comp.company, then gvkey → permno via crsp.ccmxpf_lnkhist.
+    CIK → gvkey + cusip via comp.company, then cusip → permno via crsp.stocknames.
+    This CUSIP-based route avoids crsp.ccmxpf_lnkhist (requires CCM subscription).
+
     Returns a DataFrame with columns: cik, gvkey, permno, linkdt, linkenddt.
-    Uses only link types LC and LU (most reliable primary links).
+    linkdt / linkenddt come from crsp.stocknames namedt / nameendt date ranges.
     """
     cik_list = ", ".join(f"'{c}'" for c in ciks)
 
     # CIK → gvkey
-    log.info("Fetching CIK → gvkey link from Compustat ...")
+    log.info("Fetching CIK → gvkey from Compustat ...")
     cik_gvkey = conn.raw_sql(f"""
         SELECT cik, gvkey
         FROM comp.company
@@ -114,31 +116,45 @@ def build_cik_permno_link(conn, ciks: list[str]) -> pd.DataFrame:
     if cik_gvkey.empty:
         raise ValueError("No CIK → gvkey matches found. Check that CIKs are in Compustat.")
 
+    # gvkey → most-recent CUSIP via comp.funda (comp.company lacks cusip on this subscription)
     gvkeys = cik_gvkey["gvkey"].unique().tolist()
     gvkey_list = ", ".join(f"'{g}'" for g in gvkeys)
-
-    # gvkey → permno (CRSP-Compustat link, primary links only)
-    log.info("Fetching gvkey → permno link from CRSP ...")
-    gvkey_permno = conn.raw_sql(f"""
-        SELECT gvkey, lpermno AS permno, linkdt, linkenddt
-        FROM crsp.ccmxpf_lnkhist
+    log.info("Fetching gvkey → cusip from comp.funda ...")
+    gvkey_cusip = conn.raw_sql(f"""
+        SELECT DISTINCT ON (gvkey) gvkey, cusip
+        FROM comp.funda
         WHERE gvkey IN ({gvkey_list})
-          AND linktype IN ('LC', 'LU')
-          AND linkprim IN ('P', 'C')
+          AND cusip IS NOT NULL
+        ORDER BY gvkey, datadate DESC
     """)
-    # NULL linkdt means "active from beginning of time" — fill with early sentinel.
-    # NULL linkenddt means "still active" — fill with far-future sentinel.
-    # Without filling linkdt, NaT comparisons return False and valid links are dropped.
-    gvkey_permno["linkdt"]    = pd.to_datetime(
-        gvkey_permno["linkdt"].fillna("1900-01-01")
-    )
-    gvkey_permno["linkenddt"] = pd.to_datetime(
-        gvkey_permno["linkenddt"].fillna("2099-12-31")
-    )
-    log.info("  gvkey → permno matches: %d gvkeys", gvkey_permno["gvkey"].nunique())
+    log.info("  gvkey → cusip matches: %d / %d gvkeys",
+             gvkey_cusip["gvkey"].nunique(), len(gvkeys))
 
-    # Merge
-    link = cik_gvkey.merge(gvkey_permno, on="gvkey", how="inner")
+    # Merge CIK → gvkey → cusip
+    cik_gvkey = cik_gvkey.merge(gvkey_cusip, on="gvkey", how="inner")
+
+    # CRSP stocknames uses 8-digit NCUSIP (drop the 9th check-digit character)
+    cik_gvkey["ncusip8"] = cik_gvkey["cusip"].str[:8]
+    ncusip_list = ", ".join(f"'{c}'" for c in cik_gvkey["ncusip8"].dropna().unique())
+
+    # ncusip → permno via crsp.stocknames (standard CRSP subscription, no CCM needed)
+    log.info("Fetching ncusip → permno from crsp.stocknames ...")
+    stocknames = conn.raw_sql(f"""
+        SELECT permno, ncusip, namedt, nameenddt
+        FROM crsp.stocknames
+        WHERE ncusip IN ({ncusip_list})
+    """)
+    stocknames["namedt"]     = pd.to_datetime(stocknames["namedt"].fillna("1900-01-01"))
+    stocknames["nameenddt"]  = pd.to_datetime(stocknames["nameenddt"].fillna("2099-12-31"))
+    log.info("  ncusip → permno rows: %d", len(stocknames))
+
+    # Merge: gvkey table → stocknames on 8-digit CUSIP
+    link = (
+        cik_gvkey
+        .merge(stocknames, left_on="ncusip8", right_on="ncusip", how="inner")
+        .rename(columns={"namedt": "linkdt", "nameenddt": "linkenddt"})
+        [["cik", "gvkey", "permno", "linkdt", "linkenddt"]]
+    )
     log.info("Combined link table: %d rows", len(link))
     return link
 
@@ -359,7 +375,10 @@ def compute_car_one_event(permno: int, event_date: pd.Timestamp,
         row = ev_firm[ev_firm["date"] == d]
         if len(row) == 0:
             return np.nan, np.nan
-        return float(row["ret"].iloc[0]), float(row["vol"].iloc[0])
+        r = row["ret"].iloc[0]
+        v = row["vol"].iloc[0]
+        return (float(r) if pd.notna(r) else np.nan,
+                float(v) if pd.notna(v) else np.nan)
 
     ret_m1, vol_m1 = get_day_ret(-1)
     ret_0,  vol_0  = get_day_ret(0)

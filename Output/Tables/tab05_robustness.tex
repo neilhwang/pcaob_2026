@@ -1,0 +1,32 @@
+\begin{table}[htbp]
+\centering
+\caption{Robustness Tests}
+\label{tab:robustness}
+\begin{tabular}{lccccccc}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) & (6) & (7) \\
+ & $|CAR|$\newline Compete. & $|CAR|$\newline Pres. ER & $|CAR|$\newline House ER & $|CAR|$\newline DW State & $|CAR|$\newline DW Natl & $|CAR|$\newline +State FE & $|CAR|$\newline State Clust \\
+\midrule
+Competitiveness (baseline) & 0.005** &  &  &  &  & 0.012 & 0.005** \\
+ & (0.002) &  &  &  &  & (0.008) & (0.002) \\
+Pres. ER Polarization &  & 0.003 &  &  &  &  &  \\
+ &  & (0.002) &  &  &  &  &  \\
+House ER Polarization &  &  & 0.000 &  &  &  &  \\
+ &  &  & (0.003) &  &  &  &  \\
+DW-NOMINATE (state gap) &  &  &  & 0.002 &  &  &  \\
+ &  &  &  & (0.003) &  &  &  \\
+DW-NOMINATE (national gap) &  &  &  &  & -0.009* &  &  \\
+ &  &  &  &  & (0.005) &  &  \\
+\midrule
+Year + Industry FE & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
+State FE & No & No & No & No & No & Yes & No \\
+Cluster & Firm & Firm & Firm & Firm & Firm & Firm & State \\
+Controls & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
+N & 678 & 678 & 674 & 631 & 673 & 678 & 678 \\
+$R^2$ & 0.172 & 0.170 & 0.168 & 0.173 & 0.167 & 0.212 & 0.172 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize Notes: Standard errors clustered at the firm level in parentheses. $^{***}$, $^{**}$, $^{*}$ denote significance at 1\%, 5\%, 10\%.
+\end{flushleft}
+\end{table}

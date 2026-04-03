@@ -10,6 +10,7 @@ INPUTS:
     Data/Processed/dw_nominate_polarization.parquet (from 06_build_dw_nominate.py)
     Data/Processed/state_partisan_exposure.parquet  (from 07_build_exposure.py)
     Data/Processed/affective_polarization.parquet   (from 08_build_affective_polarization.py)
+    Data/Processed/pol_presidential.parquet         (from 02b_build_presidential_polarization.py)
 
 OUTPUTS:
     Output/Tables/tab01_summary_stats.tex
@@ -26,7 +27,8 @@ SPECIFICATION:
         Y_i = alpha + beta*Pol_{s(i),t(i)} + gamma'*X_{i,t} + FE + eps_i
 
     where Y_i is |CAR(-1,+1)| or AbVol(-1,+1), Pol is the standardized
-    Esteban-Ray polarization measure for the firm's HQ state in the event year,
+    presidential Esteban-Ray polarization measure (state-level, from county returns)
+    for the firm's HQ state in the event year,
     X is a vector of firm controls, and FE are year and 2-digit SIC fixed effects.
     Standard errors are clustered at the firm (gvkey) level.
 
@@ -54,9 +56,10 @@ CRSP_FILE = PROC / "crsp_event_window.parquet"
 POL_FILE  = PROC / "polarization_state_year.parquet"
 COMP_FILE = PROC / "compustat_controls.parquet"
 DW_FILE       = PROC / "dw_nominate_polarization.parquet"
-EXPOSURE_FILE = PROC / "state_partisan_exposure.parquet"
-AP_FILE       = PROC / "affective_polarization.parquet"
-SAMPLE_FILE   = PROC / "analysis_sample.parquet"
+EXPOSURE_FILE  = PROC / "state_partisan_exposure.parquet"
+AP_FILE        = PROC / "affective_polarization.parquet"
+PRES_POL_FILE  = PROC / "pol_presidential.parquet"
+SAMPLE_FILE    = PROC / "analysis_sample.parquet"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -79,6 +82,7 @@ def load_and_merge() -> pd.DataFrame:
     dw       = pd.read_parquet(DW_FILE)
     exposure = pd.read_parquet(EXPOSURE_FILE)
     ap       = pd.read_parquet(AP_FILE)
+    pres_pol = pd.read_parquet(PRES_POL_FILE)
 
     log.info("CRSP events: %d", len(crsp))
     log.info("Polarization panel: %d rows", len(pol))
@@ -86,6 +90,7 @@ def load_and_merge() -> pd.DataFrame:
     log.info("DW-NOMINATE panel: %d rows", len(dw))
     log.info("Partisan exposure: %d states", len(exposure))
     log.info("Affective polarization: %d years", len(ap))
+    log.info("Presidential polarization: %d rows", len(pres_pol))
 
     # Derive event year from event date
     crsp["event_year"] = pd.to_datetime(crsp["event_date"]).dt.year
@@ -142,6 +147,17 @@ def load_and_merge() -> pd.DataFrame:
     )
     log.info("After AP merge: %d with ap_ft", crsp["ap_ft"].notna().sum())
 
+    # ── Merge presidential polarization (state × year, forward-filled) ────────
+    # er_pres = D_share × R_share (ER index at state level from county returns)
+    # margin  = |D_share - R_share| (partisan homogeneity; higher = one-party state)
+    # Both have ~13× more cross-sectional variation than House ER index.
+    pres_merge = pres_pol[["year", "state_abbr", "er_pres", "margin"]].rename(
+        columns={"year": "event_year", "state_abbr": "state"}
+    )
+    crsp = crsp.merge(pres_merge, on=["event_year", "state"], how="left")
+    log.info("After presidential pol merge: %d with er_pres, %d with margin",
+             crsp["er_pres"].notna().sum(), crsp["margin"].notna().sum())
+
     # ── Merge Compustat controls ───────────────────────────────────────────────
     # Match to fiscal year ending in the calendar year prior to the event
     # (standard in event study literature: use pre-event fundamentals)
@@ -159,13 +175,13 @@ def load_and_merge() -> pd.DataFrame:
     crsp["abvol"]   = crsp["abvol_m1p1"]
     crsp["car"]     = crsp["car_m1p1"]
 
-    # pol_std standardization is deferred to after apply_sample_filters() so that
+    # Polarization standardization is deferred to after apply_sample_filters() so that
     # mean=0, sd=1 holds exactly in the estimation sample (not the pre-filter universe).
-    # Leave pol_er_alpha10 in place; standardization applied in main().
+    # Leave er_pres and other raw columns in place; standardization applied in main().
 
     # Event-type indicators for heterogeneity tests
     crsp["dismissal"]      = (crsp["reason"] == "dismissal").astype(int)
-    crsp["disagreement"]   = crsp["disagreements"].fillna(False).astype(int)
+    crsp["disagreement"]   = (crsp["disagreements"].astype(str).str.lower() == "true").astype(int)
     crsp["big4_departure"] = crsp["quality_direction"].isin(
         ["Big4_to_nonBig4", "Big4_to_Big4"]
     ).astype(int)
@@ -196,9 +212,9 @@ def load_and_merge() -> pd.DataFrame:
 def apply_sample_filters(df: pd.DataFrame) -> pd.DataFrame:
     """Drop observations missing key variables for the main regression."""
     n0 = len(df)
-    # Filter on pol_er_alpha10 (the raw measure), not pol_std — pol_std is
-    # created in main() after this function returns (so it doesn't exist here yet).
-    df = df.dropna(subset=["absCar", "abvol", "pol_er_alpha10", "sic2"] + CONTROLS)
+    # Filter on er_pres (the primary raw measure), not er_pres_std — the
+    # standardized version is created in main() after this function returns.
+    df = df.dropna(subset=["absCar", "abvol", "er_pres", "sic2"] + CONTROLS)
     log.info("After dropping missing: %d rows (dropped %d)", len(df), n0 - len(df))
     return df.reset_index(drop=True)
 
@@ -210,7 +226,7 @@ def make_summary_stats(df: pd.DataFrame) -> pd.DataFrame:
         "absCar":       "|CAR(-1,+1)|",
         "car":          "CAR(-1,+1)",
         "abvol":        "Abn. Volume",
-        "pol_er_alpha10": "Polarization (ER, α=1)",
+        "margin":         "Partisan Margin ($|D-R|$)",
         "size":         "Size (log assets)",
         "leverage":     "Leverage",
         "roa":          "ROA",
@@ -242,8 +258,16 @@ def to_latex_table(df: pd.DataFrame, caption: str, label: str,
         caption=caption,
         label=label,
         escape=True,
-        booktabs=True,
     )
+    # pandas ≥ 2.0 removed booktabs argument; replace \hline with booktabs rules
+    _count = [0]
+    def _hline_to_booktabs(m):
+        _count[0] += 1
+        if _count[0] == 1: return r"\toprule"
+        if _count[0] == 2: return r"\midrule"
+        return r"\bottomrule"
+    import re as _re
+    tex = _re.sub(r"\\hline", _hline_to_booktabs, tex)
     # Wrap in table environment with notes placeholder
     tex = tex.replace(
         r"\end{tabular}",
@@ -251,7 +275,7 @@ def to_latex_table(df: pd.DataFrame, caption: str, label: str,
         r"\footnotesize Notes: [PLACEHOLDER]" + "\n"
         r"\end{flushleft}",
     )
-    out_path.write_text(tex)
+    out_path.write_text(tex, encoding="utf-8")
     log.info("Table written: %s", out_path)
 
 
@@ -259,12 +283,19 @@ def to_latex_table(df: pd.DataFrame, caption: str, label: str,
 
 def run_ols(formula: str, df: pd.DataFrame,
             cluster_var: str = "gvkey_str") -> object:
-    """OLS with firm-clustered standard errors."""
-    model  = smf.ols(formula, data=df).fit(
-        cov_type="cluster",
-        cov_kwds={"groups": df[cluster_var]},
+    """OLS with firm-clustered standard errors.
+
+    statsmodels drops NaN rows silently; use patsy to recover which rows
+    survive so the cluster variable has the same length as the model data.
+    """
+    import patsy
+    _, X = patsy.dmatrices(formula, data=df, return_type="dataframe",
+                           NA_action="drop")
+    keep_idx = X.index
+    groups = df.loc[keep_idx, cluster_var].values
+    return smf.ols(formula, data=df).fit(
+        cov_type="cluster", cov_kwds={"groups": groups}
     )
-    return model
 
 
 def fmt(x, digits=3):
@@ -356,21 +387,21 @@ def run_main_results(df: pd.DataFrame) -> None:
 
     specs = {
         # (1) |CAR|, no controls, year FE only
-        "m1": run_ols(f"absCar ~ pol_std + C(year_str)", df),
+        "m1": run_ols(f"absCar ~ competitive_std + C(year_str)", df),
         # (2) |CAR|, controls + year FE + industry FE
-        "m2": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", df),
+        "m2": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
         # (3) AbVol, no controls, year FE only
-        "m3": run_ols(f"abvol ~ pol_std + C(year_str)", df),
+        "m3": run_ols(f"abvol ~ competitive_std + C(year_str)", df),
         # (4) AbVol, controls + year FE + industry FE
-        "m4": run_ols(f"abvol ~ pol_std + {ctrl} + {fe}", df),
+        "m4": run_ols(f"abvol ~ competitive_std + {ctrl} + {fe}", df),
     }
 
     for k, m in specs.items():
-        log.info("%s: pol_std coef=%.4f p=%.3f", k, m.params["pol_std"],
-                 m.pvalues["pol_std"])
+        log.info("%s: competitive_std coef=%.4f p=%.3f", k, m.params["competitive_std"],
+                 m.pvalues["competitive_std"])
 
     coef_map = {
-        "pol_std":     r"\textit{Polarization}",
+        "competitive_std": r"\textit{Polarization}",
         "size":        "Size",
         "leverage":    "Leverage",
         "roa":         "ROA",
@@ -405,17 +436,17 @@ def run_event_type(df: pd.DataFrame) -> None:
     qual_up     = df[df["quality_up"] == 1]
 
     specs = {
-        "m1": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", dismissals),
-        "m2": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", resignations),
-        "m3": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", qual_down),
-        "m4": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", qual_up),
+        "m1": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", dismissals),
+        "m2": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", resignations),
+        "m3": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", qual_down),
+        "m4": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", qual_up),
     }
 
     for k, m in specs.items():
-        log.info("Event-type %s: pol_std coef=%.4f p=%.3f", k,
-                 m.params["pol_std"], m.pvalues["pol_std"])
+        log.info("Event-type %s: competitive_std coef=%.4f p=%.3f", k,
+                 m.params["competitive_std"], m.pvalues["competitive_std"])
 
-    coef_map = {"pol_std": r"\textit{Polarization}"}
+    coef_map = {"competitive_std": r"\textit{Polarization}"}
     # "Resignations" subsample is df[dismissal==0], which includes both
     # resignations and unclassified events; label accurately as Non-dismissals.
     dep_labels = [r"$|CAR|$\newline Dismissals",
@@ -445,14 +476,19 @@ def run_ambiguity(df: pd.DataFrame) -> None:
     lo_amb = df[df["high_ambiguity"] == 0]
 
     specs = {
-        "m1": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", df),
-        "m2": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", hi_amb),
-        "m3": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", lo_amb),
-        "m4": run_ols(f"abvol  ~ pol_std + {ctrl} + {fe}", hi_amb),
-        "m5": run_ols(f"abvol  ~ pol_std + {ctrl} + {fe}", lo_amb),
+        "m1": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
+        "m2": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", hi_amb),
+        "m3": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", lo_amb),
+        "m4": run_ols(f"abvol  ~ competitive_std + {ctrl} + {fe}", hi_amb),
+        "m5": run_ols(f"abvol  ~ competitive_std + {ctrl} + {fe}", lo_amb),
     }
 
-    coef_map = {"pol_std": r"\textit{Polarization}"}
+    for k, m in specs.items():
+        log.info("Ambiguity %s: competitive_std coef=%.4f p=%.3f N=%d",
+                 k, m.params["competitive_std"], m.pvalues["competitive_std"],
+                 int(m.nobs))
+
+    coef_map = {"competitive_std": r"\textit{Polarization}"}
     dep_labels = [r"$|CAR|$\newline Full",
                   r"$|CAR|$\newline High Amb.",
                   r"$|CAR|$\newline Low Amb.",
@@ -481,25 +517,25 @@ def run_robustness(df: pd.DataFrame) -> None:
     # All polarization columns are already standardized in main() before this runs.
 
     specs = {
-        # (1) Baseline (repeat for comparison)
-        "m1": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", df),
-        # (2) α = 0.8
-        "m2": run_ols(f"absCar ~ pol_std_a08 + {ctrl} + {fe}", df),
-        # (3) α = 1.2
-        "m3": run_ols(f"absCar ~ pol_std_a12 + {ctrl} + {fe}", df),
-        # (4) DW-NOMINATE: state-level cross-party gap (alternative pol proxy)
+        # (1) Baseline (repeat for comparison; primary measure)
+        "m1": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
+        # (2) Pres. ER index (quadratic alternative to linear competitiveness)
+        "m2": run_ols(f"absCar ~ er_pres_std + {ctrl} + {fe}", df),
+        # (3) House ER index (alternative geographic scale; much lower cross-sectional variation)
+        "m3": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", df),
+        # (4) DW-NOMINATE: state-level cross-party gap (roll-call based alternative)
         "m4": run_ols(f"absCar ~ dw_std + {ctrl} + {fe}", df),
-        # (5) DW-NOMINATE: national gap (time-series pol variation)
+        # (5) DW-NOMINATE: national gap (time-series pol variation only)
         "m5": run_ols(f"absCar ~ dw_national_std + {ctrl} + {fe}", df),
         # (6) Add state FEs to baseline spec (absorbs cross-state confounders)
-        "m6": run_ols(f"absCar ~ pol_std + {ctrl} + {fe_st}", df),
+        "m6": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe_st}", df),
         # (7) State-level clustered SEs (pol measure varies at state x year level)
-        "m7": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", df,
+        "m7": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df,
                       cluster_var="state_str"),
     }
 
     for k, m in specs.items():
-        pol_param = next((p for p in ["pol_std", "pol_std_a08", "pol_std_a12",
+        pol_param = next((p for p in ["competitive_std", "er_pres_std", "pol_std",
                                        "dw_std", "dw_national_std"]
                           if p in m.params), None)
         if pol_param:
@@ -507,15 +543,15 @@ def run_robustness(df: pd.DataFrame) -> None:
                      k, pol_param, m.params[pol_param], m.pvalues[pol_param])
 
     coef_map = {
-        "pol_std":          r"ER Polarization (baseline, $\alpha=1$)",
-        "pol_std_a08":      r"ER Polarization ($\alpha=0.8$)",
-        "pol_std_a12":      r"ER Polarization ($\alpha=1.2$)",
+        "competitive_std":  r"Competitiveness (baseline)",
+        "er_pres_std":      r"Pres. ER Polarization",
+        "pol_std":          r"House ER Polarization",
         "dw_std":           r"DW-NOMINATE (state gap)",
         "dw_national_std":  r"DW-NOMINATE (national gap)",
     }
-    dep_labels = [r"$|CAR|$\newline ER Base",
-                  r"$|CAR|$\newline $\alpha=0.8$",
-                  r"$|CAR|$\newline $\alpha=1.2$",
+    dep_labels = [r"$|CAR|$\newline Compete.",
+                  r"$|CAR|$\newline Pres. ER",
+                  r"$|CAR|$\newline House ER",
                   r"$|CAR|$\newline DW State",
                   r"$|CAR|$\newline DW Natl",
                   r"$|CAR|$\newline +State FE",
@@ -549,7 +585,7 @@ def run_affective_test(df: pd.DataFrame) -> None:
     affective polarization rises over time.
 
     Specification (memo Eq. 3):
-        Y_e = α + β1·pol_std + β2·high_ambiguity + β3·pol_std×high_ambiguity
+        Y_e = α + β1·competitive_std + β2·high_ambiguity + β3·competitive_std×high_ambiguity
             + β4·(AP×Exposure) + β5·(AP×Exposure×Ambiguity)
             + ΓX + year FE + industry FE + ε
 
@@ -570,41 +606,41 @@ def run_affective_test(df: pd.DataFrame) -> None:
     specs = {
         # (1) Ideological pol only (baseline, for comparison)
         "m1": run_ols(
-            f"absCar ~ pol_std + {ctrl} + {fe}", ap_df
+            f"absCar ~ competitive_std + {ctrl} + {fe}", ap_df
         ),
         # (2) Add AP × Exposure (no ambiguity interaction)
         "m2": run_ols(
-            f"absCar ~ pol_std + ap_x_exposure + {ctrl} + {fe}", ap_df
+            f"absCar ~ competitive_std + ap_x_exposure + {ctrl} + {fe}", ap_df
         ),
         # (3) Add ambiguity split for ideological pol
         "m3": run_ols(
-            f"absCar ~ pol_std + high_ambiguity + pol_std:high_ambiguity"
+            f"absCar ~ competitive_std + high_ambiguity + competitive_std:high_ambiguity"
             f" + {ctrl} + {fe}", ap_df
         ),
         # (4) Full spec: ideological + affective + ambiguity interactions
         "m4": run_ols(
-            f"absCar ~ pol_std + high_ambiguity + pol_std:high_ambiguity"
+            f"absCar ~ competitive_std + high_ambiguity + competitive_std:high_ambiguity"
             f" + ap_x_exposure + ap_x_exp_x_amb + {ctrl} + {fe}", ap_df
         ),
         # (5) AbVol outcome, full spec
         "m5": run_ols(
-            f"abvol ~ pol_std + high_ambiguity + pol_std:high_ambiguity"
+            f"abvol ~ competitive_std + high_ambiguity + competitive_std:high_ambiguity"
             f" + ap_x_exposure + ap_x_exp_x_amb + {ctrl} + {fe}", ap_df
         ),
     }
 
     for k, m in specs.items():
-        for param in ["pol_std", "ap_x_exposure", "ap_x_exp_x_amb"]:
+        for param in ["competitive_std", "ap_x_exposure", "ap_x_exp_x_amb"]:
             if param in m.params:
                 log.info("Affective %s [%s]: coef=%.4f p=%.3f",
                          k, param, m.params[param], m.pvalues[param])
 
     coef_map = {
-        "pol_std":                   r"\textit{Ideo. Pol.} (ER)",
-        "high_ambiguity":            r"High Ambiguity",
-        "pol_std:high_ambiguity":    r"\textit{Ideo. Pol.} $\times$ Ambiguity",
-        "ap_x_exposure":             r"$AP \times Exposure$",
-        "ap_x_exp_x_amb":            r"$AP \times Exposure \times$ Ambiguity",
+        "competitive_std":                   r"\textit{Competitiveness}",
+        "high_ambiguity":                    r"High Ambiguity",
+        "competitive_std:high_ambiguity":    r"\textit{Competitiveness} $\times$ Ambiguity",
+        "ap_x_exposure":                 r"$AP \times Exposure$",
+        "ap_x_exp_x_amb":                r"$AP \times Exposure \times$ Ambiguity",
     }
     dep_labels = [
         r"$|CAR|$\newline Ideo. only",
@@ -641,7 +677,7 @@ def main() -> None:
     log.info("=== 05_merge_and_estimate.py  start ===")
 
     # Check inputs exist
-    for f in [CRSP_FILE, POL_FILE, COMP_FILE, DW_FILE, EXPOSURE_FILE, AP_FILE]:
+    for f in [CRSP_FILE, POL_FILE, COMP_FILE, DW_FILE, EXPOSURE_FILE, AP_FILE, PRES_POL_FILE]:
         if not f.exists():
             raise FileNotFoundError(
                 f"Missing input: {f}\n"
@@ -662,6 +698,8 @@ def main() -> None:
         ("dw_national_gap",   "dw_national_std"),
         ("exposure_pres",     "exposure_std"),
         ("ap_ft",             "ap_std"),
+        ("er_pres",           "er_pres_std"),
+        ("margin",            "margin_std"),
     ]:
         if raw_col in df.columns and df[raw_col].notna().sum() > 0:
             mu  = df[raw_col].mean()
@@ -669,6 +707,11 @@ def main() -> None:
             df[std_col] = (df[raw_col] - mu) / sig
         else:
             df[std_col] = np.nan
+
+    # Competitiveness = −margin: positive scale so higher = more competitive/polarized.
+    # Algebraically identical to margin regression; coefficient sign flips to positive,
+    # making the table read: "one-SD increase in competitiveness → larger |CAR|."
+    df["competitive_std"] = -df["margin_std"]
 
     # Affective polarization interaction term: AP_t × Exposure_s.
     # This is the identifying variation — differential response of firms in

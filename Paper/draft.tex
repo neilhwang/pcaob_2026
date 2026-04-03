@@ -583,7 +583,13 @@ Esteban-Ray electoral measure covers the same period, as MIT Election Lab
 House returns are available through the 2022 midterm election, which is
 forward-filled to cover calendar years 2023 and 2024.} We retain only
 original 8-K filings matched to a CRSP PERMNO and require at least 100
-non-missing trading days in the estimation window. The final sample consists
+non-missing trading days in the estimation window.\footnote{Of the 8,621
+auditor-change events identified from EDGAR, 1,720 are 8-K/A amendments and
+are excluded, leaving 6,901 original filings. Of these, 5,641 cannot be
+matched to a CRSP/Compustat security and are dropped, and a further 40 are
+excluded for insufficient trading-day coverage in the estimation window.
+The unmatched filings are predominantly firms not listed on major exchanges
+or not covered by CRSP/Compustat.} The final sample consists
 of [N] auditor change events for [N] unique firms. We exclude financial firms
 (SIC 6000--6999) and utilities (SIC 4900--4999).
 
