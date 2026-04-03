@@ -1,0 +1,308 @@
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\setstretch{1.08}
+\setlength{\parskip}{0.55em}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Referee-Style Review Report for a Top Accounting Journal}}\\[0.4em]
+{\normalsize Based on the current uploaded \texttt{draft.tex}}
+\end{center}
+
+\section*{Overall recommendation}
+
+The paper has a clear and potentially publishable core idea: politically polarized environments may generate more heterogeneous interpretation of auditor-change disclosures, leading to stronger market reactions around Form 8-K Item 4.01 events. That basic idea is interesting and relevant to the intersection of auditing, disclosure, and capital markets.
+
+In its current form, however, I do \emph{not} think the paper is yet at the level expected by a top accounting journal. The main problems are not lack of promise, but lack of discipline and alignment. The draft currently overstates what its theory proves, uses a political-environment proxy that is conceptually plausible but still under-defended, mixes competing interpretations of the cross-sectional tests, and contains several internal inconsistencies that reduce confidence in the paper's execution. The results section also still reads as less fully developed than the abstract and introduction imply.
+
+My overall judgment is therefore:
+
+\begin{quote}
+\textbf{Promising idea; not yet submission-ready for a top accounting journal without a substantial tightening revision.}
+\end{quote}
+
+The strongest path forward is \emph{not} to broaden the paper further. It is to narrow the claims, sharpen the theory--empirics mapping, and make the empirical design feel more clearly like a test of investor interpretation rather than a reduced-form association between state politics and event-study outcomes.
+
+\section*{1. What the paper does well}
+
+The draft has several genuine strengths.
+
+\textbf{First, the setting is plausible and economically meaningful.} Auditor-change disclosures are a reasonable place to study heterogeneous interpretation because they are mandatory, public, and often ambiguous in economic meaning. The paper is strongest when it emphasizes this specific feature of Item 4.01 events.
+
+\textbf{Second, the paper has a real mechanism.} The central mechanism is not merely that politics matters; it is that polarization affects how investors interpret an audit-related disclosure. That is much more interesting than a generic ``politics correlates with returns'' story.
+
+\textbf{Third, the paper has a potentially useful bridge contribution.} If cleaned up, the study could speak to three literatures at once without appearing scattered: auditor-change disclosure, disagreement-based trading, and the role of non-firm information environments in shaping the use of accounting signals.
+
+\textbf{Fourth, the volume result is directionally consistent with the theory.} Among the paper's empirical outcomes, abnormal volume is the one that most naturally follows from a disagreement framework, and that is a valuable anchor for the paper.
+
+\section*{2. Core concerns preventing top-journal readiness}
+
+\subsection*{2.1 The theory currently proves less than the draft claims}
+
+The formal proposition is useful but narrower than the paper's narrative suggests. What the model cleanly establishes is that a mean-preserving spread in priors increases \emph{posterior-belief dispersion} after a common signal. That is an intellectually coherent comparative static. But the draft then moves too quickly from posterior dispersion to both price extremity and trading volume, and at points implies stronger equilibrium implications than the model actually delivers.
+
+This matters because careful readers will distinguish sharply between:
+\begin{enumerate}[leftmargin=1.5em]
+    \item a result about belief dispersion,
+    \item a result about trading volume under disagreement,
+    \item and a result about absolute returns.
+\end{enumerate}
+
+The current theory supports (1) directly and (2) plausibly, but it does not fully derive (3). A top journal referee will notice this immediately.
+
+\textbf{What to do.} Recast the theory section so that:
+\begin{itemize}[leftmargin=1.5em]
+    \item posterior-belief dispersion is the formal object proved,
+    \item abnormal volume is the most directly theory-backed empirical outcome,
+    \item and absolute abnormal returns are treated as a secondary outcome motivated by disagreement plus frictions or limited arbitrage, unless a proper pricing environment is added.
+\end{itemize}
+
+\subsection*{2.2 The draft overstates the clarity of the ambiguity channel}
+
+The ambiguity logic is intuitive, but the paper currently cycles among several different versions of it: lack of disclosed reason, unclear fault, resignation versus dismissal, and absence of clear quality direction. These may all be related, but they are not equivalent. Right now the paper uses ``ambiguity'' as a broad umbrella rather than a tightly defined construct.
+
+This creates a risk that readers will conclude the ambiguity channel has been reverse-engineered around whichever subgroup happens to produce a stronger coefficient.
+
+\textbf{What to do.} The paper needs a single conceptual definition of ambiguity, followed by coding choices that clearly map to that definition. For example, the paper could define ambiguity as the amount of interpretive latitude left by the filing regarding the severity, source, or implications of the auditor change. Then every empirical ambiguity proxy should be justified against that rule.
+
+\subsection*{2.3 The polarization proxy is plausible, but still under-defended for a top journal}
+
+The paper's core empirical move is to use headquarters-state political competitiveness as a proxy for investor belief heterogeneity or interpretive heterogeneity. That is an understandable reduced-form design choice. But at the level of a top accounting journal, the reader will still ask:
+
+\begin{quote}
+Why should the headquarters-state political environment capture the beliefs of the marginal traders who set prices around an event?
+\end{quote}
+
+The draft partly anticipates this, but not forcefully enough. The current version still slides too quickly from the theory's object (belief dispersion among investors) to the empirical proxy (state political competitiveness).
+
+\textbf{What to do.} The paper should explicitly state that it is testing whether the broader political-information environment surrounding a firm predicts stronger market reactions to ambiguous audit-related signals. That is a reduced-form claim. It should \emph{not} imply that the proxy directly observes the priors of the marginal investors. Framed that way, the design is more credible and the claims become more disciplined.
+
+\subsection*{2.4 The paper is not fully internally consistent}
+
+Several inconsistencies weaken the draft materially:
+\begin{itemize}[leftmargin=1.5em]
+    \item the baseline polarization measure is described differently in different places;
+    \item the event-type discussion points in conflicting directions, with dismissals described as higher stakes but resignations producing the stronger result;
+    \item outcome notation varies across sections;
+    \item the sample period is not always described identically;
+    \item the abstract and introduction sound more numerically final than the results section feels.
+\end{itemize}
+
+A top-journal submission cannot afford this kind of internal slippage. Readers use these inconsistencies as evidence about overall reliability.
+
+\textbf{What to do.} Before any substantive reframing, the paper needs one clean consistency pass:
+\begin{enumerate}[leftmargin=1.5em]
+    \item one baseline polarization proxy,
+    \item one stable description of the sample window,
+    \item one notation scheme for outcomes,
+    \item one clear interpretation of resignations versus dismissals,
+    \item and full consistency between abstract, introduction, tables, and text.
+\end{enumerate}
+
+\subsection*{2.5 The empirical contribution is currently thinner than the framing suggests}
+
+The framing presents the paper as if it is making a broad statement about investor interpretation of audit-related disclosure in polarized environments. But the actual empirics are still relatively lean: one event-study design, a politically defined state-level proxy, split-sample tests, and robustness using alternative political measures. That can be enough for a good paper, but not if the narrative sounds much larger than the evidence base.
+
+\textbf{What to do.} Scale the claims to the evidence. A top accounting journal version should sound narrower, more precise, and more disciplined:
+\begin{quote}
+This paper provides evidence that market reactions to auditor-change disclosures are stronger in more politically competitive states, consistent with heterogeneous interpretation of an ambiguous audit-related signal.
+\end{quote}
+That is a good claim. It is more believable than a broad claim about polarization and investor interpretation in general.
+
+\section*{3. Detailed evaluation of the theory}
+
+\subsection*{3.1 What is correct}
+
+The two-group posterior-dispersion proposition is basically fine. It cleanly shows that widening the gap between group priors while holding the weighted mean prior fixed increases posterior dispersion after a common favorable signal. The algebra is straightforward and correct.
+
+The additional appendixed propositions on trust, perceived precision, and a unified latent-index representation are helpful conceptually, although they function more as stylized extensions than as fully integrated parts of the main model.
+
+\subsection*{3.2 What is not yet persuasive}
+
+The theory section currently asks the reader to accept several interpretive steps too quickly:
+\begin{itemize}[leftmargin=1.5em]
+    \item that posterior-dispersion results translate directly into stronger absolute returns;
+    \item that ambiguity formally amplifies the updating sensitivity in the exact way described;
+    \item and that the model's prior heterogeneity object can stand in equally cleanly for institutional trust and perceived precision.
+\end{itemize}
+
+These are not absurd claims, but they are not all fully established either. The safest revision is to distinguish clearly between:
+\begin{itemize}[leftmargin=1.5em]
+    \item what is proved,
+    \item what is suggested,
+    \item and what is a reduced-form interpretation.
+\end{itemize}
+
+\subsection*{3.3 Suggested theoretical revision}
+
+A strong top-journal version of the theory section would do the following:
+\begin{enumerate}[leftmargin=1.5em]
+    \item keep the posterior-dispersion proposition as the centerpiece;
+    \item state openly that the theory most directly predicts disagreement-sensitive trading volume;
+    \item either soften or remove the stronger pricing claims unless an explicit market-clearing setup is added;
+    \item define ambiguity more cleanly and more narrowly;
+    \item avoid saying that the broader channels are formally equivalent unless that equivalence is stated more carefully.
+\end{enumerate}
+
+\section*{4. Detailed evaluation of the empirical design}
+
+\subsection*{4.1 Baseline event-study design}
+
+The event-study framework is reasonable and standard. The use of $[-1,+1]$ windows is defensible in this setting, and the paper is right to focus on absolute returns rather than signed returns if the mechanism is disagreement rather than directional news.
+
+That said, the sample is not large. Once the paper starts cutting the sample by event type and ambiguity class, power falls quickly. A top-journal draft should therefore be careful not to over-interpret subgroup differences that are noisy or only directionally supportive.
+
+\subsection*{4.2 Main outcome choice}
+
+The strongest dependent variable is abnormal trading volume. That is where the disagreement channel feels most naturally linked to the theory.
+
+Absolute abnormal returns are still worth reporting, but readers will want a sharper explanation of why disagreement should increase the magnitude of price movement rather than simply trading among disagreeing investors. That link becomes more plausible under frictions, segmented investor clientele, or event-time attention limits. The draft should say so.
+
+\subsection*{4.3 Proxy validity}
+
+The headquarters-state political environment is a tractable reduced-form proxy, but the paper should confront two natural alternative interpretations more directly:
+\begin{itemize}[leftmargin=1.5em]
+    \item the proxy may capture state-level institutional or media environments rather than investor priors per se;
+    \item the proxy may also correlate with omitted firm characteristics despite controls.
+\end{itemize}
+
+These concerns do not kill the design, but the paper should not treat them as solved by standard controls alone.
+
+\subsection*{4.4 Heterogeneity tests}
+
+The paper's most credible heterogeneity tests are those that sharpen interpretive latitude in the filing itself. That is where the design comes closest to the theory. However, the current treatment of resignations, dismissals, quality shifts, and disclosed disagreement still feels under-integrated. It needs a stronger organizing principle.
+
+My suggestion would be:
+\begin{enumerate}[leftmargin=1.5em]
+    \item make ambiguity the main cross-sectional organizing concept;
+    \item place event type beneath that concept rather than alongside it;
+    \item and be explicit when a split is exploratory rather than theory-derived.
+\end{enumerate}
+
+\section*{5. Writing and positioning issues}
+
+\subsection*{5.1 The draft still sounds broader than it should}
+
+The paper is most persuasive when it sounds like:
+\begin{quote}
+a focused paper about how investors interpret an ambiguous audit-related disclosure under heterogeneous political environments.
+\end{quote}
+
+It is least persuasive when it sounds like:
+\begin{quote}
+a broad paper about political polarization, market efficiency, institutional trust, disagreement trading, and disclosure regulation all at once.
+\end{quote}
+
+A top journal will reward focus. The paper should therefore be written more narrowly and more carefully, especially in the abstract and conclusion.
+
+\subsection*{5.2 The contribution paragraph should be shorter and sharper}
+
+The paper should probably claim only three contributions:
+\begin{enumerate}[leftmargin=1.5em]
+    \item evidence on market reactions to auditor-change disclosures,
+    \item evidence that those reactions are stronger in more politically competitive environments,
+    \item and implications for the informativeness of audit-related disclosure when interpretation depends on investor heterogeneity.
+\end{enumerate}
+
+That is enough. Anything beyond that risks making the paper feel over-positioned.
+
+\section*{6. Assessment of the highlighted statement}
+
+The statement under review is:
+
+\begin{quote}
+``we find that absolute abnormal returns are 0.47 percentage points larger and abnormal trading volume is 0.11 units higher around auditor-change disclosures in more politically competitive states''
+\end{quote}
+
+My assessment is as follows.
+
+\subsection*{6.1 Is it insightful?}
+
+\textbf{Yes, moderately insightful.} The statement is insightful because it communicates the paper's core empirical point in economically interpretable terms, and because it links a non-firm information environment --- political competitiveness --- to investor reactions to an audit-related disclosure. That is a useful idea and not merely a routine event-study coefficient.
+
+However, the insight comes more from the \emph{mechanism behind the result} than from the magnitude statement itself. The sentence becomes meaningfully insightful only when the reader already understands that the paper is about heterogeneous interpretation of ambiguous audit-related information.
+
+\subsection*{6.2 Is it compelling?}
+
+\textbf{Partly compelling, but not yet fully compelling in its current presentation.} The statement is directionally appealing, especially because it reports economic magnitudes rather than only coefficients. But it is not fully compelling yet for three reasons:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item the return effect sounds modest relative to the sample mean and needs better benchmarking;
+    \item the abnormal-volume unit is not intuitively interpretable to a reader unless the paper reminds them exactly how the metric is scaled;
+    \item the causal or interpretive leap from ``more politically competitive states'' to ``greater investor disagreement'' still needs stronger defense.
+\end{enumerate}
+
+In other words, the sentence sounds like a real result, but it does not yet independently compel belief at top-journal standards. It needs the surrounding design and mechanism discussion to do more work.
+
+\subsection*{6.3 Is it surprising?}
+
+\textbf{Somewhat, but not deeply surprising.} It is somewhat surprising in the sense that many readers would not immediately predict that a state-level political environment should shape reactions to auditor-change disclosures. That cross-domain link has novelty.
+
+But it is \emph{not} surprising in the stronger sense of overturning a well-established expectation. Once the paper explains the disagreement mechanism, the result feels plausible fairly quickly. So I would describe it as:
+\begin{quote}
+interesting and moderately novel, but not startling.
+\end{quote}
+
+\subsection*{6.4 How to improve the sentence}
+
+The sentence would be stronger if it did three things:
+\begin{enumerate}[leftmargin=1.5em]
+    \item stated the benchmark explicitly,
+    \item reminded the reader that the comparison is economically meaningful relative to the sample mean,
+    \item and translated abnormal volume into clearer terms.
+\end{enumerate}
+
+For example, a stronger version would be:
+
+\begin{quote}
+We find that auditor-change disclosures trigger larger market reactions in more politically competitive states: a one-standard-deviation increase in competitiveness is associated with a 0.47 percentage point increase in absolute abnormal returns relative to a sample mean of 5.0\%, and a 0.11 increase in abnormal trading volume relative to its event-window baseline.
+\end{quote}
+
+That version is clearer and more persuasive because it anchors the magnitudes.
+
+\section*{7. Specific revision recommendations}
+
+If the goal is a top-accounting-journal-caliber draft, I would recommend the following revision priorities.
+
+\textbf{Priority 1: Tighten the paper's central claim.}
+The paper should claim one main insight:
+\begin{quote}
+politically polarized environments amplify heterogeneous interpretation of auditor-change disclosures.
+\end{quote}
+Everything else should support that claim.
+
+\textbf{Priority 2: Narrow the theory to what is proved.}
+Keep the posterior-dispersion proposition, but avoid overclaiming on prices unless more theory is added.
+
+\textbf{Priority 3: Make abnormal volume the cleaner theory-backed outcome.}
+Returns can remain, but volume should be the theoretical anchor.
+
+\textbf{Priority 4: Clean up the ambiguity design.}
+Define ambiguity once and code it consistently.
+
+\textbf{Priority 5: Defend the proxy more honestly.}
+Describe the headquarters-state political variable as a reduced-form environment proxy, not a direct measure of trader priors.
+
+\textbf{Priority 6: Perform a full internal consistency pass.}
+This includes notation, sample period, polarization measure description, event-type discussion, and narrative consistency across sections.
+
+\textbf{Priority 7: Rewrite the abstract and conclusion more narrowly.}
+The paper should sound more precise and less sweeping.
+
+\section*{8. Bottom-line verdict}
+
+This paper has a \emph{real} idea and a setting that could support a good accounting paper. But in its current draft, it still falls short of top-journal quality because it is not yet rigorous enough in aligning its theory, design, and claims. The right next step is not to add more ideas, variables, or framing angles. The right next step is to make the current paper cleaner, narrower, and more internally coherent.
+
+With that revision strategy, I think the paper could become much stronger. Without it, the draft will likely be read as promising but under-disciplined.
+
+\end{document}

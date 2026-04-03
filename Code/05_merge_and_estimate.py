@@ -599,7 +599,16 @@ def run_robustness(df: pd.DataFrame) -> None:
         # (9) County-level competitiveness (finer geographic alternative; N=659)
         "m9": run_ols(f"absCar ~ county_comp_std + {ctrl} + {fe}",
                       df[df["county_comp_std"].notna()].copy()),
+        # (10) Small-firm subsample: below-median log assets.
+        # The local equity bias channel predicts stronger effects for smaller firms,
+        # whose marginal investors are more likely to be local retail investors.
+        "m10": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}",
+                       df[df["size"] < df["size"].median()].copy()),
     }
+
+    size_median = df["size"].median()
+    log.info("Small-firm cutoff (median log assets): %.3f; N_small=%d",
+             size_median, (df["size"] < size_median).sum())
 
     for k, m in specs.items():
         pol_param = next((p for p in ["competitive_std", "er_pres_std", "pol_std",
@@ -628,12 +637,14 @@ def run_robustness(df: pd.DataFrame) -> None:
                   r"$|CAR|$\newline +State FE",
                   r"$|CAR|$\newline State Clust",
                   r"$|CAR|$\newline 2-Way Clust",
-                  r"$|CAR|$\newline County"]
+                  r"$|CAR|$\newline County",
+                  r"$|CAR|$\newline Small Firm"]
     extra_rows = {
-        "Year + Industry FE": ["Yes"] * 9,
-        "State FE":           ["No", "No", "No", "No", "No", "Yes", "No", "No", "No"],
-        "Cluster":            ["Firm"] * 6 + ["State", "Firm$\\times$State", "Firm"],
-        "Controls":           ["Yes"] * 9,
+        "Year + Industry FE": ["Yes"] * 10,
+        "State FE":           ["No", "No", "No", "No", "No", "Yes", "No", "No", "No", "No"],
+        "Cluster":            ["Firm"] * 6 + ["State", "Firm$\\times$State", "Firm", "Firm"],
+        "Controls":           ["Yes"] * 10,
+        "Sample":             ["Full"] * 9 + ["Small firms"],
     }
     reg_table(
         list(specs.values()), dep_labels, coef_map,

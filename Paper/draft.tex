@@ -228,7 +228,7 @@ disclosures.
 A rapidly growing literature documents that political polarization affects
 capital markets. \citet{kempf2024} survey evidence that partisan identity
 influences asset allocation, trading behavior, and return expectations. Related
-work finds that political beliefs shape economic forecasts and risk perceptions.
+work finds that partisan identity shapes economic forecasts \citep{gerberhuber2009, coibion2020} and risk perceptions \citep{barrioshochberg2021}.
 The political science literature distinguishes ideological from affective
 polarization (reviewed in Section~\ref{sec:affective} below); both forms are
 relevant here, because auditor disclosures are institution-dependent signals
@@ -282,7 +282,7 @@ precision should be understood as reduced-form sources of prior-like
 heterogeneity: a less trusting investor effectively places a lower prior on the
 informativeness of the auditor's signal; an investor who perceives lower signal
 precision effectively flattens the likelihood function. Either way, the
-formal result is the same increase in posterior dispersion. The model therefore provides a microfoundation for the broader mechanism
+formal result is the same increase in posterior dispersion. The model thus provides a microfoundation for the broader mechanism
 described in the introduction, not a claim that priors are the only operative
 channel.
 
@@ -495,8 +495,8 @@ $\sigma(\cdot)$ is strictly increasing, so $|\mu_D - \mu_R|$ increases
 strictly. It follows that
 posterior variance $\omega_D \omega_R (\mu_D - \mu_R)^2$ increases under any channel
 (see Appendix~\ref{app:proofs}). The core prediction is therefore
-channel-agnostic: polarization amplifies disagreement-sensitive market
-outcomes regardless of which specific mechanism predominates. The ambiguity
+channel-agnostic: polarization amplifies belief-dispersion-driven trading and
+price outcomes regardless of which specific mechanism predominates. The ambiguity
 interaction in P3 is similarly robust: ambiguous signals reduce $\ell$,
 which increases the relative weight of the non-signal components ($a(\pi_i)$
 and $\tau_i$), so prior and trust heterogeneity contribute more to posterior
@@ -666,9 +666,9 @@ belief heterogeneity.}
 
 We forward-fill each presidential election's measure over the four subsequent
 calendar years --- assigning the 2000 vote to 2001--2004, the 2004 vote to
-2005--2008, and so on, through the 2020 election covering 2021--2023 within our sample period --- on the
-assumption that the state political environment evolves at the electoral-cycle
-frequency rather than annually. We standardize to mean zero and unit variance
+2005--2008, and so on through the 2020 election, which covers 2021--2023
+within our sample period. This assignment assumes that the state political
+environment evolves at the electoral-cycle frequency rather than annually. We standardize to mean zero and unit variance
 within the analysis sample. Because different polarization indices emphasize
 different aspects of between-group separation and within-group cohesion, the
 competitiveness measure cannot be treated as exhaustive \citep{wang2000}.
@@ -816,9 +816,9 @@ environment. For larger firms with globally dispersed institutional ownership,
 the headquarters-state proxy is less well-matched to the actual investor base,
 and the effect should be attenuated. This cross-sectional prediction provides
 a validation test: we expect the polarization effect to be stronger for
-smaller firms and firms with higher retail-investor ownership, and weaker for
-firms with predominantly institutional or geographically dispersed ownership
-(Table~\ref{tab:robustness}).
+smaller firms, whose marginal investors are more likely to be local.
+Column (10) of Table~\ref{tab:robustness} restricts the sample to
+below-median log-asset firms and tests this directly.
 
 We acknowledge the main limitation of the proxy directly: equity investors in
 publicly traded firms are not confined to the headquarters state. Institutional
@@ -958,7 +958,7 @@ Table~\ref{tab:robustness} addresses conventional robustness concerns and
 provides measurement triangulation across the three conceptually distinct
 polarization proxies described in Section~\ref{sec:design}.
 
-Table~\ref{tab:robustness} presents nine robustness columns. Column (1) repeats the
+Table~\ref{tab:robustness} presents ten robustness columns. Column (1) repeats the
 baseline for reference ($\beta = 0.005$, $p = 0.040$). Column (2) substitutes the
 quadratic presidential Esteban-Ray index for the linear competitiveness measure;
 the coefficient is directionally consistent but attenuated ($\beta = 0.003$,
@@ -970,10 +970,10 @@ House-district measure relative to state presidential margins (SD = 0.101).
 Columns (4)--(5) replace the electoral measure with DW-NOMINATE roll-call scores:
 the state-level cross-party ideological gap (column 4, $p = 0.522$) and the national
 ideological gap (column 5, $\beta = -0.009$, $p = 0.050$). The negative coefficient
-on the national measure likely reflects a secular decline in market reactions to
-auditor changes over the post-SOX period rather than a genuine polarization effect,
-since the national gap rises monotonically and year fixed effects do not fully absorb
-biennial congressional variation. Column (6) augments the baseline with state fixed
+on the national measure is consistent with a secular trend in market reactions
+to auditor changes over the post-SOX period partially confounding the time-series
+variation, since the national gap has trended upward throughout the sample and
+year fixed effects do not fully absorb biennial congressional variation. Column (6) augments the baseline with state fixed
 effects; the coefficient triples in magnitude but loses precision ($\beta = 0.012$,
 $p = 0.144$), consistent with within-state variation in presidential competitiveness
 being noisier than cross-state variation. Column (7) clusters standard errors at the
@@ -990,6 +990,11 @@ returns, matched to each firm's headquarters county via Compustat zip codes and
 the HUD ZIP-COUNTY crosswalk. The coefficient is $\beta = 0.005$ ($p = 0.036$,
 $N = 659$), virtually identical to the state-level baseline, confirming that
 the result is not an artifact of geographic aggregation.
+Column (10) restricts the sample to below-median log-asset firms ($N = 339$),
+where the local equity bias channel predicts the strongest polarization effects.
+The coefficient is $\beta = 0.005$ ($p = 0.175$), directionally consistent with
+the full-sample baseline but imprecise given the smaller subsample, providing
+suggestive rather than conclusive support for the size heterogeneity prediction.
 
 \input{../Output/Tables/tab05_robustness}
 
@@ -1022,9 +1027,11 @@ ideological heterogeneity --- rather than the temporal rise in affective polariz
 Political polarization affects how investors interpret auditor signals, with
 implications for market efficiency and audit regulation. The same class of mandatory auditor-change disclosures
 generates larger absolute returns and higher trading volume in more
-politically competitive environments. Effects are concentrated in auditor resignations --- the more ambiguous event type ---
-with abnormal volume effects strongest for low-ambiguity events, consistent with
-polarization widening disagreement in interpretation most when signals are harder to read.
+politically competitive environments. For absolute returns, effects are concentrated in auditor resignations --- the more
+ambiguous event type --- consistent with polarization amplifying disagreement most
+when fault and severity are unclear. For abnormal volume, the effect is strongest
+in the low-ambiguity subsample, where clear quality signals give investors with
+opposing political priors concrete grounds for disagreement about severity.
 
 The findings suggest one limit to disclosure-based regulation in
 credibility-sensitive settings: when investors differ in their assessments of
@@ -1036,8 +1043,8 @@ interpretation depends on trust in regulated gatekeepers. Future research
 should examine whether these patterns extend to critical audit matters, going
 concern opinions, and internal control reports. A further promising direction
 is to distinguish the roles of ideological and affective polarization ---
-our proxies primarily capture ideological distance, but the recent political
-science literature suggests that partisan distrust and identity-based animus
+our primary proxy captures electoral division rather than ideological distance,
+and the recent political science literature suggests that partisan distrust and identity-based animus
 \citep{mason2015, druckmanlevy2021} may be independently important for how
 investors assess the credibility of institution-dependent disclosures.
 
