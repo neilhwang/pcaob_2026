@@ -409,6 +409,20 @@ def parse_one_filing(row: pd.Series) -> dict:
     }
 
 
+def _sanitize_for_csv(df: pd.DataFrame) -> pd.DataFrame:
+    """Strip null bytes from all string columns before writing to CSV.
+
+    On Windows, pandas raises OSError (errno 22) when any string value
+    contains a null byte (\\x00), which can appear in EDGAR HTML text.
+    """
+    str_cols = df.select_dtypes(include="object").columns
+    for col in str_cols:
+        df[col] = df[col].apply(
+            lambda v: v.replace("\x00", "") if isinstance(v, str) else v
+        )
+    return df
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -430,11 +444,16 @@ def main() -> None:
     # Step 4: Parse with checkpointing
     log.info("Step 4: Parse %d candidate filings", len(candidates))
 
-    if CHECKPOINT_FILE.exists():
-        completed = pd.read_csv(CHECKPOINT_FILE)
-        done_accs = set(completed["acc_nodash"].astype(str))
-        results   = completed.to_dict("records")
-        log.info("Resuming from checkpoint: %d already parsed", len(results))
+    if CHECKPOINT_FILE.exists() and CHECKPOINT_FILE.stat().st_size > 0:
+        try:
+            completed = pd.read_csv(CHECKPOINT_FILE)
+            done_accs = set(completed["acc_nodash"].astype(str))
+            results   = completed.to_dict("records")
+            log.info("Resuming from checkpoint: %d already parsed", len(results))
+        except Exception as exc:
+            log.warning("Checkpoint unreadable (%s); starting fresh.", exc)
+            done_accs = set()
+            results   = []
     else:
         done_accs = set()
         results   = []
@@ -451,9 +470,9 @@ def main() -> None:
             results.append(parse_one_filing(row))
 
         if (i + 1) % CHECKPOINT_EVERY == 0:
-            pd.DataFrame(results).to_csv(CHECKPOINT_FILE, index=False)
+            _sanitize_for_csv(pd.DataFrame(results)).to_csv(CHECKPOINT_FILE, index=False)
 
-    pd.DataFrame(results).to_csv(CHECKPOINT_FILE, index=False)
+    _sanitize_for_csv(pd.DataFrame(results)).to_csv(CHECKPOINT_FILE, index=False)
 
     if not results:
         log.error("No filings parsed. Check EFTS phrase and index intersection.")
