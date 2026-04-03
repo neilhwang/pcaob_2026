@@ -113,10 +113,9 @@ def load_and_merge() -> pd.DataFrame:
     crsp["abvol"]   = crsp["abvol_m1p1"]
     crsp["car"]     = crsp["car_m1p1"]
 
-    # Standardize polarization to mean=0, sd=1
-    pol_mean = crsp["pol_er_alpha10"].mean()
-    pol_std  = crsp["pol_er_alpha10"].std()
-    crsp["pol_std"] = (crsp["pol_er_alpha10"] - pol_mean) / pol_std
+    # pol_std standardization is deferred to after apply_sample_filters() so that
+    # mean=0, sd=1 holds exactly in the estimation sample (not the pre-filter universe).
+    # Leave pol_er_alpha10 in place; standardization applied in main().
 
     # Event-type indicators for heterogeneity tests
     crsp["dismissal"]      = (crsp["reason"] == "dismissal").astype(int)
@@ -136,7 +135,10 @@ def load_and_merge() -> pd.DataFrame:
     ).astype(int)
 
     # sic2 as string category for FE
-    crsp["sic2_str"]  = crsp["sic2"].astype("Int64").astype(str)
+    # Convert sic2 to string for use as a fixed effect.
+    # Must fill NA before converting: nullable Int64 → str produces "<NA>",
+    # which creates a spurious FE level that absorbs firms with missing SIC.
+    crsp["sic2_str"]  = crsp["sic2"].fillna(-1).astype(int).astype(str)
     crsp["year_str"]  = crsp["event_year"].astype(str)
     crsp["gvkey_str"] = crsp["gvkey"].astype(str)
 
@@ -147,7 +149,7 @@ def load_and_merge() -> pd.DataFrame:
 def apply_sample_filters(df: pd.DataFrame) -> pd.DataFrame:
     """Drop observations missing key variables for the main regression."""
     n0 = len(df)
-    df = df.dropna(subset=["absCar", "abvol", "pol_std"] + CONTROLS)
+    df = df.dropna(subset=["absCar", "abvol", "pol_std", "sic2"] + CONTROLS)
     log.info("After dropping missing: %d rows (dropped %d)", len(df), n0 - len(df))
     return df.reset_index(drop=True)
 
@@ -424,20 +426,7 @@ def run_robustness(df: pd.DataFrame) -> None:
     ctrl = " + ".join(CONTROLS)
     fe   = "C(year_str) + C(sic2_str)"
 
-    # Alternative polarization measures
-    pol_mean08 = df["pol_er_alpha08"].mean()
-    pol_std08  = df["pol_er_alpha08"].std()
-    df = df.copy()
-    df["pol_std_a08"] = (df["pol_er_alpha08"] - pol_mean08) / pol_std08
-
-    pol_mean12 = df["pol_er_alpha12"].mean()
-    pol_std12  = df["pol_er_alpha12"].std()
-    df["pol_std_a12"] = (df["pol_er_alpha12"] - pol_mean12) / pol_std12
-
-    # Drop single-district states (Louisiana, Alaska, etc.)
-    multi_dist = df[df["state"].notna()].copy()
-    # Flag states with only 1 district — use pol panel to identify
-    df_no_single = df[df["state"].notna()].copy()  # refine below if n_districts available
+    # pol_std_a08 and pol_std_a12 are already standardized in main() before this runs.
 
     specs = {
         # (1) Baseline (repeat for comparison)
@@ -491,6 +480,17 @@ def main() -> None:
     # Merge
     df = load_and_merge()
     df = apply_sample_filters(df)
+
+    # Standardize polarization measures on the final estimation sample (mean=0, sd=1).
+    # Done after filtering so the coefficient is interpretable as a 1-SD effect.
+    for alpha_col, std_col in [
+        ("pol_er_alpha10", "pol_std"),
+        ("pol_er_alpha08", "pol_std_a08"),
+        ("pol_er_alpha12", "pol_std_a12"),
+    ]:
+        mu  = df[alpha_col].mean()
+        sig = df[alpha_col].std()
+        df[std_col] = (df[alpha_col] - mu) / sig
 
     # Save analysis sample
     df.to_parquet(SAMPLE_FILE, index=False)

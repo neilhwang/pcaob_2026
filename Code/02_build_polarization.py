@@ -113,6 +113,14 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     if "runoff" in df.columns:
         df = df[df["runoff"] == False]
 
+    # Drop Louisiana — uses a jungle primary system where the "general"
+    # election may be a runoff between two candidates of the same party,
+    # making the two-party ER measure unreliable. Louisiana's single
+    # at-large-equivalent district also produces extreme ER values.
+    # Louisiana state_fips = 22.
+    df = df[df["state_fips"] != 22]
+    log.info("Dropped Louisiana (jungle primary). Remaining rows: %d", len(df))
+
     # Drop write-ins
     if "writein" in df.columns:
         df = df[df["writein"] == False]

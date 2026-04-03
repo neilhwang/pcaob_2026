@@ -69,6 +69,11 @@ def load_events(path: Path) -> pd.DataFrame:
     events = pd.read_parquet(path)
     events["date_filed"] = pd.to_datetime(events["date_filed"])
 
+    # Normalize CIK to 10-digit zero-padded string to match comp.company.cik format.
+    # EDGAR index stores CIKs as plain integers ("919012"); Compustat stores them as
+    # "0000919012". Without this, the CIK → gvkey SQL lookup returns zero rows.
+    events["cik"] = events["cik"].astype(str).str.strip().str.zfill(10)
+
     # Drop 8-K/A amendments — keep only original filings for the main sample.
     # Amendments often refile after market has already reacted.
     n_before = len(events)
@@ -121,7 +126,12 @@ def build_cik_permno_link(conn, ciks: list[str]) -> pd.DataFrame:
           AND linktype IN ('LC', 'LU')
           AND linkprim IN ('P', 'C')
     """)
-    gvkey_permno["linkdt"]    = pd.to_datetime(gvkey_permno["linkdt"])
+    # NULL linkdt means "active from beginning of time" — fill with early sentinel.
+    # NULL linkenddt means "still active" — fill with far-future sentinel.
+    # Without filling linkdt, NaT comparisons return False and valid links are dropped.
+    gvkey_permno["linkdt"]    = pd.to_datetime(
+        gvkey_permno["linkdt"].fillna("1900-01-01")
+    )
     gvkey_permno["linkenddt"] = pd.to_datetime(
         gvkey_permno["linkenddt"].fillna("2099-12-31")
     )
@@ -387,18 +397,25 @@ def main() -> None:
     conn = connect_wrds()
 
     # Step 3: Link CIKs to PERMNOs
-    ciks  = events["cik"].dropna().unique().tolist()
+    ciks = events["cik"].dropna().unique().tolist()
+    if not ciks:
+        log.error("No CIKs in event file. Exiting.")
+        conn.close()
+        return
     link  = build_cik_permno_link(conn, ciks)
     events_linked = apply_link_to_events(events, link)
 
     if events_linked.empty:
         log.error("No events matched to PERMNO. Exiting.")
+        conn.close()
         return
 
     # Step 4: Pull CRSP daily data
     # Date range: earliest event minus estimation window, to latest event plus buffer
+    # EST_WINDOW_START = -252 trading days ≈ 365 calendar days. Use 400 calendar
+    # days to be safe (252 × 365/252 ≈ 365, plus ~35 days buffer).
     sample_start = (events_linked["date_filed"].min() -
-                    pd.DateOffset(days=abs(EST_WINDOW_START) + 30))
+                    pd.DateOffset(days=400))
     sample_end   = events_linked["date_filed"].max() + pd.DateOffset(days=10)
 
     permnos = events_linked["permno"].astype(int).unique().tolist()

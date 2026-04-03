@@ -6,22 +6,43 @@
 
 ## What was accomplished
 
-### Planning (prior session — recovered from summary)
-- Reviewed research plan in `/Admin` and all manuscript drafts in `/Paper`.
-- Confirmed research question: how political polarization affects investor interpretation of auditor-related signals; primary setting = auditor changes (Form 8-K Item 4.01).
-- Settled on **Esteban & Ray (1994) polarization measure** with α=1:
-  P^ER_{c,t} = 2 · s_{D,c,t}^(1+α) · s_{R,c,t}, computed from MIT Election Lab congressional district vote shares.
-- Identified **rsljr/edgarParser** as the conceptual reference but implemented natively in R (CLAUDE.md requires R; the Python parser would require reticulate).
-- Identified EDGAR EFTS full-text search API as a pre-filter to reduce downloads from ~800K 8-K filings to ~20K Item 4.01 candidates.
-- Confirmed timeline: PCAOB/CAR conference deadline **May 15, 2026** (~43 days). Critical path = EDGAR pipeline.
+### Pipeline scripts written and run
 
-### Coding (this session)
-- Created `Code/01_build_edgar_event_file.Rmd` — the first pipeline script.
-  - Step 1: Downloads EDGAR quarterly index files (2000–2023), filters for 8-K/8-K/A.
-  - Step 2: Hits EDGAR EFTS API by year to get the ~20K filings containing "4.01".
-  - Step 3: Intersects EFTS candidates with the quarterly index.
-  - Step 4: Downloads each candidate's primary document and extracts Item 4.01 section via regex.
-  - Step 5: Parses auditor names (Big 4 anchor list), dismissal/resignation reason, disagreements flag, Big4↔non-Big4 direction, writes parquet to `Data/Processed/auditor_changes_raw.parquet`.
+| Script | Status | Output |
+|--------|--------|--------|
+| `01_build_edgar_event_file.py` | Running (checkpointed) | `auditor_changes_raw.parquet` |
+| `02_build_polarization.py` | ✅ Done | `polarization_state_year.parquet` |
+| `03_build_crsp_sample.py` | Written, waiting for 01 | `crsp_event_window.parquet` |
+| `04_build_compustat_controls.py` | ✅ Done | `compustat_controls.parquet` |
+| `05_merge_and_estimate.py` | Written, waiting for 03 | `Output/Tables/tab01–05.tex` |
+
+### Paper sections drafted and consolidated
+
+All manuscript components merged into `Paper/draft.tex`. All bib files merged into `Paper/references.bib`. Superseded files moved to `Paper/_Archive/`.
+
+`draft.tex` section structure:
+1. Abstract
+2. Introduction
+3. Related Literature
+4. Theory (Bayesian framework, Proposition 1, equilibrium prices/volume)
+5. Hypothesis Development (H1, H2, H3 formally stated)
+6. Empirical Design (sample, variables, ER measure formula, specification, identification)
+7. Results (placeholders — fill after script 05 runs)
+8. Conclusion
+
+### Key bugs fixed this session
+
+| Script | Bug | Fix |
+|--------|-----|-----|
+| 01 | EFTS `_id` format was `acc:docname` | Split on `:`, take left part |
+| 01 | Index acc regex `\d{18}` failed (dashes in filename) | Changed to `\d{10}-\d{2}-\d{6}` then strip dashes |
+| 01 | `User-Agent: Mozilla` → 403 from EDGAR | Updated to real email in `parse_8K.py` |
+| 01 | `sys.exit()` in parser crashed whole run | Added `except SystemExit` catch |
+| 01 | No checkpointing → lost progress on interrupt | Added checkpoint every 100 filings |
+| 02 | File read as 1 column (CSV not TSV) | Changed `sep="\t"` to `sep=","` |
+| 02 | Louisiana jungle primary biases ER measure | Dropped Louisiana (state_fips=22) |
+| 04 | `state`/`sic` not in `comp.funda` | Joined `comp.company` for state; used `sich` |
+| 04 | Nullable dtype → `cannot convert NA to integer` | Added `.astype(float)` on all numeric cols |
 
 ---
 
@@ -29,39 +50,41 @@
 
 | Decision | Rationale |
 |----------|-----------|
-| R rather than Python | CLAUDE.md requires R; avoids reticulate dependency |
-| EFTS pre-filter before bulk download | Reduces HTTP requests from ~800K to ~20K; respects SEC rate limits |
-| Anchor list for auditor names | Full NLP name extraction is overkill for conference version; Big 4 flag is sufficient for quality-direction subgroups |
-| Include 8-K/A amendments | Conservative; flag for review in script 02 |
-| α=1 for ER measure | Theorem 3 lower bound; maximized at 50-50 district split; standard in literature |
+| Python throughout | CLAUDE.md specifies Python; better EDGAR tooling |
+| rsljr edgarParser (local) | Pre-existing tested parser; placed in `Code/edgarparser/` |
+| ER measure α=1 | Simplifies to s_D·s_R; standard lower bound; maximized at 50-50 |
+| Drop Louisiana | Jungle primary makes D vs R two-party share unreliable |
+| State-level polarization | No 13F; HQ state is cleanest available match to firm |
+| Event-study cross-section for regressions | Cleaner than pseudo-event panel; standard in auditing literature |
+| Estimation window [-252,-46] | Avoids contamination; minimum 100 days required |
+| WRDS username `nhwang` hardcoded | Avoids repeated prompts across scripts |
 
 ---
 
-## What is still pending / unresolved
+## What is still pending
 
-1. **Script not yet run** — Neil must run `01_build_edgar_event_file.Rmd` to produce the event file. Runtime ~45 min on full 2000–2023 sample.
-2. **Script number confirmed?** — Assumed `01_` (pipeline is empty). Neil should confirm or rename.
-3. **USER_AGENT field** — Neil must update the `USER_AGENT` string in the setup chunk with a real contact email (SEC requires this for automated downloads).
-4. **MIT Election Lab data** — Still needs to be downloaded and processed. Script `02_` (or separate script) will build the ER polarization measure.
-5. **CRSP data pull** — WRDS query for daily returns + volume not yet written.
-6. **Compustat controls** — Not yet pulled.
-7. **Script 02: merge CRSP + event file** — Next coding task.
-8. **Verify PCAOB conference format** — Neil should confirm whether the conference accepts work-in-progress (critical for May 15 feasibility).
+1. **Script 01 still running** — checkpointed; will resume if interrupted
+2. **Script 03** — run immediately after 01 finishes
+3. **Script 05** — run after 03 finishes; produces all 5 tables
+4. **Fill placeholders in draft.tex** — sample N counts, main results
+5. **`bordalo2023` citation** — flagged with VERIFY note in references.bib; confirm correct paper
+6. **Existing bib entries** — firth1978, dodd1984, etc. still missing volume/pages; flesh out before RAS submission
+7. **Apply for 13F access** — for RAS version investor-based polarization measure
 
 ---
 
 ## Open questions for Neil
 
-1. Does the PCAOB/CAR conference accept work-in-progress submissions, or does it require completed empirical results?
-2. Should 8-K/A amendments be included in the event file, or dropped?
-3. What email address should go in the `USER_AGENT` string for EDGAR requests?
-4. Is `01_` the correct script number? (Pipeline was empty — assumed first.)
+1. Should 8-K/A amendments be included or dropped in final sample?
+2. Confirm `bordalo2023` intended citation (currently: Bordalo, Gennaioli, Shleifer JPE 2023 "Stereotypes and Politics")
+3. Does the PCAOB conference accept work-in-progress, or are results required?
 
 ---
 
-## Next steps (in priority order)
+## Immediate next steps (in order)
 
-1. Neil runs `01_build_edgar_event_file.Rmd` and reports row count / any errors.
-2. Claude writes `02_build_crsp_sample.Rmd` — WRDS CRSP pull and CAR computation.
-3. Claude writes `03_build_polarization.Rmd` — MIT Election Lab download + ER measure.
-4. Claude writes `04_merge_and_estimate.Rmd` — main regression.
+1. Wait for script 01 to finish
+2. Run `python Code/03_build_crsp_sample.py`
+3. Run `python Code/05_merge_and_estimate.py`
+4. Fill result placeholders in `Paper/draft.tex`
+5. Git commit and push

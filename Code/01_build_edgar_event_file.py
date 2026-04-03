@@ -9,7 +9,8 @@ OUTPUT: Data/Processed/auditor_changes_raw.parquet
 
 PIPELINE:
     1. Query EDGAR full-text search (EFTS) API to identify 8-K filings that
-       contain "Item 4.01" text (~15K–25K filings across 2000–2023).
+       contain "Changes in Registrant's Certifying Accountant" — the exact
+       Item 4.01 title (~17,600 filings across 2001–2023, per EFTS count).
     2. Fetch the EDGAR quarterly index to obtain CIK, company name, and filing
        date for each candidate accession number.
     3. Parse each filing with edgarParser (rsljr/edgarParser on GitHub) to
@@ -49,7 +50,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "edgarparser"))
 from parse_8K import parse_8k_filing
 
 # ── Configuration ─────────────────────────────────────────────────────────────
-START_YEAR    = 2000
+START_YEAR    = 2001   # 2000 has 0 hits under correct EFTS query; Item 4.01 disclosures start 2001
 END_YEAR      = 2023
 REQUEST_DELAY = 0.12          # seconds between requests (~8 req/sec)
 USER_AGENT    = "Research project neil.hwang@bcc.cuny.edu"
@@ -121,11 +122,12 @@ def edgar_get(url: str, stream: bool = False) -> requests.Response | None:
 
 def fetch_efts_year(year: int) -> list[str]:
     """
-    Query EDGAR full-text search for 8-K filings containing '4.01' in a given
-    year. Returns a list of accession numbers (with dashes).
+    Query EDGAR full-text search for 8-K filings containing the exact phrase
+    "Changes in Registrant's Certifying Accountant" (Item 4.01 title) in a
+    given year. Returns a list of accession numbers (with dashes).
 
     EFTS caps results at 10,000 per query. Iterating by year keeps each window
-    well under that ceiling (~1,000–2,000 hits per year).
+    well under that ceiling (max ~3,600 hits in 2002).
     """
     start_dt = f"{year}-01-01"
     end_dt   = f"{year}-12-31"
@@ -137,9 +139,11 @@ def fetch_efts_year(year: int) -> list[str]:
     while True:
         url = (
             "https://efts.sec.gov/LATEST/search-index"
-            f'?q=%224.01%22&forms=8-K,8-K%2FA'
+            # Search for the exact Item 4.01 title text — much more precise than "4.01"
+            # which matches financial figures and contract section numbers in exhibits.
+            f"?q=%22Changes+in+Registrant%27s+Certifying+Accountant%22&forms=8-K"
             f"&dateRange=custom&startdt={start_dt}&enddt={end_dt}"
-            f"&from={from_idx}"
+            f"&from={from_idx}"  # EFTS returns 100/page max; advance by len(hits) below
         )
         resp = edgar_get(url)
         if resp is None:
@@ -160,7 +164,8 @@ def fetch_efts_year(year: int) -> list[str]:
 
         accessions.extend(h["_id"] for h in hits)
 
-        from_idx += page_size
+        # Advance by actual hits returned (EFTS caps at 100/page regardless of size=).
+        from_idx += len(hits)
         if from_idx >= min(total, 9_800):  # EFTS hard cap at 10K
             break
 
