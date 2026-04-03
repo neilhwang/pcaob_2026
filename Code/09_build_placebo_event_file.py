@@ -55,7 +55,7 @@ import requests
 import pandas as pd
 from tqdm import tqdm
 
-sys.path.insert(0, str(Path(__file__).resolve().parent / "edgarparser"))
+sys.path.insert(0, str(Path(__file__).resolve().parent / "edgarParser-master"))
 from parse_8K import parse_8k_filing
 
 # ── Configuration ──────────────────────────────────────────────────────────────
