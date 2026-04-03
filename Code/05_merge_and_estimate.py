@@ -210,12 +210,21 @@ def load_and_merge() -> pd.DataFrame:
 
 
 def apply_sample_filters(df: pd.DataFrame) -> pd.DataFrame:
-    """Drop observations missing key variables for the main regression."""
+    """Drop observations missing key variables and apply standard SIC exclusions."""
     n0 = len(df)
     # Filter on er_pres (the primary raw measure), not er_pres_std — the
     # standardized version is created in main() after this function returns.
     df = df.dropna(subset=["absCar", "abvol", "er_pres", "sic2"] + CONTROLS)
     log.info("After dropping missing: %d rows (dropped %d)", len(df), n0 - len(df))
+
+    # Exclude financial firms (SIC 6000-6999) and utilities (SIC 4900-4999).
+    # Standard in the accounting literature; these industries have distinct
+    # regulatory environments and auditor relationships.
+    n1 = len(df)
+    df = df[~df["sic2"].isin(range(60, 70)) & ~df["sic2"].isin(range(49, 50))]
+    log.info("After SIC exclusions (financials/utilities): %d rows (dropped %d)",
+             len(df), n1 - len(df))
+
     return df.reset_index(drop=True)
 
 
@@ -723,7 +732,8 @@ def main() -> None:
 
     # Save analysis sample
     df.to_parquet(SAMPLE_FILE, index=False)
-    log.info("Analysis sample saved: %s  (%d rows)", SAMPLE_FILE, len(df))
+    log.info("Analysis sample saved: %s  (%d events, %d unique firms)",
+             SAMPLE_FILE, len(df), df["gvkey"].nunique())
 
     # Summary stats — Table 1
     log.info("Building Table 1: Summary statistics")

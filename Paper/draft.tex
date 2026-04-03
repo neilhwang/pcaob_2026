@@ -115,11 +115,17 @@ change disclosures on the state-level polarization measure at the time of the
 event, controlling for firm characteristics and including year and industry
 fixed effects.
 
-We find that [PLACEHOLDER: insert main result once estimates are available].
-These effects are concentrated in [PLACEHOLDER: ambiguous events / dismissals
-without disclosed reasons / Big-4 departures], consistent with the model's
-prediction that polarization effects are amplified when signals carry less
-inherent precision.
+We find that firms headquartered in more politically competitive states experience
+significantly larger absolute abnormal returns and abnormal trading volume around
+auditor-change disclosures. A one-standard-deviation increase in state partisan
+competitiveness is associated with a 0.47 percentage point increase in $|CAR(-1,+1)|$
+($\beta = 0.005$, $p = 0.040$) and a 0.11-unit increase in abnormal volume
+($\beta = 0.111$, $p = 0.010$), controlling for firm characteristics, year fixed effects,
+and industry fixed effects.
+These effects are concentrated in auditor resignations rather than client-initiated
+dismissals ($\beta = 0.012$, $p = 0.043$ vs.\ $\beta = 0.003$, $p = 0.203$),
+consistent with the prediction that polarization amplifies investor disagreement
+when the signal is inherently ambiguous about auditor--client fault.
 
 This paper makes three contributions. First, we contribute to the auditing and
 capital markets literature by documenting that the market response to audit signals
@@ -590,7 +596,7 @@ matched to a CRSP/Compustat security and are dropped, and a further 40 are
 excluded for insufficient trading-day coverage in the estimation window.
 The unmatched filings are predominantly firms not listed on major exchanges
 or not covered by CRSP/Compustat.} The final sample consists
-of [N] auditor change events for [N] unique firms. We exclude financial firms
+of 678 auditor change events for 456 unique firms. We exclude financial firms
 (SIC 6000--6999) and utilities (SIC 4900--4999).
 
 \subsection{Dependent Variables}
@@ -890,26 +896,69 @@ also report two-way clustering by firm and state.
 
 \subsection{Descriptive Statistics}
 
-[PLACEHOLDER: Table 1 — summary statistics for event sample, CARs, abnormal
-volume, and polarization measure.]
+Table~\ref{tab:summary} presents descriptive statistics for the 678 auditor-change
+events in the estimation sample. The mean $|CAR(-1,+1)|$ is 5.0\% with a standard
+deviation of 6.7\%, consistent with prior event studies of auditor changes
+\citep{defond2014}. Abnormal trading volume averages 0.11 units above normal,
+reflecting the information content of the disclosures. The mean partisan margin
+is 0.13 (SD 0.10), spanning from near-zero for highly competitive states to 0.40
+for strongly one-party states. The median firm has log assets of 4.97 and leverage
+of 17\%; 45\% report a loss in the year preceding the auditor change, reflecting
+the elevated distress common in this sample.
+
+\input{../Output/Tables/tab01_summary_stats}
 
 \subsection{Main Results}
 
-[PLACEHOLDER: Table 2 — baseline regressions of $|CAR|$ and $AbVol$ on
-$\textit{Pol}$, with and without controls; columns (1)--(2) for $|CAR|$,
-columns (3)--(4) for $AbVol$; year and industry FEs throughout.]
+Table~\ref{tab:main} reports the baseline results. Columns (1)--(2) use $|CAR(-1,+1)|$
+as the dependent variable; columns (3)--(4) use abnormal volume. Odd columns include
+year fixed effects only; even columns add industry fixed effects and the full set of
+firm controls. Across all four specifications, the coefficient on \textit{Competitiveness}
+is positive and statistically significant, ranging from $\beta = 0.005$ ($p = 0.016$)
+in column (1) to $\beta = 0.005$ ($p = 0.040$) in column (2) for $|CAR|$, and
+$\beta = 0.118$ ($p = 0.006$) to $\beta = 0.111$ ($p = 0.010$) for abnormal volume.
+The economic magnitude is meaningful: a one-standard-deviation increase in partisan
+competitiveness is associated with a 0.47 percentage point increase in $|CAR|$ relative
+to a sample mean of 5.0\%, and a 0.11-unit increase in abnormal volume. The consistency
+of the coefficient across specifications with and without firm controls suggests that
+political geography is not merely proxying for firm characteristics.
+
+\input{../Output/Tables/tab02_main_results}
 
 \subsection{Heterogeneity by Event Type}
 
-[PLACEHOLDER: Table 3 — split-sample regressions by event type: dismissals
-vs.\ non-dismissals (Hypothesis~\ref{h2}), and Big-4 quality direction.
-All columns use full controls and year $+$ industry FEs.]
+Table~\ref{tab:event_type} presents split-sample regressions by auditor change type.
+The effect is concentrated in non-dismissals (auditor resignations): $\beta = 0.012$,
+$p = 0.043$. Among dismissals --- where the client terminates the auditor and the
+adversarial nature of the separation is more transparent --- the coefficient is
+$\beta = 0.003$ and statistically indistinguishable from zero ($p = 0.203$). This
+asymmetry is consistent with the mechanism: when the signal is inherently ambiguous
+about fault (resignation), politically heterogeneous investor bases disagree more
+about its interpretation, generating larger price and volume responses. Splits by
+quality direction (Big-4 departures and non-Big-4 upgrades) are also reported but
+are individually insignificant, likely due to small subsamples.
+
+\input{../Output/Tables/tab03_event_type}
 
 \subsection{Signal Ambiguity}
 
-[PLACEHOLDER: Table 4 — split by high- vs.\ low-ambiguity events (no
-disclosed disagreement and unclear quality direction), testing
-Hypothesis~\ref{h3}.]
+Table~\ref{tab:ambiguity} splits the sample into high- and low-ambiguity events.
+High-ambiguity events are those with no formally disclosed disagreement and no clear
+quality change (lateral auditor-to-auditor switches or changes classified as unknown),
+comprising 120 of the 678 sample observations. The $|CAR|$ coefficient in the
+high-ambiguity subsample ($\beta = 0.020$, $p = 0.110$) is four times the full-sample
+estimate, but does not reach conventional significance at $N = 120$; the low-ambiguity
+coefficient ($\beta = 0.003$, $p = 0.209$) is smaller and also insignificant. For
+abnormal volume, the pattern reverses: the low-ambiguity subsample drives the result
+($\beta = 0.114$, $p = 0.008$), while the high-ambiguity volume coefficient is
+imprecise ($p = 0.422$). We interpret the volume finding as evidence that events
+carrying clear quality signals (disclosed disagreements, auditor quality changes)
+generate more polarization-driven heterogeneous trading in competitive states, where
+investors with opposing political priors disagree about the severity of the event.
+The $|CAR|$ pattern is directionally consistent with the ambiguity hypothesis but
+remains underpowered given the small high-ambiguity subsample.
+
+\input{../Output/Tables/tab04_ambiguity}
 
 \subsection{Robustness and Measurement Triangulation}
 
@@ -921,38 +970,50 @@ identity--alienation object \citep{duclos2004}; convergent evidence across
 proxies that differ in their data source, construction, and conceptual
 emphasis is therefore more informative than stability within a single measure.
 
-[PLACEHOLDER: Table 5 — seven columns. Columns (1)--(3) vary the ER
-sensitivity parameter ($\alpha = 1, 0.8, 1.2$), testing robustness to the
-within-electoral-proxy parameterization. Columns (4)--(5) replace the ER
-measure entirely: column (4) uses the state-level DW-NOMINATE ideological
-gap $P^{DW}_{s,t}$ (elite ideological distance); column (5) uses the national
-DW-NOMINATE gap $P^{DW\text{-nat}}_t$ (time-series only). Because DW-NOMINATE
-is constructed from legislative roll-call records rather than election returns,
-these columns test whether the ER result reflects ideological polarization
-rather than electoral competitiveness per se. Column (6) augments the baseline
-with state fixed effects, providing a within-state interpretation that absorbs
-time-invariant cross-state differences in investor composition and auditor
-market structure. Column (7) clusters standard errors at the state level rather
-than the firm level, since the key regressor varies at the state$\times$year
-level; firm-level clustering is optimistic when between-firm correlation within
-states is non-trivial. Consistency of the main coefficient across all seven
-columns addresses concerns about functional form, measure construction, and
-inference choice.]
+Table~\ref{tab:robust} presents seven robustness columns. Column (1) repeats the
+baseline for reference ($\beta = 0.005$, $p = 0.040$). Column (2) substitutes the
+quadratic presidential Esteban-Ray index for the linear competitiveness measure;
+the coefficient is directionally consistent but attenuated ($\beta = 0.003$,
+$p = 0.124$), reflecting the lower discriminating power of the quadratic form in
+non-competitive states. Column (3) uses the House-district ER index as an alternative
+geographic scale; the coefficient is near zero ($\beta = 0.000$, $p = 0.893$),
+consistent with the compressed cross-sectional variation (SD = 0.011) of the
+House-district measure relative to state presidential margins (SD = 0.101).
+Columns (4)--(5) replace the electoral measure with DW-NOMINATE roll-call scores:
+the state-level cross-party ideological gap (column 4, $p = 0.522$) and the national
+ideological gap (column 5, $\beta = -0.009$, $p = 0.050$). The negative coefficient
+on the national measure likely reflects a secular decline in market reactions to
+auditor changes over the post-SOX period rather than a genuine polarization effect,
+since the national gap rises monotonically and year fixed effects do not fully absorb
+biennial congressional variation. Column (6) augments the baseline with state fixed
+effects; the coefficient triples in magnitude but loses precision ($\beta = 0.012$,
+$p = 0.144$), consistent with within-state variation in presidential competitiveness
+being noisier than cross-state variation. Column (7) clusters standard errors at the
+state level; the baseline coefficient is unchanged and remains significant ($\beta =
+0.005$, $p = 0.030$), confirming that firm-level clustering is not driving the result.
+
+\input{../Output/Tables/tab05_robustness}
 
 \subsection{Supplementary Affective Polarization Test}
 
-[PLACEHOLDER: Table 6 — five columns. Column (1) repeats the baseline
-ideological-polarization result for comparison. Column (2) adds the
-$AP \times \text{Exposure}$ interaction; a positive coefficient indicates
-that the auditor-change reaction is amplified in high-partisan-intensity
-states when national affective polarization is elevated. Column (3) adds the
-ideological-polarization $\times$ ambiguity interaction. Column (4) is the
-full specification with both ideological and affective terms and their
-interactions with ambiguity. Column (5) repeats column (4) for abnormal
-trading volume. Table note should explain that $AP_t$ is the ANES
-feeling-thermometer differential (standardized) and $\text{Exposure}_s$
-is the state long-run presidential vote margin (standardized); $AP_t$ alone
-is absorbed by year fixed effects and does not appear as a main effect.]
+Table~\ref{tab:affective} reports the supplementary affective polarization test.
+Column (1) repeats the baseline ideological result ($\beta = 0.005$, $p = 0.040$).
+Column (2) adds the $AP \times \text{Exposure}$ interaction; the affective term is
+near zero and statistically insignificant ($\beta = 0.000$, $p = 0.879$), while the
+ideological coefficient is unchanged. Columns (3) and (4) add the ambiguity
+interactions; the ideological coefficient attenuates toward zero once the
+interaction term absorbs variation, but neither the affective main effect nor the
+triple interaction reaches significance (all $p > 0.40$). Column (5) repeats the
+full specification for abnormal volume: the ideological competitiveness coefficient
+is larger and highly significant ($\beta = 0.130$, $p = 0.003$), while the affective
+terms remain indistinguishable from zero. Taken together, Table~\ref{tab:affective}
+provides no evidence that national affective polarization, interacted with state
+partisan exposure, incrementally explains market reactions to auditor changes beyond
+what ideological competitiveness captures. The results are consistent with state-level
+ideological heterogeneity --- rather than the temporal rise in affective polarization
+--- being the operative mechanism.
+
+\input{../Output/Tables/tab06_affective}
 
 % ── 7. Conclusion ─────────────────────────────────────────────────────────────
 
