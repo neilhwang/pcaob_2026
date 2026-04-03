@@ -128,8 +128,8 @@ are concentrated in auditor resignations rather than client-initiated dismissals
 with the prediction that polarization amplifies investor disagreement most when
 the disclosure provides less inherent guidance about fault or severity. The
 main coefficient is stable across alternative polarization proxies (DW-NOMINATE
-ideological gap, presidential Esteban-Ray index) and survives two-way clustering
-of standard errors by firm and state.
+ideological gap, presidential Esteban-Ray index, county-level competitiveness)
+and survives two-way clustering of standard errors by firm and state.
 
 This paper makes three contributions. First, we provide new evidence that
 capital-market reactions to mandatory auditor-change disclosures vary
@@ -837,8 +837,8 @@ is not driven by the headquarters-state aggregation choice. Convergent
 findings across all three proxies would indicate that the result is not an
 artifact of the ER state-level aggregation. Fourth, a county-level polarization check using MIT Election Lab county
 presidential returns matched to firm headquarters counties via Compustat
-zip codes provides a finer-grained geographic alternative (available upon
-request).
+zip codes provides a finer-grained geographic alternative
+(Table~\ref{tab:robustness}, column 9).
 
 \subsubsection*{State-level confounds and inference}
 
@@ -958,7 +958,7 @@ Table~\ref{tab:robustness} addresses conventional robustness concerns and
 provides measurement triangulation across the three conceptually distinct
 polarization proxies described in Section~\ref{sec:design}.
 
-Table~\ref{tab:robustness} presents eight robustness columns. Column (1) repeats the
+Table~\ref{tab:robustness} presents nine robustness columns. Column (1) repeats the
 baseline for reference ($\beta = 0.005$, $p = 0.040$). Column (2) substitutes the
 quadratic presidential Esteban-Ray index for the linear competitiveness measure;
 the coefficient is directionally consistent but attenuated ($\beta = 0.003$,
@@ -984,7 +984,12 @@ Column (8) implements two-way clustering by firm and state following
 V_{\text{firm} \times \text{state}}$; because firms are nested within states
 (each firm's headquarters state is fixed), the intersection clusters equal the
 firm clusters and the two-way estimator is equivalent to state-level clustering
-in expectation.
+in expectation. Column (9) replaces the state-level competitiveness measure with
+a county-level analogue constructed from the same MIT Election Lab presidential
+returns, matched to each firm's headquarters county via Compustat zip codes and
+the HUD ZIP-COUNTY crosswalk. The coefficient is $\beta = 0.005$ ($p = 0.036$,
+$N = 659$), virtually identical to the state-level baseline, confirming that
+the result is not an artifact of geographic aggregation.
 
 \input{../Output/Tables/tab05_robustness}
 

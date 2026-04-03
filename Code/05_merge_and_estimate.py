@@ -11,6 +11,7 @@ INPUTS:
     Data/Processed/state_partisan_exposure.parquet  (from 07_build_exposure.py)
     Data/Processed/affective_polarization.parquet   (from 08_build_affective_polarization.py)
     Data/Processed/pol_presidential.parquet         (from 02b_build_presidential_polarization.py)
+    Data/Processed/analysis_sample_county.parquet  (from 10_build_county_polarization.py)
 
 OUTPUTS:
     Output/Tables/tab01_summary_stats.tex
@@ -595,11 +596,14 @@ def run_robustness(df: pd.DataFrame) -> None:
                       cluster_var="state_str"),
         # (8) Two-way clustered SEs: firm × state (Cameron, Gelbach & Miller 2011)
         "m8": run_ols_twoway(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
+        # (9) County-level competitiveness (finer geographic alternative; N=659)
+        "m9": run_ols(f"absCar ~ county_comp_std + {ctrl} + {fe}",
+                      df[df["county_comp_std"].notna()].copy()),
     }
 
     for k, m in specs.items():
         pol_param = next((p for p in ["competitive_std", "er_pres_std", "pol_std",
-                                       "dw_std", "dw_national_std"]
+                                       "dw_std", "dw_national_std", "county_comp_std"]
                           if p in m.params), None)
         if pol_param:
             log.info("Robustness %s: %s coef=%.4f p=%.3f",
@@ -614,6 +618,7 @@ def run_robustness(df: pd.DataFrame) -> None:
         "pol_std":          r"House ER Polarization",
         "dw_std":           r"DW-NOMINATE (state gap)",
         "dw_national_std":  r"DW-NOMINATE (national gap)",
+        "county_comp_std":  r"County Competitiveness",
     }
     dep_labels = [r"$|CAR|$\newline Compete.",
                   r"$|CAR|$\newline Pres. ER",
@@ -622,12 +627,13 @@ def run_robustness(df: pd.DataFrame) -> None:
                   r"$|CAR|$\newline DW Natl",
                   r"$|CAR|$\newline +State FE",
                   r"$|CAR|$\newline State Clust",
-                  r"$|CAR|$\newline 2-Way Clust"]
+                  r"$|CAR|$\newline 2-Way Clust",
+                  r"$|CAR|$\newline County"]
     extra_rows = {
-        "Year + Industry FE": ["Yes"] * 8,
-        "State FE":           ["No", "No", "No", "No", "No", "Yes", "No", "No"],
-        "Cluster":            ["Firm"] * 6 + ["State", "Firm$\\times$State"],
-        "Controls":           ["Yes"] * 8,
+        "Year + Industry FE": ["Yes"] * 9,
+        "State FE":           ["No", "No", "No", "No", "No", "Yes", "No", "No", "No"],
+        "Cluster":            ["Firm"] * 6 + ["State", "Firm$\\times$State", "Firm"],
+        "Controls":           ["Yes"] * 9,
     }
     reg_table(
         list(specs.values()), dep_labels, coef_map,
@@ -755,6 +761,18 @@ def main() -> None:
     df = load_and_merge()
     df = apply_sample_filters(df)
 
+    # County-level competitiveness (robustness column 9).
+    # Merge before standardization loop so county_comp_std is computed with other measures.
+    county_file = ROOT / "Data/Processed/analysis_sample_county.parquet"
+    if county_file.exists():
+        county_df = pd.read_parquet(county_file, columns=["acc_nodash", "county_comp"])
+        df = df.merge(county_df, on="acc_nodash", how="left")
+        log.info("County competitiveness merged: %d / %d events matched",
+                 df["county_comp"].notna().sum(), len(df))
+    else:
+        df["county_comp"] = np.nan
+        log.warning("analysis_sample_county.parquet not found; county column will be NaN")
+
     # Standardize polarization measures on the final estimation sample (mean=0, sd=1).
     # Done after filtering so the coefficient is interpretable as a 1-SD effect.
     for raw_col, std_col in [
@@ -767,6 +785,7 @@ def main() -> None:
         ("ap_ft",             "ap_std"),
         ("er_pres",           "er_pres_std"),
         ("margin",            "margin_std"),
+        ("county_comp",       "county_comp_std"),
     ]:
         if raw_col in df.columns and df[raw_col].notna().sum() > 0:
             mu  = df[raw_col].mean()
