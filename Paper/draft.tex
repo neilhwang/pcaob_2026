@@ -565,7 +565,14 @@ trait. Because our setting does not yield a firm-year density of investor
 political identity, we use reduced-form political-environment proxies instead.}
 
 We apply the \citet{esteban1994} polarization index to U.S. House election
-returns. For congressional district $d$ in election year $e$:
+returns. The ER index is the canonical distributional polarization measure in
+economics \citep{duclos2004}: unlike simple variance or the Herfindahl index,
+it is sensitive to both the \emph{distance} between groups and the
+\emph{mass} concentrated in each group, which aligns with the
+identity--alienation logic of our theoretical framework. Applied to
+two-party electoral returns, it captures electoral bipolarity --- how
+concentrated votes are into two opposing camps --- rather than mere
+competitiveness or inequality. For congressional district $d$ in election year $e$:
 \begin{equation}
     \label{eq:er}
     P^{ER}_{d,e} = s_{D,d,e} \cdot s_{R,d,e}
@@ -640,19 +647,24 @@ when polarization is measured through partisan animus \citep{druckmanlevy2021,
 mason2015}.
 
 We construct the affective polarization series from the ANES Time Series
-Cumulative Data File. In each survey year with available data (2000, 2004,
-2008, 2012, 2016, 2020, 2024), we compute:
+Cumulative Data File. The ANES asks respondents to rate political parties on
+a 0--100 feeling-thermometer scale, where higher values indicate warmer
+feelings. Let $T^D_i$ and $T^R_i$ denote respondent $i$'s feeling-thermometer
+rating of the Democratic and Republican parties, respectively. In each survey
+year with available data (2000, 2004, 2008, 2012, 2016, 2020, 2024), we compute:
 \begin{equation}
     \label{eq:ap}
     AP_t = \frac{1}{2}\left[
         \overline{\Delta_D}_t + \overline{\Delta_R}_t
     \right],
 \end{equation}
-where $\overline{\Delta_D}_t = \mathbb{E}_t[\text{Dem therm} - \text{Rep
-therm} \mid \text{Dem partisan}]$ and $\overline{\Delta_R}_t =
-\mathbb{E}_t[\text{Rep therm} - \text{Dem therm} \mid \text{Rep partisan}]$
-are the mean in-party minus out-party feeling thermometer differentials among
-partisan identifiers \citep{iyengar2012}. We linearly interpolate between
+where $\overline{\Delta_D}_t = \mathbb{E}_t[T^D_i - T^R_i \mid
+\text{Democratic partisan}]$ is the mean in-party minus out-party
+feeling-thermometer gap among Democratic identifiers, and
+$\overline{\Delta_R}_t = \mathbb{E}_t[T^R_i - T^D_i \mid
+\text{Republican partisan}]$ is the analogous gap among Republican
+identifiers \citep{iyengar2012}. $AP_t$ is thus the average partisan
+in-group favoritism across both parties. We linearly interpolate between
 survey years to produce an annual series.
 
 Because $AP_t$ is national, it is absorbed by year fixed effects when entered
