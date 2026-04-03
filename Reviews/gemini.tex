@@ -1,0 +1,63 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\title{Reviewer Report\\ \large \textit{Political Polarization and Market Reactions to Auditor-Change Disclosures}}
+\date{\today}
+\author{}
+
+\begin{document}
+\maketitle
+\onehalfspacing
+
+\section*{Overall Evaluation}
+The manuscript examines whether cross-state political polarization influences investor interpretation of mandatory auditor-change disclosures[cite: 2, 3]. The theoretical framework, building on Kandel and Pearson (1995), elegantly motivates how heterogeneous priors lead to increased trading volume[cite: 17, 76]. However, the paper currently suffers from a disconnect between the formal theory and the primary empirical tests, questionable construct validity regarding the polarization proxy, and severe statistical power limitations in the cross-sectional tests. The following five iterations of critique provide actionable steps for improvement prior to submission.
+
+\section*{Iteration 1: Bridging the Theory-Empirics Gap}
+\textbf{Critique:} The formal model (Proposition 1) yields a sharp prediction for trading volume ($AbVol$) driven by belief dispersion[cite: 104, 114]. However, the model explicitly lacks the structure to predict absolute price movements ($|CAR|$) without additional assumptions regarding market clearing or short-sale constraints[cite: 118, 119]. Despite this, $|CAR|$ is presented as the primary dependent variable in Table 2 and Hypothesis 1[cite: 152, 267]. 
+\newline
+\textbf{Actionable Suggestion:} 
+\begin{itemize}
+    \item Relegate $|CAR|$ to a secondary, exploratory outcome, or formally introduce the necessary friction (e.g., limits to arbitrage or asymmetric demand) into the model in Section 3 to mathematically derive P2.
+    \item Rewrite Hypothesis 1 to position $AbVol$ as the primary test of the dispersion mechanism[cite: 135].
+\end{itemize}
+
+\section*{Iteration 2: Construct Validity of the Main Proxy}
+\textbf{Critique:} The primary empirical proxy is state-level "competitiveness" defined as $1 - |D - R|$[cite: 186]. Electoral competitiveness is not synonymous with polarization. A perfectly competitive 50/50 state might consist entirely of moderates rather than polarized extremists. Furthermore, relying on "local equity bias" [cite: 234] to link a firm's headquarters state to its marginal retail investor is a heroic assumption for modern, nationally traded equities.
+\newline
+\textbf{Actionable Suggestion:}
+\begin{itemize}
+    \item You must rigorously defend why electoral competitiveness maps to the "identity-alienation" framework[cite: 178]. Consider elevating the DW-NOMINATE ideological gap [cite: 201, 203] to co-primary status, as it measures actual ideological distance rather than just vote margins.
+    \item The split by firm size (Table 5, Column 10) is currently buried in robustness[cite: 298]. Make this a central test: if local equity bias is the mechanism, the polarization effect \textit{must} be monotonically decreasing in institutional ownership and firm size.
+\end{itemize}
+
+\section*{Iteration 3: Empirical Design and Power Constraints}
+\textbf{Critique:} The baseline sample of 678 events over 22 years is unusually small[cite: 170]. When splitting the sample for the critical "ambiguity" test in Table 4, the high-ambiguity group is reduced to just 120 observations[cite: 278]. Concluding that the lack of significance in this group ($p = 0.422$) [cite: 281] is a meaningful non-result is dangerous; it is highly likely a Type II error due to lack of statistical power[cite: 283].
+\newline
+\textbf{Actionable Suggestion:}
+\begin{itemize}
+    \item Expand the sample. Consider relaxing the stringent filter requiring at least 100 non-missing trading days [cite: 171] or broadening the definition of the events.
+    \item If $N$ cannot be increased, implement and report non-parametric permutation tests or bootstrapped standard errors to prove the baseline $p$-values (e.g., $p=0.040$) [cite: 268] are not artifacts of finite-sample bias.
+\end{itemize}
+
+\section*{Iteration 4: Mathematical Proofs and Formal Model}
+\textbf{Critique:} I have carefully verified the proof for Proposition 1[cite: 319, 320]. The algebra for the two-point distribution variance is correct[cite: 321]. However, the economic assumption driving the proof—a perfectly symmetrical mean-preserving spread ($\epsilon$ shift) [cite: 322]—is fragile. If affective polarization causes asymmetric shifts in priors (e.g., one group becomes highly distrustful while the other remains unchanged), the mean $\bar{\pi}$ shifts, potentially violating the core comparative static.
+\newline
+\textbf{Actionable Suggestion:}
+\begin{itemize}
+    \item Add a brief corollary or discussion in Appendix A addressing what happens to posterior dispersion if the spread is non-mean-preserving.
+    \item Ensure the notation in Propositions A1-A3 is consistent; $\sigma(x)$ is defined elegantly [cite: 329], but clarify if $\tau_i$ and $\kappa_i$ [cite: 331, 337] are assumed to be drawn from the same two-point group distribution as $\pi_i$.
+\end{itemize}
+
+\section*{Iteration 5: Exposition, Redundancies, and Tone}
+\textbf{Critique:} The manuscript repeats certain phrasing to the point of distraction. The phrase "interpretive latitude" is heavily overused in Sections 3 and 4[cite: 126, 127, 130, 141, 156]. Additionally, the transition between the Political Economy of Auditing (2.3) [cite: 54] and Political Polarization (2.4) [cite: 62] is disjointed.
+\newline
+\textbf{Actionable Suggestion:}
+\begin{itemize}
+    \item Edit for conciseness. Replace redundant uses of "interpretive latitude" with precise terms related to the specific signal attributes (e.g., "objective informational guidance" or "signal precision").
+    \item Streamline the literature review by combining 2.4 and 2.5 [cite: 62, 68] to clearly delineate how ideological distance differs empirically from affective animus.
+\end{itemize}
+
+\end{document}
