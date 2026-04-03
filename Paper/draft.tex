@@ -59,14 +59,26 @@ trust in regulatory infrastructure --- which is precisely what polarization erod
 --- central to how investors evaluate the disclosure.
 
 Our theoretical framework builds on the heterogeneous-priors model of
-\citet{kandel1995}. Investors observe a public audit signal but differ in their
-prior beliefs due to differential trust in auditors and the institutions that
-oversee them. Political polarization increases the dispersion of these priors,
-which generates greater dispersion in posterior beliefs following an identical
-signal. Under standard models of belief-driven trading \citep{harris1993},
-greater posterior dispersion translates into more trading volume and larger
-absolute price movements. The mechanism is distinct from information asymmetry:
-polarization does not change what is disclosed, only how it is processed.
+\citet{kandel1995}. Investors observe a public audit signal but differ in how
+they interpret it. This heterogeneity can arise through at least three
+channels: differences in prior beliefs about firm quality and audit
+credibility, differences in institutional trust --- particularly trust in
+auditors, the PCAOB, and regulatory oversight more broadly --- and differences
+in perceived signal precision, where some investors treat the disclosure as
+highly diagnostic while others discount it as noisy or strategically motivated.
+Political polarization amplifies all three channels. The recent political
+science literature distinguishes \emph{ideological} polarization (divergence
+in issue positions) from \emph{affective} or \emph{social} polarization
+(partisan animus, distrust, and identity-driven bias that can intensify even
+when policy views are moderate; \citealp{mason2015, druckmanlevy2021}).
+Auditor disclosures are likely affected by both: ideological polarization may
+drive divergent substantive interpretations of the same event, while affective
+polarization may drive divergent assessments of whether auditors and
+regulators are credible. Under standard models of belief-driven trading
+\citep{harris1993}, greater posterior dispersion translates into more trading
+volume and larger absolute price movements. The mechanism is distinct from
+information asymmetry: polarization does not change what is disclosed, only
+how it is processed.
 
 Empirically, we measure political polarization at the congressional district level
 using the \citet{esteban1994} polarization index, applied to U.S. House election
@@ -88,13 +100,13 @@ capital markets literature by documenting that the market response to audit sign
 depends on the political environment in which investors are embedded. Prior work
 establishes that audit reports and auditor-related events convey information to
 markets \citep{firth1978, dodd1984, defond2014}; we show that the same disclosure
-generates systematically different reactions depending on investors' political
-priors. Second, we contribute to the emerging literature on political polarization
-in finance \citep{kempf2024}. Existing work focuses primarily on asset allocation,
-partisan trading behavior, and analyst forecasts; we extend this literature to the
-auditing context, documenting that polarization shapes how investors process
-mandatory audit disclosures. Third, we contribute to
-the theoretical literature on heterogeneous beliefs and trading
+generates systematically different reactions depending on the political composition
+of the firm's investor environment. Second, we contribute to the emerging
+literature on political polarization in finance \citep{kempf2024}. Existing work
+focuses primarily on asset allocation, partisan trading behavior, and analyst
+forecasts; we extend this literature to the auditing context, where institutional
+trust plays an unusually central role in how disclosures are interpreted. Third,
+we contribute to the theoretical literature on heterogeneous beliefs and trading
 \citep{harris1993, kandel1995, hong2007} by providing an empirical setting where
 the source of belief heterogeneity --- political polarization --- is plausibly
 exogenous to firm-level reporting decisions and varies in well-defined ways over
@@ -107,7 +119,10 @@ and improve market efficiency. Our results suggest a limit to this logic: when
 investors differ in their priors about institutional credibility, more information
 does not eliminate disagreement --- it may instead amplify it. The effectiveness of
 disclosure-based regulation therefore depends on the political and institutional
-context in which investors receive it.
+context in which investors receive it. Although we study auditor changes as a clean
+first setting, the mechanism should operate wherever disclosure interpretation
+depends on trust in regulated gatekeepers --- including critical audit matters,
+going-concern opinions, and internal control reports.
 
 The remainder of the paper proceeds as follows. Section~\ref{sec:lit} reviews
 the related literature. Section~\ref{sec:theory} develops the theoretical
@@ -160,8 +175,18 @@ A rapidly growing literature documents that political polarization affects
 financial markets. \citet{kempf2024} survey evidence that partisan identity
 influences asset allocation, trading behavior, and return expectations. Related
 work finds that political beliefs shape economic forecasts and risk perceptions.
-We extend this literature to the auditing context, focusing specifically on the
-mechanism of heterogeneous prior beliefs and its implications for disagreement.
+A key distinction in the broader political science literature is between
+\emph{ideological} polarization --- divergence in substantive issue positions
+--- and \emph{affective} or \emph{social} polarization --- partisan animus,
+distrust, and identity-driven bias \citep{druckmanlevy2021}. \citet{mason2015}
+shows that partisan sorting can intensify bias and anger even without
+commensurate growth in issue extremity, suggesting that identity alignment
+alone can drive divergent responses to the same information. This distinction
+is important for our setting: auditor disclosures are institution-dependent
+signals whose interpretation may be shaped by both substantive policy
+disagreement and affective distrust of gatekeepers. We extend the polarization
+and finance literature to the auditing context, where institutional trust
+plays an unusually central role.
 
 \subsection{Heterogeneous Beliefs and Trading}
 
@@ -179,10 +204,15 @@ belief heterogeneity to a specific, measurable source --- political polarization
 \section{Theory}
 \label{sec:theory}
 
-We develop a model of investor belief updating around public audit signals to
-formalize how political polarization affects market outcomes. The model draws on
-the heterogeneous-priors framework of \citet{kandel1995} and the polarization
-measure of \citet{esteban1994}.
+We formalize polarization as a force that increases heterogeneity in investors'
+interpretation of auditor-originated disclosures. In practice, this
+heterogeneity can arise through several channels: differences in prior beliefs
+about firm quality and audit credibility, differences in trust in auditing
+institutions and regulatory oversight, and differences in perceived signal
+precision. The Bayesian model that follows is a tractable microfoundation for
+this broader economic mechanism, not the paper's only behavioral
+interpretation. The model draws on the heterogeneous-priors framework of
+\citet{kandel1995} and the polarization measure of \citet{esteban1994}.
 
 \subsection{Setting}
 
@@ -199,6 +229,11 @@ prior beliefs $\pi_i \equiv P_i(\theta = 1) \in (0,1)$.
 ideological groups indexed by political affiliation $g \in \{D, R\}$, with
 population shares $s_D$ and $s_R = 1 - s_D$. Group-level priors reflect
 differential trust in auditors and regulatory institutions: $\pi_D \neq \pi_R$.
+In the model, all heterogeneity is captured by differences in $\pi_i$; in
+practice, polarization may also affect how investors perceive signal precision
+($p_H, p_L$) or how much weight they place on the disclosure relative to their
+priors. The reduced-form predictions are the same: greater political distance
+generates greater dispersion in posterior beliefs.
 Polarization increases the \emph{dispersion} of priors across groups without
 changing the \emph{average} prior.
 
@@ -268,9 +303,19 @@ informative.
 \textbf{Discussion.} The model predicts that polarization affects the
 \textit{processing} of identical information, not the information itself.
 Identical audit disclosures can lead to different market outcomes depending on
-the political composition of investors. Standard disclosure-based interventions
-cannot eliminate polarization-driven disagreement because the source of
-heterogeneity lies in investors' priors.
+the political composition of investors. Although the formal model operates
+through heterogeneous priors, the predictions are consistent with a broader
+set of channels. If polarization instead affects institutional trust, investors
+in more polarized environments would differ more sharply in how much credibility
+they assign to the disclosure, generating the same increase in posterior
+dispersion. Similarly, if polarization affects perceived signal precision,
+some investors would treat the disclosure as highly diagnostic while others
+would discount it, again widening the distribution of posterior beliefs.
+The key empirical prediction --- that polarization amplifies disagreement-sensitive
+market outcomes --- is robust across these interpretations. Standard
+disclosure-based interventions cannot eliminate polarization-driven disagreement
+because the source of heterogeneity lies in how investors process signals, not
+in the signals themselves.
 
 % ── 4. Hypothesis Development ─────────────────────────────────────────────────
 
@@ -460,14 +505,22 @@ implications for market efficiency and audit regulation. Identical disclosures
 generate more extreme market reactions --- larger absolute returns and higher
 trading volume --- in more polarized political environments. These effects are
 stronger for ambiguous signals, consistent with a model in which polarization
-increases prior dispersion and amplifies the role of priors in belief updating.
+increases the dispersion of investor interpretations through heterogeneous
+priors, institutional trust, and perceived signal precision.
 
 The findings suggest that the effectiveness of disclosure-based regulation
 depends on the political context in which disclosures are received. As
 polarization has increased persistently over the past two decades, its effect
-on audit signal interpretation may be growing. Future research should examine
-whether these patterns extend to other audit-related disclosures, including
-critical audit matters, going concern opinions, and internal control reports.
+on audit signal interpretation may be growing. We study auditor changes as a
+clean first setting, but the mechanism should operate wherever disclosure
+interpretation depends on trust in regulated gatekeepers. Future research
+should examine whether these patterns extend to critical audit matters, going
+concern opinions, and internal control reports. A further promising direction
+is to distinguish the roles of ideological and affective polarization ---
+our proxies primarily capture ideological distance, but the recent political
+science literature suggests that partisan distrust and identity-based animus
+\citep{mason2015, druckmanlevy2021} may be independently important for how
+investors assess the credibility of institution-dependent disclosures.
 
 \bibliographystyle{apalike}
 \bibliography{references}

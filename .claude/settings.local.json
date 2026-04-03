@@ -12,7 +12,9 @@
       "Bash(ls:*)",
       "Bash(grep -E \"\\\\.py$\")",
       "Bash(grep -E \"\\\\.md$|\\\\.txt$\")",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "Bash(grep -oP '\\\\\\\\cite[tp]?\\\\{[^}]+\\\\}|\\\\\\\\citealp\\\\{[^}]+\\\\}' \"/c/Users/neilh/documents/pcaob_2026/Paper/draft.tex\")",
+      "Bash(grep -oE '\\\\\\\\cite[a-z]*\\\\{[^}]+\\\\}' \"/c/Users/neilh/documents/pcaob_2026/Paper/draft.tex\")"
     ]
   }
 }
