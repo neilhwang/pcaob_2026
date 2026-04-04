@@ -1,0 +1,142 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\setstretch{1.1}
+
+\title{Suggestions on Microfounding $|CAR|$}
+\date{}
+
+\begin{document}
+\maketitle
+
+The cleanest fix is to keep the current posterior-dispersion core, then add a very small demand/market-clearing block that turns belief dispersion into price impact. Below are three workable routes, in increasing order of ambition.
+
+\section*{1. Minimal add-on: CAR from Heterogeneous Demand and Downward-Sloping Residual Demand}
+This is likely the best option for the paper as currently written.
+
+\subsection*{Add assumptions}
+After the posterior section, add a short demand block:
+\begin{itemize}[leftmargin=1.5em]
+    \item Investor $i$ chooses a post-event position $q_i$ in the stock.
+    \item Demand is increasing in the investor's posterior mean:
+    \[
+    q_i(P)=\alpha\bigl(\mu_i-P\bigr),
+    \]
+    where $\mu_i$ is investor $i$'s posterior valuation and $\alpha>0$ is risk tolerance or demand elasticity.
+    \item There is limited arbitrage or downward-sloping residual demand, so equilibrium satisfies
+    \[
+    \int q_i(P)\,di = \bar S,
+    \]
+    with $\bar S$ fixed in the short run.
+\end{itemize}
+Then equilibrium price is
+\[
+P^*=\bar\mu-\frac{\bar S}{\alpha},
+\]
+where $\bar\mu=\int \mu_i\,di$.
+
+This gives a microfoundation for price effects from beliefs. But by itself it maps prices to the \emph{average} posterior, not to posterior dispersion.
+
+\subsection*{What extra ingredient is needed}
+To get $|CAR|$ from disagreement, add one of the following frictions:
+\begin{itemize}[leftmargin=1.5em]
+    \item short-sale constraints,
+    \item convex trading frictions,
+    \item asymmetric participation,
+    \item state-dependent demand elasticity,
+    \item heterogeneous risk-bearing capacity.
+\end{itemize}
+For example, with a short-sale constraint $q_i\geq -\bar q$, pessimists cannot fully offset optimists, so wider dispersion raises one-sided net demand and therefore increases absolute price impact.
+
+\subsection*{Suggested text}
+A concise insertion could read:
+
+\begin{quote}
+To connect posterior dispersion to absolute abnormal returns, we augment the belief-updating block with a reduced-form demand system. Investors choose positions $q_i(P)=\alpha(\mu_i-P)$, but short-sale capacity is limited at $q_i\geq -\bar q$. When polarization widens the cross-investor distribution of posterior valuations, optimistic investors expand demand while pessimistic investors cannot fully offset through short positions. The resulting one-sided order imbalance increases the magnitude of equilibrium price adjustment. Thus, posterior dispersion maps cleanly into trading volume, and into $|CAR|$ under limited shorting or other limits to arbitrage.
+\end{quote}
+
+That is enough to justify a return prediction without pretending it is as sharp as the volume prediction.
+
+\section*{2. Slightly Richer Option: Disagreement Plus a No-Trade-to-Trade Threshold}
+This route can link both volume and $|CAR|$ to the same mechanism.
+
+Suppose investors begin from benchmark positions and trade only if
+\[
+|\mu_i-P_0|>c,
+\]
+where $c$ is a participation or transaction-cost threshold.
+
+Then greater posterior dispersion does two things:
+\begin{itemize}[leftmargin=1.5em]
+    \item it increases the mass of investors whose desired trade is nonzero, generating more volume;
+    \item if the distribution is skewed because one side is constrained or more active, the resulting net imbalance moves prices more, generating larger $|CAR|$.
+\end{itemize}
+This is attractive if you want the empirics to read as disagreement turning into order flow.
+
+\section*{3. Strongest but More Invasive: Constrained Belief-Demand Equilibrium}
+If you want a formal proposition, use a two-group setup. Let groups $g\in\{D,R\}$ have posterior means $\mu_g$, masses $\omega_g$, and demands
+\[
+q_g(P)=\alpha_g(\mu_g-P), \qquad q_g\geq -\bar q_g.
+\]
+Equilibrium solves
+\[
+\omega_D q_D(P)+\omega_R q_R(P)=\bar S.
+\]
+Then one can show:
+\begin{itemize}[leftmargin=1.5em]
+    \item if polarization increases $|\mu_D-\mu_R|$, turnover rises;
+    \item if at least one group faces a binding short-sale cap or lower elasticity, equilibrium price becomes a nonlinear function of $(\mu_D,\mu_R)$, and larger disagreement increases expected $|P-P_0|$.
+\end{itemize}
+This gives a formal proposition, but it is probably more than the current paper needs.
+
+\section*{Recommendation for the Paper}
+I would not fully rework the theory around returns. Instead:
+\begin{enumerate}[leftmargin=1.5em]
+    \item Keep the trading-volume prediction as the sharpest formal implication.
+    \item Recast the $|CAR|$ prediction as requiring additional market-structure assumptions.
+    \item Add a short subsection titled \emph{From disagreement to price impact}. In one or two paragraphs, state:
+    \begin{itemize}[leftmargin=1.5em]
+        \item posterior dispersion produces opposing trades,
+        \item trading volume follows directly,
+        \item price impact requires that trades do not cancel perfectly,
+        \item imperfect cancellation arises under standard assumptions such as short-sale constraints, limited risk-bearing capacity, segmented participation, or downward-sloping residual demand.
+    \end{itemize}
+\end{enumerate}
+That is enough to address the reviewer concern without overstating the model's reach.
+
+\section*{LaTeX-Ready Paragraph}
+The following paragraph is insertion-ready:
+
+\begin{quote}
+\paragraph{From posterior dispersion to absolute returns.}
+The mapping from posterior-belief dispersion to trading volume is direct: when investors form more dispersed posteriors after the same public signal, more pairs of investors have opposing desired trades, increasing turnover. The link to absolute abnormal returns requires one additional market-clearing ingredient. Suppose investor $i$ demands
+\[
+q_i(P)=\alpha_i(\mu_i-P),
+\]
+where $\mu_i$ is investor $i$'s posterior valuation and $\alpha_i>0$ captures risk-bearing capacity. If pessimistic investors can short without friction and all trades clear symmetrically, disagreement need not generate large price movements even though it increases volume. By contrast, under standard limits to arbitrage---such as short-sale constraints, heterogeneous risk-bearing capacity, or segmented participation---optimistic and pessimistic demands do not offset one-for-one. In that case, greater posterior dispersion generates larger net order imbalances and therefore larger equilibrium price adjustments in absolute value. We therefore view $AbVol$ as the sharpest implication of the model, and $|CAR|$ as a secondary outcome that follows under empirically plausible market-friction assumptions.
+\end{quote}
+
+\section*{How to Align This with the Ambiguity Interaction}
+This becomes sharper if you say explicitly:
+\begin{itemize}[leftmargin=1.5em]
+    \item ambiguous events increase heterogeneity in posterior valuations;
+    \item under limited arbitrage, that heterogeneity translates into larger net order imbalance;
+    \item therefore ambiguity should strengthen both $AbVol$ and $|CAR|$, although the latter remains the less structurally clean outcome.
+\end{itemize}
+
+This keeps the cross-sectional story coherent while being honest about what is directly implied by the theory and what requires added market frictions.
+
+\section*{Important Caution}
+Avoid writing that dispersion by itself implies $|CAR|$. That is exactly the logical gap the reviewer identified. The safer claim is:
+\begin{itemize}[leftmargin=1.5em]
+    \item dispersion \emph{directly} implies trading volume;
+    \item dispersion implies $|CAR|$ \emph{under limited arbitrage or constrained offsetting demand}.
+\end{itemize}
+
+That wording is much safer and better aligned with the model as currently structured.
+
+\end{document}

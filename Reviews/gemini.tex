@@ -1,63 +1,87 @@
-\documentclass[11pt]{article}
+\documentclass[12pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
-\usepackage{hyperref}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{titlesec}
 \usepackage{enumitem}
 
-\title{Reviewer Report\\ \large \textit{Political Polarization and Market Reactions to Auditor-Change Disclosures}}
+\title{\textbf{Reviewer Report}\\ \Large Political Polarization and Market Reactions to Auditor-Change Disclosures}
+\author{Reviewer}
 \date{\today}
-\author{}
 
 \begin{document}
 \maketitle
-\onehalfspacing
+\doublespacing
 
-\section*{Overall Evaluation}
-The manuscript examines whether cross-state political polarization influences investor interpretation of mandatory auditor-change disclosures[cite: 2, 3]. The theoretical framework, building on Kandel and Pearson (1995), elegantly motivates how heterogeneous priors lead to increased trading volume[cite: 17, 76]. However, the paper currently suffers from a disconnect between the formal theory and the primary empirical tests, questionable construct validity regarding the polarization proxy, and severe statistical power limitations in the cross-sectional tests. The following five iterations of critique provide actionable steps for improvement prior to submission.
+\section*{General Assessment}
+This paper examines how state-level political polarization impacts market reactions to auditor-change disclosures (Form 8-K Item 4.01). The premise---that institutional trust, mediated by political polarization, generates heterogeneous priors and thereby amplifies trading volume and price movements---is a creative and novel integration of political economy and accounting research. 
 
-\section*{Iteration 1: Bridging the Theory-Empirics Gap}
-\textbf{Critique:} The formal model (Proposition 1) yields a sharp prediction for trading volume ($AbVol$) driven by belief dispersion[cite: 104, 114]. However, the model explicitly lacks the structure to predict absolute price movements ($|CAR|$) without additional assumptions regarding market clearing or short-sale constraints[cite: 118, 119]. Despite this, $|CAR|$ is presented as the primary dependent variable in Table 2 and Hypothesis 1[cite: 152, 267]. 
-\newline
-\textbf{Actionable Suggestion:} 
+However, the manuscript suffers from a critical disconnect between the primary theoretical predictions and the empirical findings, particularly regarding the ambiguity mechanism. Furthermore, the theoretical model, while mathematically sound, is somewhat elementary and could be streamlined. The prose contains repetitive defensive phrasing that detracts from the paper's flow. 
+
+To provide a rigorous evaluation, I have structured this review in five iterative passes, moving from macro-level contributions down to micro-level mathematical and notational consistency.
+
+% ── Iteration 1 ───────────────────────────────────────────────────────────────
+
+\section{Iteration 1: Novelty and Contribution Assessment}
+
+The integration of the identity/alienation literature from political science into the auditing literature is the paper's strongest asset. Showing that mandatory disclosure effectiveness is bounded by the political-information environment is a compelling contribution to the disclosure literature.
+
+\textbf{Deficiencies \& Actionable Suggestions:}
 \begin{itemize}
-    \item Relegate $|CAR|$ to a secondary, exploratory outcome, or formally introduce the necessary friction (e.g., limits to arbitrage or asymmetric demand) into the model in Section 3 to mathematically derive P2.
-    \item Rewrite Hypothesis 1 to position $AbVol$ as the primary test of the dispersion mechanism[cite: 135].
+    \item \textbf{The Identification Strategy:} The mechanism strictly relies on the assumption that the marginal trader evaluating these 8-Ks is a local retail investor subject to local state political polarization. However, the paper uses 678 medium-to-large firms covered by CRSP/Compustat. Institutional investors, who are geographically dispersed, dominate trading in these markets. 
+    \item \textbf{Action:} You must condition the main effect on institutional ownership. Merge your sample with 13F filings. If your theory holds, the polarization coefficient ($\beta$) must be significantly larger (or exclusively present) in the subset of firms with high retail ownership / low institutional ownership. 
 \end{itemize}
 
-\section*{Iteration 2: Construct Validity of the Main Proxy}
-\textbf{Critique:} The primary empirical proxy is state-level "competitiveness" defined as $1 - |D - R|$[cite: 186]. Electoral competitiveness is not synonymous with polarization. A perfectly competitive 50/50 state might consist entirely of moderates rather than polarized extremists. Furthermore, relying on "local equity bias" [cite: 234] to link a firm's headquarters state to its marginal retail investor is a heroic assumption for modern, nationally traded equities.
-\newline
-\textbf{Actionable Suggestion:}
+% ── Iteration 2 ───────────────────────────────────────────────────────────────
+
+\section{Iteration 2: Theory-to-Empirics Gaps}
+
+There is a significant conceptual gap between the theoretical construct of ``polarization'' and the empirical proxy.
+
+\textbf{Deficiencies \& Actionable Suggestions:}
 \begin{itemize}
-    \item You must rigorously defend why electoral competitiveness maps to the "identity-alienation" framework[cite: 178]. Consider elevating the DW-NOMINATE ideological gap [cite: 201, 203] to co-primary status, as it measures actual ideological distance rather than just vote margins.
-    \item The split by firm size (Table 5, Column 10) is currently buried in robustness[cite: 298]. Make this a central test: if local equity bias is the mechanism, the polarization effect \textit{must} be monotonically decreasing in institutional ownership and firm size.
+    \item \textbf{Proxy Mismatch:} The theoretical model relies on a mean-preserving spread of priors (a widening of $|\pi_D - \pi_R|$). The empirical proxy is $1 - |D-R|$ (state-level electoral competitiveness). A 50-50 state means the local population is evenly split. It does \textit{not} necessarily mean that the specific investors holding the firm's stock are polarized, nor does it guarantee that the distance between the two ideological camps is wider than in a 70-30 state.
+    \item \textbf{Action:} Acknowledge this explicitly in the empirics section, not just as ``noise.'' Better yet, utilize the DW-NOMINATE cross-sectional variance or county-level variance (which you relegated to a robustness check) as a co-primary measure, as these better capture actual ideological distance rather than just competitive vote shares.
 \end{itemize}
 
-\section*{Iteration 3: Empirical Design and Power Constraints}
-\textbf{Critique:} The baseline sample of 678 events over 22 years is unusually small[cite: 170]. When splitting the sample for the critical "ambiguity" test in Table 4, the high-ambiguity group is reduced to just 120 observations[cite: 278]. Concluding that the lack of significance in this group ($p = 0.422$) [cite: 281] is a meaningful non-result is dangerous; it is highly likely a Type II error due to lack of statistical power[cite: 283].
-\newline
-\textbf{Actionable Suggestion:}
+% ── Iteration 3 ───────────────────────────────────────────────────────────────
+
+\section{Iteration 3: Logical Coherence \& The Ambiguity Contradiction}
+
+This is the most critical flaw in the current draft. The paper establishes abnormal volume ($AbVol$) as the primary formal prediction of the disagreement model (P1). It then hypothesizes that ambiguity amplifies this effect (P3). 
+
+\textbf{Deficiencies \& Actionable Suggestions:}
 \begin{itemize}
-    \item Expand the sample. Consider relaxing the stringent filter requiring at least 100 non-missing trading days [cite: 171] or broadening the definition of the events.
-    \item If $N$ cannot be increased, implement and report non-parametric permutation tests or bootstrapped standard errors to prove the baseline $p$-values (e.g., $p=0.040$) [cite: 268] are not artifacts of finite-sample bias.
+    \item \textbf{The P3 Failure:} In Section 6.4, the empirics show that volume is driven by the \textit{low-ambiguity} subsample, failing the P3 test. The author writes: \textit{``One possible interpretation is that low-ambiguity events... give investors with opposing political priors concrete grounds on which to disagree... This is a post-hoc rationalization, however...''} 
+    \item \textbf{Critique:} Candidness is appreciated, but a post-hoc rationalization that explicitly contradicts the theoretical framework is fatal in top-tier review. If unambiguous signals generate more volume, then your theory in Section 3.4 (which claims ambiguity shifts the locus of disagreement to subjective priors) is either misspecified or empirically invalid.
+    \item \textbf{Action:} You must resolve this contradiction before submission. Consider revising the theoretical framework to incorporate \textit{directional} bias alongside precision. For example, a clear negative signal (low ambiguity) might trigger differential disposition effects among polarized investors. Alternatively, rethink your empirical definition of \texttt{high\_ambiguity}. Is a lateral Big-4-to-Big-4 switch genuinely ``ambiguous,'' or just uninformative noise?
 \end{itemize}
 
-\section*{Iteration 4: Mathematical Proofs and Formal Model}
-\textbf{Critique:} I have carefully verified the proof for Proposition 1[cite: 319, 320]. The algebra for the two-point distribution variance is correct[cite: 321]. However, the economic assumption driving the proof—a perfectly symmetrical mean-preserving spread ($\epsilon$ shift) [cite: 322]—is fragile. If affective polarization causes asymmetric shifts in priors (e.g., one group becomes highly distrustful while the other remains unchanged), the mean $\bar{\pi}$ shifts, potentially violating the core comparative static.
-\newline
-\textbf{Actionable Suggestion:}
+% ── Iteration 4 ───────────────────────────────────────────────────────────────
+
+\section{Iteration 4: Mathematical Verification and Notation}
+
+I have carefully audited the proofs in Appendix A. 
+
+\textbf{Deficiencies \& Actionable Suggestions:}
 \begin{itemize}
-    \item Add a brief corollary or discussion in Appendix A addressing what happens to posterior dispersion if the spread is non-mean-preserving.
-    \item Ensure the notation in Propositions A1-A3 is consistent; $\sigma(x)$ is defined elegantly [cite: 329], but clarify if $\tau_i$ and $\kappa_i$ [cite: 331, 337] are assumed to be drawn from the same two-point group distribution as $\pi_i$.
+    \item \textbf{Proof Validation:} The proofs for Propositions 1, A1, A2, and A3 are algebraically correct. The variance of the two-point distribution $\mathrm{Var}_i[\phi(\pi_i)] = \omega_D \omega_R \bigl(\phi(\pi_D) - \phi(\pi_R)\bigr)^2$ is derived cleanly.
+    \item \textbf{Critique of Theoretical Depth:} The math, while correct, is trivial. Propositions A1, A2, and A3 are essentially the same mathematical statement repeated three times. They do not need to be separate propositions.
+    \item \textbf{Action:} Condense Propositions A1, A2, and A3 into a single unified proposition (similar to your current Prop A3) in the main text. State that the latent index $X_g$ captures priors, trust, and perceived precision, and prove the variance property once. This will make the theory section read as a more cohesive structural model rather than a step-by-step textbook derivation.
+    \item \textbf{Notation Consistency:} In Equation 6, you use $X_{e,t(e)-1}$ for firm controls, but in Section 3.4 you use $X_g$ for the latent log-odds index. Overloading $X$ causes confusion. Change the firm controls matrix in Eq 6 to $C_{e, t(e)-1}$ or $Z_{e, t(e)-1}$.
 \end{itemize}
 
-\section*{Iteration 5: Exposition, Redundancies, and Tone}
-\textbf{Critique:} The manuscript repeats certain phrasing to the point of distraction. The phrase "interpretive latitude" is heavily overused in Sections 3 and 4[cite: 126, 127, 130, 141, 156]. Additionally, the transition between the Political Economy of Auditing (2.3) [cite: 54] and Political Polarization (2.4) [cite: 62] is disjointed.
-\newline
-\textbf{Actionable Suggestion:}
+% ── Iteration 5 ───────────────────────────────────────────────────────────────
+
+\section{Iteration 5: Redundancy, Flow, and Writing}
+
+The manuscript frequently repeats defensive arguments, which dilutes the impact of the findings.
+
+\textbf{Deficiencies \& Actionable Suggestions:}
 \begin{itemize}
-    \item Edit for conciseness. Replace redundant uses of "interpretive latitude" with precise terms related to the specific signal attributes (e.g., "objective informational guidance" or "signal precision").
-    \item Streamline the literature review by combining 2.4 and 2.5 [cite: 62, 68] to clearly delineate how ideological distance differs empirically from affective animus.
+    \item \textbf{Repetitive Phrasing:} The phrase ``generic attention or salience stories'' (or close variants) appears repeatedly in the Introduction, Section 3.4, Section 6.3, Section 6.4, and the Conclusion. Similarly, the phrase ``objective informational guidance'' is heavily overused.
+    \item \textbf{Action:} Streamline the text. Make the argument against the ``salience'' alternative once, forcefully, when introducing the placebo test and ambiguity splits, and then trust the reader to remember it. 
+    \item \textbf{Sample Size:} $N=678$ is quite small for a 22-year window (2001-2023). Briefly clarify in the data section whether this is due to the exclusion of 8-K amendments, or missing CRSP/Compustat matches, and explicitly defend the statistical power of your tests given the $N$.
 \end{itemize}
 
 \end{document}

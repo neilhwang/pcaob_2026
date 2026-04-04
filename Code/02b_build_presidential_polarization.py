@@ -5,12 +5,19 @@ Build state-year presidential polarization measures from county-level returns.
 Presidential elections show far more red/blue state variation than House data,
 providing better cross-sectional identification.
 
-Two measures produced per state per election year:
+Three measures produced per state per election year:
   er_pres   — Esteban-Ray index from presidential two-party shares = D*R.
                Same concept as the House ER measure; range (0, 0.25].
   margin    — Absolute two-party margin = |D_share - R_share|. Captures
                partisan homogeneity: high margin = one-party state.
                Range [0, 1]. Negatively related to within-state heterogeneity.
+  county_sd — Population-weighted within-state SD of county-level D_share.
+               Captures geographic partisan sorting: high county_sd means
+               a state has both deep-red and deep-blue counties (genuine
+               polarization), whereas low county_sd means counties are
+               uniformly similar (competitive-but-moderate). Addresses the
+               Fiorina (2005) critique that electoral competitiveness does
+               not necessarily imply ideological polarization.
 
 Identification note:
   Both measures vary substantially across states (Alabama 2020 ≈ 0.20 ER vs
@@ -24,7 +31,7 @@ Forward-filling:
 
 INPUT:  Data/Raw/countypres_2000-2024.tab
 OUTPUT: Data/Processed/pol_presidential.parquet
-        Columns: state_abbr, year, dem_share, rep_share, er_pres, margin
+        Columns: state_abbr, year, dem_share, rep_share, er_pres, margin, county_sd
 """
 
 import logging
@@ -49,16 +56,62 @@ SAMPLE_END   = 2023
 def main() -> None:
     log.info("Loading county presidential data: %s", IN_FILE)
     raw = pd.read_csv(IN_FILE, sep="\t",
-                      usecols=["state_po", "year", "party", "candidatevotes"])
+                      usecols=["state_po", "county_fips", "year", "party",
+                               "candidatevotes", "mode"],
+                      dtype={"county_fips": str})
     log.info("Raw rows: %d  |  election years: %s",
              len(raw), sorted(raw["year"].unique()))
 
-    # Keep only Democrat and Republican votes; drop NaN votes
-    dr = raw[raw["party"].isin(["DEMOCRAT", "REPUBLICAN"])].copy()
+    # Keep only TOTAL mode and Democrat/Republican votes; drop NaN votes
+    dr = raw[(raw["party"].isin(["DEMOCRAT", "REPUBLICAN"]))
+             & (raw["mode"] == "TOTAL")].copy()
     dr["candidatevotes"] = pd.to_numeric(dr["candidatevotes"], errors="coerce")
     dr = dr.dropna(subset=["candidatevotes"])
 
-    # Aggregate to state-election level (sum across counties and modes)
+    # ── County-level D-share (for within-state SD) ─────────────────────────
+    county_votes = (
+        dr.groupby(["state_po", "county_fips", "year", "party"],
+                    as_index=False)["candidatevotes"]
+        .sum()
+        .pivot_table(index=["state_po", "county_fips", "year"],
+                     columns="party",
+                     values="candidatevotes",
+                     aggfunc="sum")
+        .reset_index()
+    )
+    county_votes.columns.name = None
+    county_votes = county_votes.rename(columns={
+        "DEMOCRAT": "dem_votes", "REPUBLICAN": "rep_votes",
+    })
+    county_votes["two_party"] = county_votes["dem_votes"] + county_votes["rep_votes"]
+    county_votes = county_votes[county_votes["two_party"] > 0].copy()
+    county_votes["d_share"] = county_votes["dem_votes"] / county_votes["two_party"]
+
+    # Population-weighted within-state SD of county D-share
+    # Weights = county two-party votes (proxy for voting population)
+    def weighted_sd(grp):
+        w = grp["two_party"].values
+        x = grp["d_share"].values
+        w_sum = w.sum()
+        if w_sum == 0 or len(x) < 2:
+            return np.nan
+        w_mean = np.average(x, weights=w)
+        w_var = np.average((x - w_mean) ** 2, weights=w)
+        # Bessel-like correction: multiply by N/(N-1) where N = effective sample size
+        return np.sqrt(w_var)
+
+    county_sd = (
+        county_votes.groupby(["state_po", "year"])
+        .apply(weighted_sd, include_groups=False)
+        .reset_index(name="county_sd")
+        .rename(columns={"state_po": "state_abbr"})
+    )
+    log.info("County SD: %d state-year obs, range %.4f–%.4f (mean %.4f, SD %.4f)",
+             len(county_sd),
+             county_sd["county_sd"].min(), county_sd["county_sd"].max(),
+             county_sd["county_sd"].mean(), county_sd["county_sd"].std())
+
+    # ── Aggregate to state-election level (sum across counties) ────────────
     state_votes = (
         dr.groupby(["state_po", "year", "party"], as_index=False)["candidatevotes"]
         .sum()
@@ -84,6 +137,9 @@ def main() -> None:
     state_votes["er_pres"] = state_votes["dem_share"] * state_votes["rep_share"]
     state_votes["margin"]  = (state_votes["dem_share"] - state_votes["rep_share"]).abs()
 
+    # Join county SD to state-level measures
+    state_votes = state_votes.merge(county_sd, on=["state_abbr", "year"], how="left")
+
     log.info("Election-year state observations: %d", len(state_votes))
     log.info("ER range:    %.4f – %.4f  (mean %.4f, SD %.4f)",
              state_votes["er_pres"].min(), state_votes["er_pres"].max(),
@@ -91,6 +147,9 @@ def main() -> None:
     log.info("Margin range: %.4f – %.4f  (mean %.4f, SD %.4f)",
              state_votes["margin"].min(), state_votes["margin"].max(),
              state_votes["margin"].mean(), state_votes["margin"].std())
+    log.info("County SD range: %.4f – %.4f  (mean %.4f, SD %.4f)",
+             state_votes["county_sd"].min(), state_votes["county_sd"].max(),
+             state_votes["county_sd"].mean(), state_votes["county_sd"].std())
 
     # Forward-fill to annual: election year e → covers e+1 through e+4
     # (the 2000 election governs 2001-2004, the 2004 election 2005-2008, etc.)
@@ -119,6 +178,7 @@ def main() -> None:
                 "rep_share":  row_src["rep_share"],
                 "er_pres":    row_src["er_pres"],
                 "margin":     row_src["margin"],
+                "county_sd":  row_src["county_sd"],
             })
 
     annual = pd.DataFrame(rows)

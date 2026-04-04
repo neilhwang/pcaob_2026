@@ -9,13 +9,8 @@
 *.Rproj
 
 # ---- Data files (large) ----
-# Uncomment these if your data is too large for Git.
-# Track them separately (e.g., Dropbox, S3, institutional storage).
-# *.parquet
-# *.csv
-# *.dta
-# *.sas7bdat
-# *.rds
+Data/Raw/
+Data/Processed/
 
 # ---- Output files (reproducible from code) ----
 # Uncomment if you prefer to regenerate rather than track these.

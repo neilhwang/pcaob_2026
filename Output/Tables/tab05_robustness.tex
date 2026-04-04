@@ -1,32 +1,65 @@
 \begin{table}[htbp]
 \centering
-\caption{Robustness Tests}
+\caption{Robustness and Alternative Proxies}
 \label{tab:robustness}
+
+\textit{Panel A: Abnormal Volume (AbVol)}
+\vspace{2pt}
 \begin{tabular}{lcccccccccc}
 \toprule
  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9) & (10) \\
- & $|CAR|$\newline Compete. & $|CAR|$\newline Pres. ER & $|CAR|$\newline House ER & $|CAR|$\newline DW State & $|CAR|$\newline DW Natl & $|CAR|$\newline +State FE & $|CAR|$\newline State Clust & $|CAR|$\newline 2-Way Clust & $|CAR|$\newline County & $|CAR|$\newline Small Firm \\
+ & Baseline & Pres. ER & DW State & +State FE & State Clust & 2-Way Clust & County & Small Firm & Cty Vote SD & Interaction \\
 \midrule
-Polarization (baseline) & 0.005** &  &  &  &  & 0.012 & 0.005** & 0.005** &  & 0.005 \\
- & (0.002) &  &  &  &  & (0.008) & (0.002) & (0.002) &  & (0.004) \\
-Pres. ER Polarization &  & 0.003 &  &  &  &  &  &  &  &  \\
- &  & (0.002) &  &  &  &  &  &  &  &  \\
-House ER Polarization &  &  & 0.000 &  &  &  &  &  &  &  \\
- &  &  & (0.003) &  &  &  &  &  &  &  \\
-DW-NOMINATE (state gap) &  &  &  & 0.002 &  &  &  &  &  &  \\
- &  &  &  & (0.003) &  &  &  &  &  &  \\
-DW-NOMINATE (national gap) &  &  &  &  & -0.009* &  &  &  &  &  \\
- &  &  &  &  & (0.005) &  &  &  &  &  \\
-County Competitiveness &  &  &  &  &  &  &  &  & 0.005** &  \\
- &  &  &  &  &  &  &  &  & (0.003) &  \\
+Polarization (baseline) & 0.111*** &  &  & 0.066 & 0.111*** & 0.111*** &  & 0.137** &  & 0.116** \\
+ & (0.043) &  &  & (0.153) & (0.029) & (0.029) &  & (0.062) &  & (0.049) \\
+Pres. ER Polarization &  & 0.081** &  &  &  &  &  &  &  &  \\
+ &  & (0.035) &  &  &  &  &  &  &  &  \\
+DW-NOMINATE (state gap) &  &  & 0.100* &  &  &  &  &  &  &  \\
+ &  &  & (0.052) &  &  &  &  &  &  &  \\
+County Competitiveness &  &  &  &  &  &  & 0.022 &  &  &  \\
+ &  &  &  &  &  &  & (0.043) &  &  &  \\
+County Vote SD &  &  &  &  &  &  &  &  & 0.066 & 0.069 \\
+ &  &  &  &  &  &  &  &  & (0.052) & (0.054) \\
+Polarization $\times$ County SD &  &  &  &  &  &  &  &  &  & 0.046 \\
+ &  &  &  &  &  &  &  &  &  & (0.048) \\
 \midrule
 Year + Industry FE & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
-State FE & No & No & No & No & No & Yes & No & No & No & No \\
-Cluster & Firm & Firm & Firm & Firm & Firm & Firm & State & Firm$\times$State & Firm & Firm \\
+State FE & No & No & No & Yes & No & No & No & No & No & No \\
+Cluster & Firm & Firm & Firm & Firm & State & Firm$\times$State & Firm & Firm & Firm & Firm \\
 Controls & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
-Sample & Full & Full & Full & Full & Full & Full & Full & Full & Full & Small firms \\
-N & 678 & 678 & 674 & 631 & 673 & 678 & 678 & 678 & 659 & 339 \\
-$R^2$ & 0.172 & 0.170 & 0.168 & 0.173 & 0.167 & 0.212 & 0.172 & 0.172 & 0.173 & 0.150 \\
+Sample & Full & Full & Full & Full & Full & Full & Full & Small firms & Full & Full \\
+N & 678 & 678 & 631 & 678 & 678 & 678 & 659 & 339 & 676 & 676 \\
+$R^2$ & 0.175 & 0.171 & 0.185 & 0.244 & 0.175 & 0.175 & 0.169 & 0.291 & 0.169 & 0.177 \\
+\bottomrule
+\end{tabular}
+
+\textit{Panel B: Absolute Abnormal Return ($|CAR|$)}
+\vspace{2pt}
+\begin{tabular}{lcccccccccc}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9) & (10) \\
+ & Baseline & Pres. ER & DW State & +State FE & State Clust & 2-Way Clust & County & Small Firm & Cty Vote SD & Interaction \\
+\midrule
+Polarization (baseline) & 0.005** &  &  & 0.012 & 0.005** & 0.005** &  & 0.005 &  & 0.005* \\
+ & (0.002) &  &  & (0.008) & (0.002) & (0.002) &  & (0.004) &  & (0.003) \\
+Pres. ER Polarization &  & 0.003 &  &  &  &  &  &  &  &  \\
+ &  & (0.002) &  &  &  &  &  &  &  &  \\
+DW-NOMINATE (state gap) &  &  & 0.002 &  &  &  &  &  &  &  \\
+ &  &  & (0.003) &  &  &  &  &  &  &  \\
+County Competitiveness &  &  &  &  &  &  & 0.005** &  &  &  \\
+ &  &  &  &  &  &  & (0.003) &  &  &  \\
+County Vote SD &  &  &  &  &  &  &  &  & 0.005* & 0.004 \\
+ &  &  &  &  &  &  &  &  & (0.002) & (0.003) \\
+Polarization $\times$ County SD &  &  &  &  &  &  &  &  &  & -0.002 \\
+ &  &  &  &  &  &  &  &  &  & (0.002) \\
+\midrule
+Year + Industry FE & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
+State FE & No & No & No & Yes & No & No & No & No & No & No \\
+Cluster & Firm & Firm & Firm & Firm & State & Firm$\times$State & Firm & Firm & Firm & Firm \\
+Controls & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes \\
+Sample & Full & Full & Full & Full & Full & Full & Full & Small firms & Full & Full \\
+N & 678 & 678 & 631 & 678 & 678 & 678 & 659 & 339 & 676 & 676 \\
+$R^2$ & 0.172 & 0.170 & 0.173 & 0.212 & 0.172 & 0.172 & 0.173 & 0.150 & 0.172 & 0.176 \\
 \bottomrule
 \end{tabular}
 \begin{flushleft}

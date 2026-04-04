@@ -1,0 +1,51 @@
+\begin{table}[htbp]
+\centering
+\caption{Sample Construction and Attrition}
+\label{tab:attrition}
+\small
+\begin{tabular}{lrr}
+\hline\hline
+ & $N$ & Retained (\%) \\
+\hline
+\\[-6pt]
+\multicolumn{3}{l}{\textit{Panel A: Sample Attrition}} \\[3pt]
+Item 4.01 filings parsed from EDGAR (2001--2023) & 8,621 &  \\
+\quad Less: 8-K/A amendments & $-$1,720 &  \\
+Original 8-K filings & 6,901 & 100.0 \\
+\quad Less: no CRSP link (CIK $\to$ gvkey $\to$ PERMNO) & $-$5,628 &  \\
+\quad Less: insufficient estimation-window data ($<$100 days) & $-$53 &  \\
+Events with valid market-model CAR & 1,220 & 17.7 \\
+\quad Less: missing Compustat controls or HQ state & $-$536 &  \\
+\quad Less: financial and utility industries (SIC 49, 60--69) & $-$6 &  \\
+\textbf{Final analysis sample} & \textbf{678} & \textbf{9.8} \\[6pt]
+\hline
+\\[-6pt]
+\multicolumn{3}{l}{\textit{Panel B: Matched vs.\ Unmatched Filing Characteristics (\%)}} \\[3pt]
+ & CRSP Matched & Unmatched \\
+ & ($N = 1{,}233$) & ($N = 5{,}668$) \\[3pt]
+Big 4 auditor involved & 43.0 & 14.4 \\
+Disagreement reported & 67.2 & 59.8 \\[3pt]
+\textit{Quality-tier transition:} & & \\
+\quad Non-Big-4 $\to$ Non-Big-4 & 56.9 & 85.5 \\
+\quad Big-4 $\to$ Big-4 & 12.2 & 4.1 \\
+\quad Non-Big-4 $\to$ Big-4 & 24.7 & 7.9 \\
+\quad Big-4 $\to$ Non-Big-4 & 6.1 & 2.4 \\
+\hline\hline
+\end{tabular}
+\begin{minipage}{0.92\textwidth}
+\vspace{4pt}
+\footnotesize
+Panel A reports the number of observations remaining at each stage of sample
+construction. Item 4.01 filings are identified via full-text search of the
+SEC EDGAR EFTS system and parsed using an automated extractor. 8-K/A
+amendments are excluded to avoid double-counting. The CRSP link requires a
+valid CIK--gvkey--PERMNO chain (via Compustat and CRSP stock-name history)
+and at least 100 non-missing trading days in the $[-252, -46]$ estimation
+window. Panel B compares filing-level characteristics of CRSP-matched events
+with unmatched original filings. Disagreement rates are broadly similar
+across groups (67\% vs.\ 60\%); the primary difference is firm size, proxied
+by Big 4 auditor involvement (43\% vs.\ 14\%). The unmatched filings are
+predominantly micro-cap or OTC registrants whose equity securities are not
+covered by CRSP.
+\end{minipage}
+\end{table}

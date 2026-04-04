@@ -1,0 +1,387 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{tcolorbox}
+
+\definecolor{critical}{RGB}{180,0,0}
+\definecolor{major}{RGB}{200,100,0}
+\definecolor{minor}{RGB}{0,100,150}
+
+\newtcolorbox{criticalbox}{colback=critical!5, colframe=critical!80, title=\textbf{Critical}}
+\newtcolorbox{majorbox}{colback=major!5, colframe=major!80, title=\textbf{Major}}
+\newtcolorbox{minorbox}{colback=minor!5, colframe=minor!80, title=\textbf{Minor}}
+
+\title{Referee Report\\[6pt]
+\large ``Political Polarization and Market Reactions to\\Auditor-Change Disclosures''\\[4pt]
+\normalsize Prepared for a Top-3 Accounting Journal}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+\onehalfspacing
+
+\tableofcontents
+\newpage
+
+%% ========================================================================
+\section*{Summary Recommendation}
+\addcontentsline{toc}{section}{Summary Recommendation}
+%% ========================================================================
+
+The paper examines whether political polarization amplifies market reactions to auditor-change disclosures, using cross-state variation in presidential-election competitiveness. The setting is well-chosen, the baseline result is credible ($p = 0.010$ for volume, $p = 0.040$ for absolute returns), the attrition table and matched/unmatched comparison are commendable, the within-firm earnings-announcement placebo ($p = 0.924$, $N = 20{,}800$) is the paper's strongest identification result, and the new county-vote-SD measure addresses the Fiorina competitiveness-vs.-polarization concern.
+
+However, five substantive issues remain. First, a \textbf{mathematical error persists in the Remark on mean-preservation} in Appendix~A, and the main-text Discussion paragraph states the unified channel result without the mean-preserving qualification that the corrected propositions now require (Section~\ref{sec:tech}). Second, the \textbf{P3 ambiguity prediction fails for the theoretically primary outcome} (volume), which undermines the paper's second claimed contribution (Section~\ref{sec:bridge}). Third, \textbf{only the presidential-competitiveness proxy produces consistently significant results}; the DW-NOMINATE, Esteban-Ray, and state-FE specifications are all null (Section~\ref{sec:identification}). Fourth, there is a \textbf{coefficient--text mismatch} in the discussion of Table~3 column~(1), and the standard-error rounding in Table~3 creates misleading implied $t$-statistics (Section~\ref{sec:tech}). Fifth, \textbf{Table~4 reports event-type splits only for $|CAR|$, not $AbVol$}, creating a gap in the evidence base for the theoretically primary outcome (Section~\ref{sec:bridge}).
+
+I recommend a \textbf{revise-and-resubmit}. The fixes for the proof error and the coefficient mismatch are mechanical. The ambiguity-test issue and the proxy-fragility issue require substantive engagement. Below I provide specific, actionable suggestions for each.
+
+\newpage
+
+%% ========================================================================
+\section{Iteration 1: Theoretical Framework}
+\label{sec:theory}
+%% ========================================================================
+
+\subsection{Model Structure and Assumptions}
+
+The two-group Bayesian model (Section~3) applies the Kandel--Pearson (1995) heterogeneous-priors framework to the auditor-change setting. The revision has cleaned up the notation: investors are now indexed by group $g \in \{D, R\}$ directly, eliminating the unnecessary continuum. The posterior function $\phi(\pi_g)$ is correctly derived, and the concavity claim ($\phi'' < 0$) is verified.
+
+The demand-based extension in Section~3.3 (the $q_i(P) = \alpha_i(\mu_i - P)$ formulation) is a useful addition that bridges the gap from posterior dispersion to $|CAR|$. However, the argument remains informal: the paper invokes ``short-sale constraints, heterogeneous risk-bearing capacity, or segmented participation'' without deriving the price prediction under any specific friction.
+
+\begin{majorbox}
+The $|CAR|$ prediction is still a hand-wave rather than a formal result. To tighten this, derive the equilibrium price $P^*$ under a specific friction---e.g., under a short-sale constraint where only optimists trade, $P^* = E_{\text{opt}}[\mu_g]$, which is mechanically increasing in the upper tail of the posterior distribution. Even a one-paragraph derivation would give $|CAR|$ the same formal standing as $AbVol$.\\[4pt]
+\textbf{Fix:} Add a brief proposition or lemma: ``Under short-sale constraints, the equilibrium price $P^*$ exceeds the wealth-weighted average posterior. A mean-preserving spread of posteriors increases $P^*$ and therefore $|P^* - P_{\text{pre}}|$.'' This is standard from Miller (1977) and takes 5--10 lines.
+\end{majorbox}
+
+\subsection{The Ambiguity Channel: Assumption vs.\ Prediction}
+
+Section~3.4 has been reframed: the mechanism now runs through ``the dispersion of perceived precision $|\kappa_D - \kappa_R|$ that ambiguity induces,'' rather than through the objective log-likelihood ratio $\ell$ directly. This is a subtle but important shift. The formal result (Proposition~3) shows that a mean-preserving spread of $\kappa$ increases posterior variance. But the claim that ambiguity \emph{induces} a wider $|\kappa_D - \kappa_R|$ is a \textbf{behavioral assumption}, not a model prediction. The model takes $|\kappa_D - \kappa_R|$ as given; it does not derive that ambiguous filings widen this gap.
+
+\begin{majorbox}
+The paper's key cross-sectional prediction (P3) rests on an unjustified behavioral assumption: that ambiguous filings widen the cross-group gap in perceived precision. This assumption is plausible but needs explicit justification.\\[4pt]
+\textbf{Fix:} Add a formal micro-foundation for the assumption. One approach: model perceived precision as $\kappa_g = \bar\kappa - \delta_g \cdot f(\text{ambiguity})$, where $\delta_g$ captures group $g$'s sensitivity to ambiguity and $f(\cdot)$ is increasing. Then $|\kappa_D - \kappa_R| = |\delta_D - \delta_R| \cdot f(\text{ambiguity})$, which is mechanically increasing in ambiguity as long as the two groups have different sensitivities. This makes the assumption explicit and testable. Alternatively, simply flag it as an assumption rather than a prediction.
+\end{majorbox}
+
+\subsection{Slack in the Theory: What Is Ruled Out?}
+
+The model generates directional predictions (polarization increases volume and $|CAR|$) but imposes almost no restrictions on magnitudes or cross-sectional patterns beyond P3. Any positive coefficient on any polarization proxy is ``consistent with'' the model. This is a common feature of reduced-form theory sections in accounting, but it limits the model's ability to discipline the empirics. The model does not predict, for example, whether the effect should be stronger for smaller firms (which the paper tests) or whether it should be stronger in specific industries.
+
+\begin{minorbox}
+\textbf{Suggestion:} Acknowledge the theory's limited discriminating power explicitly. A sentence like: ``The model generates signed predictions but does not restrict magnitudes or cross-sectional patterns beyond the ambiguity interaction; additional cross-sectional tests should therefore be interpreted as suggestive rather than as sharp tests of the theory.''
+\end{minorbox}
+
+%% ========================================================================
+\section{Iteration 2: The Theory--Empirics Bridge}
+\label{sec:bridge}
+%% ========================================================================
+
+\subsection{What Does the Proxy Measure?}
+
+The theory predicts that \emph{investor-level belief heterogeneity} drives volume and returns. The empirical proxy is \emph{state-level presidential-election competitiveness}. The bridge between these is the local-equity-bias channel: retail investors are geographically concentrated (Coval and Moskowitz, 1999), so headquarters-state composition proxies for the marginal retail investor's political environment.
+
+This bridge has two weak links:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{The small-firm test fails.} Column~(8) of Table~6 restricts to below-median firms ($N = 339$), where the retail-investor channel should be strongest. The coefficient is $\beta = 0.005$ ($p = 0.175$)---directionally correct but insignificant. This is the paper's own validation test for the local-investor channel, and it does not pass. The paper calls this ``suggestive rather than conclusive,'' but a referee will note that the \emph{one test designed to validate the proxy mechanism} fails.
+
+    \item \textbf{The DW-NOMINATE proxy is null.} If polarization per se is the mechanism, at least one of the conceptually distinct proxies should produce a significant result. The state DW-NOMINATE gap ($p = 0.522$) is null. The paper interprets this as evidence that ``the baseline result is driven by the partisan composition of the local electorate,'' but this interpretation is unfalsifiable: any proxy that works is evidence for the mechanism, and any proxy that fails is evidence that the mechanism operates through a different margin.
+\end{enumerate}
+
+\begin{criticalbox}
+The proxy-validation architecture produces only one significant proxy (presidential competitiveness). The DW-NOMINATE null and the small-firm null leave the causal mechanism underidentified.\\[4pt]
+\textbf{Fix:} (a) Report the correlation matrix among all proxy measures (competitiveness, Esteban-Ray, DW-NOMINATE state, DW-NOMINATE national, county vote SD) so the reader can assess whether they measure the same latent object. If correlations are low, the ``triangulation'' framing is misleading; if high, the null results on alternative proxies are more puzzling. (b) Consider an instrumental-variables approach using decennial Census demographics (urbanization, education mix) as instruments for state competitiveness, which would provide a second-stage estimate less susceptible to the concern that competitiveness proxies for something other than polarization.
+\end{criticalbox}
+
+\subsection{Table~4 Reports Only $|CAR|$ Event-Type Splits}
+
+Table~4 (Heterogeneity by Auditor Change Type) reports columns for $|CAR|$ across dismissals, non-dismissals, Big-4$\to$Non, and Non$\to$Big-4. No $AbVol$ columns are reported. The theory designates $AbVol$ as the primary outcome, yet the paper's first mechanism test omits it entirely.
+
+\begin{criticalbox}
+The absence of $AbVol$ event-type splits is a significant gap. If the dismissal/non-dismissal asymmetry holds for volume as well as returns, the interpretation-channel argument is substantially strengthened. If the volume split does not show the same pattern, the reader needs to know.\\[4pt]
+\textbf{Fix:} Add $AbVol$ columns to Table~4 (or report in an appendix table). Discuss whether the asymmetry holds for both outcomes.
+\end{criticalbox}
+
+\subsection{The P3 Failure for Volume---Revisited}
+
+The ambiguity test (Table~5) remains the paper's most vulnerable result. For $AbVol$, the low-ambiguity subsample drives the effect ($\beta = 0.114$, $p = 0.008$), while the high-ambiguity coefficient is null ($p = 0.422$). This directly contradicts P3, which predicts the opposite ordering. The paper acknowledges this and labels the post-hoc explanation (``low-ambiguity events give concrete grounds for disagreement'') a rationalization.
+
+The reframing in Section~3.4---that ambiguity widens $|\kappa_D - \kappa_R|$---does not resolve the tension. If anything, it makes it sharper: if ambiguous filings widen the perceived-precision gap, then the ambiguous-event subsample should show \emph{larger} volume effects, not smaller ones.
+
+\begin{criticalbox}
+The volume-ambiguity reversal is not a power failure; it is a significant point estimate running opposite to the prediction. This needs more than a one-paragraph acknowledgment.\\[4pt]
+\textbf{Suggestions:}
+\begin{enumerate}[leftmargin=*]
+    \item Consider whether the \texttt{high\_ambiguity} indicator (17.7\% of events) is too narrow. Broadening it to 30--40\% of events (e.g., including events with generic stated reasons) would test whether the result changes with a more inclusive definition and improve power.
+    \item Run the ambiguity test as an interaction ($\text{Pol} \times \text{High\_Ambiguity}$) in the full sample rather than a split. This uses all 678 observations and directly tests whether the polarization coefficient is differentially larger for high-ambiguity events. Report the interaction $p$-value for both $|CAR|$ and $AbVol$.
+    \item If the interaction is null or wrong-signed for $AbVol$, consider dropping P3 as a formal hypothesis and demoting the ambiguity test to an exploratory exercise. The paper's identification rests primarily on H1 + the placebo + the event-type split, and these are strong enough to stand alone.
+\end{enumerate}
+\end{criticalbox}
+
+\subsection{Outcome Ordering in the Tables}
+
+The theory designates $AbVol$ as primary. The abstract now leads with volume ($p = 0.010$). But Table~3 still presents $|CAR|$ in columns~(1)--(2) and $AbVol$ in columns~(3)--(4). Table~4 reports only $|CAR|$. Table~5 leads with $|CAR|$. The presentational ordering throughout the tables contradicts the theoretical ordering.
+
+\begin{majorbox}
+\textbf{Fix:} Reorder all tables to present $AbVol$ first, matching the abstract and the theory. This is a mechanical change with no cost.
+\end{majorbox}
+
+%% ========================================================================
+\section{Iteration 3: Identification and Robustness}
+\label{sec:identification}
+%% ========================================================================
+
+\subsection{Cross-State vs.\ Within-State Identification}
+
+The baseline specification identifies from both cross-state and within-state (over time) variation. Column~(4) adds state fixed effects, removing cross-state variation. The coefficient triples ($\beta = 0.012$) but is insignificant ($p = 0.144$). This tells us that the baseline result is driven primarily by cross-state differences rather than within-state temporal changes. Cross-state identification is more vulnerable to omitted state-level confounds (clientele, media, regulation).
+
+\begin{majorbox}
+The state-FE null is important and should be discussed more candidly. Currently the paper says the coefficient ``increases in magnitude but loses precision, consistent with within-state temporal variation\ldots being noisier.'' This is true but undersells the identification concern: the result relies on comparing firms in swing states to firms in safe states, and any time-invariant state-level correlate of competitiveness is a potential confound.\\[4pt]
+\textbf{Fix:} (a)~Report how many state$\times$election-cycle cells contain auditor-change events. If the within-state design has very thin cells, the power issue is structural, not just ``noise.'' (b)~Consider a Hausman-type comparison of the cross-state and within-state estimates to test whether they are statistically distinguishable.
+\end{majorbox}
+
+\subsection{The Moulton Problem}
+
+The polarization regressor varies at the state$\times$election-cycle level. With year and industry FE but no state FE, the effective number of clusters for the polarization variable is roughly $50 \text{ states} \times 6 \text{ cycles} = 300$, though many cells are empty. Firm-level clustering may understate standard errors because it does not account for within-state correlation in the regressor. Columns~(5)--(6) of Table~6 show that state-level and two-way clustering produce $p = 0.030$, which is reassuring. However, the paper should verify that this holds for $AbVol$ as well (currently reported only for $|CAR|$).
+
+\begin{minorbox}
+\textbf{Fix:} Report state-level and two-way clustered SEs for $AbVol$ in addition to $|CAR|$ in the robustness table, or note in the text that the clustering results hold for both outcomes.
+\end{minorbox}
+
+\subsection{Alternative Identification Strategies to Consider}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Regression discontinuity on close elections.} States that barely cross the 50-50 threshold in a presidential election are plausibly similar on unobservables. A fuzzy RD comparing market reactions in states that narrowly flipped vs.\ states that narrowly did not would provide a sharper local estimate. This is only feasible if enough auditor-change events cluster near the cutoff, but the paper should discuss whether this design is viable with 678 events.
+
+    \item \textbf{Lead-lag analysis.} If polarization causes larger market reactions, the effect should appear in the period \emph{after} a state becomes more competitive (e.g., after a presidential election shifts the margin) rather than before. Testing whether future polarization (the next election's result) predicts current-period reactions would provide a falsification test: if it does, the result may reflect a slow-moving omitted variable rather than polarization itself.
+
+    \item \textbf{Institutional vs.\ retail ownership interaction.} The theory predicts the effect should be concentrated among firms with higher retail ownership (the local-investor channel). Interact polarization with the fraction of shares held by retail investors (proxied by $1 -$ 13F institutional ownership). This is a more direct test of the retail channel than the size proxy in column~(8).
+\end{enumerate}
+
+\begin{majorbox}
+Of these three, the institutional-ownership interaction is the most feasible and directly tests the stated mechanism. I recommend implementing it.
+\end{majorbox}
+
+\subsection{The Placebo Test}
+
+The earnings-announcement placebo ($\beta = 0.000$, $p = 0.924$, $N = 20{,}800$) is excellent. The pooled specification with the $\text{Pol} \times \text{Auditor Change}$ interaction ($\beta = 0.008$, $p = 0.006$) is the paper's most convincing result after the baseline. One caveat: the $\text{Auditor Change}$ main effect in the pooled regression is $-0.024^{***}$, implying that auditor-change events have \emph{lower} $|CAR|$ than earnings announcements. If this reflects the well-known large absolute earnings surprises for small firms, it deserves a brief comment; otherwise it may appear anomalous.
+
+\begin{minorbox}
+\textbf{Fix:} Add a footnote explaining the sign of the Auditor Change main effect in column~(3) of Table~8.
+\end{minorbox}
+
+%% ========================================================================
+\section{Iteration 4: Narrative and Contribution}
+\label{sec:narrative}
+%% ========================================================================
+
+\subsection{Incremental Contribution Assessment}
+
+The paper's contribution is primarily empirical: documenting that a known mechanism (heterogeneous-prior-driven trading, Kandel and Pearson 1995) operates in a specific new setting (auditor-change disclosures modulated by political polarization). This is a legitimate and publishable contribution to the auditing literature. The theoretical apparatus is an application rather than an innovation, and the paper is now largely honest about this (``The model thus provides a microfoundation\ldots not a claim that priors are the only operative channel'').
+
+The contribution would be stronger if the cross-sectional tests were cleaner. Currently, the event-type split works (for $|CAR|$), the placebo works, but the formal ambiguity test (P3) fails for $AbVol$ and is underpowered for $|CAR|$. The paper's second claimed contribution---``evidence that this variation is concentrated in disclosures that carry less objective guidance''---is therefore only partially supported. I recommend recasting the second contribution around the event-type split and the placebo, both of which are clean, rather than around the ambiguity interaction.
+
+\subsection{Remaining Redundancy}
+
+The revision has tightened several passages, but some redundancy persists:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{The reduced-form proxy caveat} (``headquarters-state polarization is a noisy reduced-form proxy\ldots not a direct measure of investor beliefs''): appears in the abstract, introduction (lines 110--114), Section~5.5 (Empirical Specification, lines 819--823), Section~5.6 (Identification, lines 832--840), and the conclusion (lines 1199--1202). Five occurrences is excessive.
+
+    \item \textbf{The channel-agnosticism discussion}: explained in Section~3 (lines 291--313), restated in the Discussion paragraph after P3 (lines 523--544), and echoed in the conclusion. The Discussion paragraph is nearly a full column and substantially repeats Section~3.
+
+    \item \textbf{The retail-investor / local-equity-bias argument}: developed in Section~5.6 (lines 844--866) and partially restated when introducing the small-firm test (lines 862--866 and again at line 1084--1087).
+\end{enumerate}
+
+\begin{majorbox}
+\textbf{Fix:} State each caveat or argument in one canonical location and cross-reference thereafter. The proxy caveat belongs in Section~5.6 (Identification); the channel-agnosticism discussion belongs in Section~3; the retail-investor argument belongs in Section~5.6. Cutting the redundant passages would save 1.5--2 pages.
+\end{majorbox}
+
+\subsection{Consistency Checks}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Abstract vs.\ Table ordering.} The abstract now leads with $AbVol$ (good), but every table presents $|CAR|$ first (inconsistent). See Section~\ref{sec:bridge}.
+
+    \item \textbf{``Competitiveness'' vs.\ ``Polarization.''} The variable is defined as ``partisan competitiveness'' (Equation~4) but called ``Polarization'' in the regression tables and throughout the results. This terminological switch remains confusing. Pick one label.
+
+    \item \textbf{Text says ``two complementary proxies'' (line 685--686)} but Section~5.3 actually introduces three: presidential competitiveness, DW-NOMINATE, and county vote SD. The count is wrong.
+\end{enumerate}
+
+\begin{minorbox}
+\textbf{Fix:} (a) Change ``two complementary proxies'' to ``three'' or restructure the sentence. (b) Use either ``Polarization'' or ``Competitiveness'' consistently throughout; if using ``Polarization,'' rename the variable in Equation~4.
+\end{minorbox}
+
+%% ========================================================================
+\section{Iteration 5: Technical Audit}
+\label{sec:tech}
+%% ========================================================================
+
+\subsection{Proof Verification: Propositions 2--4 (Corrected)}
+
+The propositions now use mean-preserving-spread conditions. Let me verify each.
+
+\textbf{Proposition~2} (Trust): $\tau_D' = \tau_D + \omega_R\epsilon$, $\tau_R' = \tau_R - \omega_D\epsilon$. Since $m(\tau) = \sigma(a(\pi) + \tau\ell)$ is strictly increasing ($\sigma' > 0$, $\ell > 0$), $m(\tau_D') > m(\tau_D)$ and $m(\tau_R') < m(\tau_R)$. Gap widens. Variance increases. \textbf{Correct.}
+
+\textbf{Proposition~3} (Precision): Identical structure. \textbf{Correct.}
+
+\textbf{Proposition~4} (Unified): $X_D' = X_D + \omega_R\epsilon$, $X_R' = X_R - \omega_D\epsilon$. $\sigma(X_D') > \sigma(X_D)$, $\sigma(X_R') < \sigma(X_R)$. Gap widens. \textbf{Correct.}
+
+The mean-preserving-spread fix resolves the error identified in the previous review. The proofs are now mathematically valid.
+
+\subsection{Remaining Error: The Remark on Mean-Preservation}
+
+The Remark following the proof of Proposition~1 (Appendix~A, lines 1295--1309) states:
+
+\begin{quote}
+``$|\phi(\pi_D) - \phi(\pi_R)|$\ldots is strictly increasing in $|\pi_D - \pi_R|$ for any $\pi_D, \pi_R \in (0,1)$, regardless of what happens to the mean.''
+\end{quote}
+
+\textbf{This claim is false.} The function $\phi$ is concave on $(0,1)$. For a concave, strictly increasing function, an increase in $|\pi_D - \pi_R|$ does \emph{not} guarantee an increase in $|\phi(\pi_D) - \phi(\pi_R)|$ when both arguments shift in the same direction.
+
+\textbf{Counterexample.} With $p_H = 0.9$, $p_L = 0.1$:
+\begin{align*}
+    &\pi_D = 0.6,\; \pi_R = 0.4,\quad |\pi_D - \pi_R| = 0.20, \quad |\phi(0.6) - \phi(0.4)| = 0.0739. \\
+    &\pi_D' = 0.99,\; \pi_R' = 0.78,\quad |\pi_D' - \pi_R'| = 0.21 > 0.20, \quad |\phi(0.99) - \phi(0.78)| = 0.0293.
+\end{align*}
+The prior gap \emph{increased} from 0.20 to 0.21, but the posterior gap \emph{decreased} from 0.0739 to 0.0293, because both priors shifted toward 1 where $\phi$ is flat (concavity). The Remark's claim that mean-preservation is ``sufficient, not necessary'' is therefore incorrect: mean-preservation (or an equivalent condition forcing one prior up and the other down) \emph{is} necessary for the monotonicity result when $\phi$ is concave.
+
+\begin{criticalbox}
+The Remark contains a mathematically false claim that has survived from the earlier draft. The mean-preserving condition is not merely sufficient; it is (approximately) necessary because $\phi$ is concave.\\[4pt]
+\textbf{Fix:} Delete or correct the Remark. A corrected version: ``Mean-preservation is not the \emph{only} sufficient condition. The result holds under any perturbation that moves $\pi_D$ and $\pi_R$ in opposite directions (one increasing, one decreasing), even if the mean shifts. It does \emph{not} hold for arbitrary increases in $|\pi_D - \pi_R|$ when both priors shift in the same direction, because $\phi$ is concave and the posterior gap can narrow near the boundary.''
+\end{criticalbox}
+
+\subsection{Residual Inconsistency in the Main-Text Discussion Paragraph}
+
+Lines 527--533 state:
+
+\begin{quote}
+``Whenever polarization widens the cross-group gap $|X_D - X_R|$\ldots the logistic (sigmoid) function $\sigma(x) = 1/(1+e^{-x})$ is strictly increasing, so the group-level posterior means\ldots satisfy $|\mu_D - \mu_R|$ increases strictly.''
+\end{quote}
+
+This does not specify the mean-preserving condition. The corrected Proposition~4 in the appendix requires a mean-preserving spread for $|X_D - X_R|$ to guarantee that $|\sigma(X_D) - \sigma(X_R)|$ increases. The Discussion paragraph should reference this condition for consistency.
+
+\begin{criticalbox}
+\textbf{Fix:} Add ``under a mean-preserving spread'' after ``widens the cross-group gap $|X_D - X_R|$'' in the Discussion paragraph.
+\end{criticalbox}
+
+\subsection{Coefficient--Text Mismatch in Table~3}
+
+The text (lines 958--959) states: ``ranging from $\beta = 0.005$ ($p = 0.016$) in column~(1).'' Table~3 column~(1) shows $\beta = 0.006$, not 0.005. Column~(2) shows $\beta = 0.005$ ($p = 0.040$), which matches the text's description of column~(2). The column~(1) description has the wrong coefficient value.
+
+\begin{criticalbox}
+\textbf{Fix:} Change ``$\beta = 0.005$ ($p = 0.016$) in column~(1)'' to ``$\beta = 0.006$ ($p = 0.016$) in column~(1).'' Verify the $p$-value is correct given the actual SE.
+\end{criticalbox}
+
+\subsection{Standard-Error Rounding in Table~3}
+
+Table~3 column~(2) reports $\beta = 0.005$ with $\text{SE} = 0.002$. The implied $t$-statistic is $0.005/0.002 = 2.50$, which corresponds to $p \approx 0.013$. But the text reports $p = 0.040$, which implies $t \approx 2.06$ and therefore $\text{SE} \approx 0.00243$. The SE has been rounded from $\sim$0.0024 to 0.002, inflating the apparent $t$-statistic from 2.06 to 2.50.
+
+\begin{majorbox}
+Rounding SEs to three decimal places would resolve this. With $\text{SE} = 0.002$, a reader computing the $t$-statistic gets $p \approx 0.013$, which is inconsistent with the reported $p = 0.040$. This will confuse referees.\\[4pt]
+\textbf{Fix:} Report standard errors to three decimal places (e.g., 0.002 $\to$ 0.002) or at minimum to enough precision that the implied $t$-statistic is consistent with the reported $p$-value. For $\beta = 0.005$ and $p = 0.040$, report $\text{SE} = (0.002)$ only if the actual $p$-value from the regression output matches. If the actual SE is 0.0024, report it as such.
+\end{majorbox}
+
+\subsection{Table~4 Column~(3): Overfitting Concern}
+
+Table~4 column~(3) (Big-4$\to$Non-Big-4 subsample) has $N = 51$ and $R^2 = 0.666$. With year and industry fixed effects, 51 observations may have very few residual degrees of freedom. An $R^2$ of 0.666 on 51 observations with categorical FEs is a red flag for overfitting.
+
+\begin{minorbox}
+\textbf{Fix:} Report the number of fixed-effect categories relative to $N$ in this subsample. If, for example, there are 20 year dummies and 10 industry dummies for 51 observations, the regression is effectively fitting noise. Consider reporting this subsample without industry FEs, or simply noting that the subsample is too small for reliable inference.
+\end{minorbox}
+
+\subsection{Table~2: Placeholder Notes}
+
+Table~2 (Summary Statistics) contains ``Notes: [PLACEHOLDER]'' in the PDF. This is a draft artifact that must be replaced before submission.
+
+\begin{minorbox}
+\textbf{Fix:} Replace with actual table notes describing the sample and variable definitions.
+\end{minorbox}
+
+\subsection{Table~6: Incomplete Display}
+
+In the PDF, Table~6 shows only columns~(1)--(4) in the visible portion. If this is a formatting issue (the table is too wide for one page), consider splitting into two panels or rotating to landscape.
+
+\begin{minorbox}
+\textbf{Fix:} Ensure all 10 columns of Table~6 are visible in the submitted version. A two-panel layout (Panel~A: columns 1--5, Panel~B: columns 6--10) would be standard.
+\end{minorbox}
+
+%% ========================================================================
+\section{Consolidated Action Items}
+\label{sec:summary}
+%% ========================================================================
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\small
+\begin{tabular}{@{} p{1.1cm} p{12.2cm} @{}}
+\toprule
+\textbf{Priority} & \textbf{Action Item} \\
+\midrule
+\textcolor{critical}{\textbf{C1}} &
+\textbf{Fix the Remark on mean-preservation} (Appendix~A). The claim that $|\phi(\pi_D) - \phi(\pi_R)|$ is increasing in $|\pi_D - \pi_R|$ ``regardless of the mean'' is false due to concavity. Delete or correct. \\
+
+\textcolor{critical}{\textbf{C2}} &
+\textbf{Add mean-preserving qualifier to the Discussion paragraph} (Section~3.5). The unified-channel claim is stated without the condition required by the corrected propositions. \\
+
+\textcolor{critical}{\textbf{C3}} &
+\textbf{Fix the coefficient--text mismatch.} Table~3 column~(1) shows $\beta = 0.006$; the text says $\beta = 0.005$. \\
+
+\textcolor{critical}{\textbf{C4}} &
+\textbf{Add $AbVol$ columns to Table~4} (event-type splits). The theoretically primary outcome is missing from the first mechanism test. \\
+
+\textcolor{critical}{\textbf{C5}} &
+\textbf{Engage substantively with the P3 volume failure.} Run the ambiguity test as an interaction in the full sample; consider broadening the \texttt{high\_ambiguity} indicator; if P3 still fails, demote it from a formal hypothesis. \\
+
+\textcolor{major}{\textbf{M1}} &
+\textbf{Report the proxy correlation matrix} to assess whether the alternative proxies measure the same latent object. \\
+
+\textcolor{major}{\textbf{M2}} &
+\textbf{Implement the institutional-ownership interaction} as a direct test of the retail-investor channel. \\
+
+\textcolor{major}{\textbf{M3}} &
+\textbf{Discuss the state-FE null more candidly.} Report the number of state$\times$cycle cells; note that identification relies primarily on cross-state variation. \\
+
+\textcolor{major}{\textbf{M4}} &
+\textbf{Fix SE rounding in Table~3.} Report to three decimal places so the implied $t$-statistics match the reported $p$-values. \\
+
+\textcolor{major}{\textbf{M5}} &
+\textbf{Reorder all tables} to present $AbVol$ before $|CAR|$, matching the theory and abstract. \\
+
+\textcolor{major}{\textbf{M6}} &
+\textbf{Eliminate redundancy.} Consolidate the proxy caveat (5 occurrences), channel-agnosticism (3 occurrences), and retail-investor argument (2 occurrences). Save 1.5--2 pages. \\
+
+\textcolor{minor}{\textbf{m1}} &
+Fix ``two complementary proxies'' $\to$ ``three'' (line~685). \\
+
+\textcolor{minor}{\textbf{m2}} &
+Add a formal micro-foundation for the $|CAR|$ prediction (short-sale constraint lemma). \\
+
+\textcolor{minor}{\textbf{m3}} &
+Footnote the Auditor Change main effect sign in Table~8 column~(3). \\
+
+\textcolor{minor}{\textbf{m4}} &
+Replace ``Notes: [PLACEHOLDER]'' in Table~2. \\
+
+\textcolor{minor}{\textbf{m5}} &
+Fix Table~6 formatting so all 10 columns are visible. \\
+
+\textcolor{minor}{\textbf{m6}} &
+Report state and two-way clustered SEs for $AbVol$, not only $|CAR|$. \\
+
+\textcolor{minor}{\textbf{m7}} &
+Flag Table~4 column~(3) ($N = 51$, $R^2 = 0.666$) as a potential overfitting concern. \\
+
+\textcolor{minor}{\textbf{m8}} &
+Use ``Polarization'' or ``Competitiveness'' consistently; not both. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip
+\noindent\textbf{Bottom line.} The paper addresses an interesting question, the setting is clean, and the baseline result plus the placebo test are persuasive. The critical items (C1--C5) are all fixable: C1--C3 are mechanical corrections; C4 requires running existing regressions on the other outcome; C5 requires honest engagement with a result that does not confirm the theory. With these revisions, the paper would make a solid contribution to the auditing and political-economy-of-finance literatures.
+
+\end{document}

@@ -1,0 +1,275 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{longtable}
+\setstretch{1.1}
+\setlist[itemize]{topsep=3pt,itemsep=3pt,leftmargin=18pt}
+\setlist[enumerate]{topsep=3pt,itemsep=3pt,leftmargin=20pt}
+\begin{document}
+
+\begin{center}
+{\LARGE Reviewer Report on \texttt{draft.tex}}\\[0.5em]
+{\large Focus: novelty, contribution, logic, theory--empirics fit, notation, redundancy, and proof verification}\\[0.5em]
+\end{center}
+
+\section*{Bottom line}
+This is a promising paper with a clear empirical idea: investor reactions to auditor-change disclosures may depend not only on the filing itself, but also on the political environment in which the filing is interpreted. The paper's strongest features are (i) a distinctive setting with genuinely ambiguous disclosures, (ii) a plausible mechanism based on heterogeneous interpretation, (iii) a useful outcome pair of abnormal volume and absolute abnormal returns, and (iv) a serious attempt to connect the theory to cross-sectional tests.
+
+At the same time, in its current form I do \emph{not} think the draft is yet fully convincing. The main reason is not the baseline result itself. The main reason is that the paper currently overstates how tightly the theory supports the empirics, especially for ambiguity and for price effects. There are also several places where the draft claims more than the evidence warrants, and a few important internal inconsistencies: most notably, the ambiguity mechanism in the theory section is not consistent with the written equations, and the conclusion partly leans on results that the paper itself describes as weak, mixed, or post-hoc rationalized.
+
+My recommendation is \textbf{revise substantially before circulation or submission}. The core empirical result is interesting enough to justify that work. Below I give a five-iteration review, with each iteration refining the previous one and ending with concrete action items.
+
+\section*{Overall assessment}
+
+\subsection*{Contribution and novelty}
+\begin{itemize}
+    \item \textbf{Novelty is real, but should be framed more narrowly.} The paper's novel angle is not simply ``politics affects markets''; that literature already exists. The more precise contribution is: \emph{political polarization appears to shape the interpretation of a mandatory, standardized, audit-related disclosure whose meaning is often underdetermined by the filing itself}. That is a clean and potentially publishable contribution.
+    \item \textbf{The audit setting is a good one.} Auditor-change 8-Ks are a sensible laboratory because they are public, standardized, and often ambiguous. That is a stronger motivation than the broader claims about politics and trust in institutions.
+    \item \textbf{The contribution to auditing should be positioned as cross-sectional heterogeneity in reactions, not as a broad redesign of disclosure regulation.} The strongest claim supported by the current evidence is about heterogeneity in market reactions. The normative implications for disclosure design should be stated more cautiously.
+\end{itemize}
+
+\subsection*{How convincing are the results?}
+\begin{itemize}
+    \item \textbf{Moderately convincing on the baseline association.} The baseline positive coefficient on polarization for both $|CAR|$ and $AbVol$ is coherent and not obviously spurious on its face.
+    \item \textbf{More convincing for volume than for price.} Your own theory supports this ranking, and the estimates do too. That is a plus.
+    \item \textbf{Much less convincing on mechanism.} The event-type split is directionally helpful. The ambiguity split is mixed at best. The placebo is useful, but it does not by itself isolate the proposed mechanism.
+    \item \textbf{Identification is reduced-form and should be sold that way.} The draft usually says this, but then sometimes slips into stronger language about investor priors, institutional trust, or disclosure effectiveness than the design can cleanly support.
+\end{itemize}
+
+\section*{Iteration 1: Core argument, novelty, and contribution}
+
+\subsection*{What works}
+\begin{enumerate}
+    \item The paper asks a crisp question: why do market reactions to the same mandatory disclosure vary across firms?
+    \item The use of auditor-change filings is smart because ambiguity is inherent to the setting.
+    \item The paper does a good job distinguishing \emph{what is disclosed} from \emph{how investors interpret it}.
+    \item The abnormal-volume outcome is especially well chosen for a disagreement mechanism.
+\end{enumerate}
+
+\subsection*{Main concerns}
+\begin{enumerate}
+    \item \textbf{The contribution is currently overextended.} The introduction claims three contributions, but only the first is firmly supported. The second and third drift toward stronger mechanism and policy claims than the evidence can currently carry.
+    \item \textbf{The paper oscillates between three different versions of the contribution:}
+    \begin{itemize}
+        \item political polarization affects reactions to audit disclosures;
+        \item polarization affects interpretation of ambiguous disclosures specifically;
+        \item disclosure-based regulation is less effective in polarized environments.
+    \end{itemize}
+    These are not the same claim. The draft should choose one primary contribution and downgrade the others to implications or conjectures.
+    \item \textbf{``Mandatory audit-related disclosure'' is too broad given the evidence.} The empirical design studies \emph{auditor-change 8-Ks}. Claims about CAMs, going-concern opinions, and audit-related disclosure more generally should be framed as external validity conjectures, not established implications.
+\end{enumerate}
+
+\subsection*{Actionable revisions}
+\begin{itemize}
+    \item Rewrite the contribution paragraph so that Contribution 1 is the headline and Contributions 2--3 are explicitly labeled as \emph{suggestive mechanism evidence} and \emph{tentative broader implication}.
+    \item Replace broad wording like ``the effectiveness of mandatory audit-related disclosure depends on the political environment'' with something tighter, such as: \emph{``market reactions to auditor-change disclosures vary with the political environment in which the filing is interpreted.''}
+    \item In the abstract, consider leading with volume rather than $|CAR|$, since volume is the theoretically cleaner outcome.
+\end{itemize}
+
+\section*{Iteration 2: Theory, logical gaps, and proof audit}
+
+\subsection*{The strongest theoretical issue}
+The ambiguity mechanism is currently not internally consistent.
+
+In the unified notation, you write
+\[
+X_i = a(\pi_i) + \tau_i \kappa_i \ell,
+\]
+where $\ell = \log(p_H/p_L) > 0$. But the surrounding text repeatedly says that when the objective signal is ambiguous (small $\ell$), the subjective trust and precision components ``carry relatively more weight'' and disagreement is amplified. In the current equation, however, heterogeneity from $\tau_i\kappa_i$ is \emph{multiplied by} $\ell$. Holding heterogeneity in $(\tau_i,\kappa_i)$ fixed, making $\ell$ smaller \emph{shrinks} the contribution of that term to cross-group differences in $X_i$.
+
+So the prose and the algebra point in opposite directions.
+
+\subsection*{Specific logical gaps in the theory section}
+\begin{enumerate}
+    \item \textbf{Ambiguity claim not implied by Proposition~A2.} Proposition~\ref{prop:precision} shows monotonicity of posterior variance in $|\kappa_D-\kappa_R|$. It does \emph{not} show that the contribution of that heterogeneity is larger when $\ell$ is small.
+    \item \textbf{Claim that large $\ell$ causes posteriors to converge is unsupported and likely false as written.} If $X_i=a(\pi_i)+\tau_i\kappa_i\ell$, then for heterogeneous $\tau_i\kappa_i$, increasing $\ell$ can widen, not narrow, the cross-group gap in $X_i$.
+    \item \textbf{Price prediction is too strong in some places and admirably cautious in others.} The draft correctly says that $|CAR|$ is a secondary implication, but then the introduction and conclusion sometimes present it almost on equal footing with the volume prediction.
+    \item \textbf{Mean-preserving spread language is sensible, but not always used carefully later.} The appendix properly notes that mean-preservation is sufficient, not necessary, for the variance result. Later prose occasionally sounds as if the empirical polarization proxy isolates only dispersion and not shifts in average priors. The empirical proxy does not accomplish that.
+\end{enumerate}
+
+\subsection*{Proof check}
+I checked the propositions and the appendix proofs.
+
+\begin{itemize}
+    \item \textbf{Proposition on posterior-dispersion monotonicity: basically correct.} The variance formula for a two-point distribution is correct. The monotonicity argument under a mean-preserving spread is also correct.
+    \item \textbf{Derivative statements: correct.} For
+    \[
+    \phi(\pi)=\frac{p_H\pi}{p_H\pi+p_L(1-\pi)},
+    \]
+    $\phi'(\pi)>0$ and $\phi''(\pi)<0$ for $p_H>p_L>0$.
+    \item \textbf{Propositions A1--A3 are mathematically fine but economically underinterpreted.} The proofs establish monotonicity of posterior variance with respect to heterogeneity in the latent index. They do \emph{not} deliver the stronger ambiguity comparative static claimed in the main text.
+    \item \textbf{One presentational issue:} in Proposition~\ref{prop:unified}, the sentence ``Propositions~\ref{prop:trust}--\ref{prop:unified} nest the main model'' is awkward because the endpoint of the range is the proposition currently being stated. Better: \emph{``Propositions~\ref{prop:trust}--\ref{prop:precision}, together with Proposition~\ref{prop:unified}, show that the main model is nested in a broader latent-index representation.''}
+\end{itemize}
+
+\subsection*{How to fix the ambiguity theory}
+You have at least three options.
+
+\begin{enumerate}
+    \item \textbf{Safest fix: drop the formal ambiguity comparative static entirely.} Keep the clean proven result: polarization widens posterior dispersion and therefore should raise abnormal volume. Then present the ambiguity test as an \emph{auxiliary empirical pattern} motivated by the broader interpretation story, not as a formal theorem-level implication.
+    \item \textbf{Alternative fix: redefine ambiguity as heterogeneity in perceived precision.} Instead of saying small $\ell$ amplifies disagreement, say that ambiguous filings induce \emph{more dispersion in perceived precision} $\kappa_i$ across investors. Then the comparative static is about polarization interacting with ambiguity because ambiguity \emph{widens $|\kappa_D-\kappa_R|$}, not because a smaller common $\ell$ mechanically magnifies disagreement.
+    \item \textbf{More ambitious fix: write a different latent-index model.} For example, ambiguity could enter as a reduction in common signal weight relative to prior log-odds in a model where investors place heterogeneous trust weights on the filing and also heterogeneous prior interpretation on the event. But that would require a genuine re-derivation, not just editorial tweaks.
+\end{enumerate}
+
+\subsection*{Actionable revisions}
+\begin{itemize}
+    \item Remove or rewrite sentences in Section~\ref{sec:ambiguity} that say subjective heterogeneity ``contributes more when $\ell$ is small.'' In the current model that is not shown.
+    \item Recast P3 as suggestive unless you re-derive it.
+    \item Make the paper consistently say: \emph{volume is the primary theoretically grounded outcome; $|CAR|$ is supportive but more reduced-form.}
+\end{itemize}
+
+\section*{Iteration 3: Empirics, theory--evidence fit, and identification}
+
+\subsection*{What is convincing}
+\begin{enumerate}
+    \item The baseline association is coherent across $|CAR|$ and $AbVol$.
+    \item The stronger precision for $AbVol$ fits the disagreement story well.
+    \item The event-type split is plausibly informative: non-dismissals leave more room for interpretation.
+    \item The earnings-announcement placebo is a good idea and strengthens the argument that the effect is not just ``any news in polarized states.''
+\end{enumerate}
+
+\subsection*{Where the evidence is weaker than the prose}
+\begin{enumerate}
+    \item \textbf{The ambiguity test does not validate the mechanism cleanly.} The draft already admits this for volume. Good. But later passages still lean too heavily on ambiguity as if it supported the theory. It does not, at least not robustly.
+    \item \textbf{The proxy story is plausible but not demonstrated.} Headquarters-state polarization may proxy for local retail-investor environment, media environment, state culture, or state-specific economic composition. The paper acknowledges this, but some prose still slides toward investor-belief language that is stronger than the proxy can justify.
+    \item \textbf{The triangulation is mixed, not convergent.} The county measure helps. But the DW-NOMINATE measures are weak or inconsistent, and the national one is even negative at the margin. That does not invalidate the paper, but it weakens the ``triangulation'' language.
+    \item \textbf{The placebo is helpful but not dispositive.} Earnings announcements differ from auditor-change filings not only in ambiguity, but also in attention, timing, investor audience, and information content. So the placebo supports specificity, but not uniquely the interpretation channel.
+\end{enumerate}
+
+\subsection*{Important theory--empirics mismatch}
+The paper's cleanest formal prediction is about trading volume. The baseline evidence supports that. But the headline framing still foregrounds $|CAR|$ heavily in the abstract and introduction. I would reverse the order and make volume the main test everywhere. Right now, the theory seems to serve as a rhetorical umbrella for both outcomes, even though only one is sharply implied.
+
+\subsection*{Actionable revisions}
+\begin{itemize}
+    \item Reorganize the empirical results so that \textbf{abnormal volume is clearly the primary outcome}. Present $|CAR|$ second.
+    \item Tone down statements like ``the mechanism is validated'' or ``consistent with the interpretation channel'' when the evidence is really mixed. Use phrasing like \emph{``more consistent with''}, \emph{``suggestive of''}, or \emph{``difficult to reconcile with a pure salience account.''}
+    \item In the robustness section, replace ``measurement triangulation'' with something less strong, such as \emph{``alternative proxy checks.''}
+    \item Add a concise paragraph stating exactly what the paper can and cannot identify:
+    \begin{itemize}
+        \item can identify reduced-form correlation between state political environment and event-window reactions;
+        \item cannot identify the political identity of marginal traders;
+        \item cannot cleanly distinguish trust, priors, media amplification, or clientele composition.
+    \end{itemize}
+\end{itemize}
+
+\section*{Iteration 4: Writing quality, redundancies, notation, and consistency}
+
+\subsection*{Redundancies and repeated expressions}
+The draft often repeats the same idea using nearly identical language. The most repeated expressions are variants of the following:
+\begin{itemize}
+    \item ``the political environment in which investors interpret the disclosure'';
+    \item ``limited objective guidance about the cause/nature of the change'';
+    \item ``politically shaped priors and institutional trust'';
+    \item ``reduced-form proxy for the political-information environment''.
+\end{itemize}
+Any one of these is fine. Repeating all of them throughout the introduction, theory, hypotheses, identification, and results creates drag and makes the paper feel less sharp than it is.
+
+\subsection*{Examples of stylistic tightening needed}
+\begin{enumerate}
+    \item The introduction explains multiple times that the proxy is noisy and conservative. Say it once carefully, then move on.
+    \item The paper repeatedly contrasts ``interpretation'' with ``information asymmetry.'' That distinction is useful, but after the first clear statement it need not be restated so often.
+    \item The event-type and ambiguity discussions partly duplicate one another. Consider consolidating the logic in one place and then referencing it later.
+\end{enumerate}
+
+\subsection*{Notation and terminology consistency issues}
+\begin{enumerate}
+    \item The paper alternates among \emph{polarization}, \emph{competitiveness}, \emph{partisan division}, and the complement of the vote margin. Pick one main term for the baseline variable and use the others only when defining alternatives.
+    \item The draft sometimes uses the language of \emph{polarization} for a measure that is mechanically electoral closeness. Reviewers may object that a 50--50 state is ``competitive'' rather than ``polarized.'' You anticipate this somewhat, but the terminology should be standardized more carefully.
+    \item The notation for group-level versus individual-level heterogeneity is mostly fine, but the prose sometimes moves too quickly between $i$-level and $g$-level objects. A short notation table would help.
+    \item Use a consistent label for the volume variable. Sometimes it is ``abnormal trading volume,'' sometimes ``$AbVol$,'' sometimes ``volume.'' Standardize after first definition.
+\end{enumerate}
+
+\subsection*{Places where claims and later discussion are inconsistent}
+\begin{enumerate}
+    \item \textbf{Hypothesis 2 versus results versus conclusion.} H2 predicts stronger effects for more ambiguous events. But the results say the volume pattern does \emph{not} follow P3, and the conclusion says abnormal volume is strongest in the low-ambiguity subsample. That is a direct tension. The conclusion does acknowledge this, but the surrounding prose should make much clearer that H2 is only partially supported at best.
+    \item \textbf{``Convergent findings across all three proxies'' is not what the reported results show.} The alternative measures are mixed.
+    \item \textbf{At times the paper says dismissals provide more directional guidance; elsewhere it stresses that clear disagreement disclosures and clear quality changes are the least compatible with the interpretation channel.} These statements can be reconciled, but the taxonomy needs to be cleaner.
+\end{enumerate}
+
+\subsection*{Actionable revisions}
+\begin{itemize}
+    \item Create a short notation/measurement table in the empirical-design section listing:
+    \begin{itemize}
+        \item baseline polarization variable and exact formula,
+        \item alternative proxies,
+        \item primary outcome ($AbVol$),
+        \item secondary outcome ($|CAR|$),
+        \item ambiguity indicator.
+    \end{itemize}
+    \item Replace repeated long phrases with shorter recurring labels after first definition, for example:
+    \begin{itemize}
+        \item ``political interpretation environment'';
+        \item ``filing ambiguity'';
+        \item ``reduced-form state proxy.''
+    \end{itemize}
+    \item Rewrite the conclusion so it does not sound more confident about ambiguity than the results section itself.
+\end{itemize}
+
+\section*{Iteration 5: What I would change before sending this paper out}
+
+\subsection*{Highest-priority revisions}
+\begin{enumerate}
+    \item \textbf{Fix the ambiguity theory.} This is the single most important revision. Either remove the formal claim or re-derive it correctly.
+    \item \textbf{Make $AbVol$ the lead outcome everywhere.} Abstract, introduction, contribution paragraph, and conclusion should all reflect that it is the primary theoretically grounded dependent variable.
+    \item \textbf{State the mechanism evidence honestly.} The event-type split is supportive; the ambiguity split is mixed; the placebo supports event specificity but not uniquely the trust/priors mechanism.
+    \item \textbf{Narrow the interpretation of the proxy.} Stay disciplined about the reduced-form nature of the state-level measure.
+    \item \textbf{Trim repetition aggressively.} The paper will read as more confident and more mature if it says the same thing fewer times.
+\end{enumerate}
+
+\subsection*{Suggested revised positioning}
+If I were rewriting the pitch, I would frame it this way:
+
+\begin{quote}
+This paper studies whether the market reaction to a standardized but ambiguous audit disclosure depends on the surrounding political environment. Using auditor-change 8-K filings, I show that abnormal trading volume---and, more tentatively, absolute abnormal returns---are larger when firms are headquartered in more politically competitive states. The evidence is most consistent with heterogeneous interpretation of the filing rather than a generic amplification of all corporate news, though the design remains reduced-form and the exact investor-level mechanism cannot be separately identified.
+\end{quote}
+
+That version is a little narrower than the current draft, but also more credible.
+
+\subsection*{Concrete editing checklist}
+\begin{itemize}
+    \item \textbf{Abstract}
+    \begin{itemize}
+        \item lead with abnormal volume;
+        \item say ``consistent with'' rather than ``suggest'' in the strongest places;
+        \item avoid broad claims about disclosure effectiveness.
+    \end{itemize}
+    \item \textbf{Introduction}
+    \begin{itemize}
+        \item compress the motivation by about 20--25\%;
+        \item keep one core contribution paragraph rather than three nearly coequal ones;
+        \item move caveats about the proxy into one compact paragraph.
+    \end{itemize}
+    \item \textbf{Theory section}
+    \begin{itemize}
+        \item separate proven results from intuitive extensions;
+        \item remove unsupported ambiguity comparative static;
+        \item clearly label $|CAR|$ as secondary.
+    \end{itemize}
+    \item \textbf{Results section}
+    \begin{itemize}
+        \item place the strongest emphasis on the baseline $AbVol$ result;
+        \item describe ambiguity results as mixed, not validating;
+        \item do not let the conclusion overrun the evidence.
+    \end{itemize}
+    \item \textbf{Conclusion}
+    \begin{itemize}
+        \item distinguish what is shown from what is conjectured;
+        \item present CAMs/going-concern/internal-control applications as future work only.
+    \end{itemize}
+\end{itemize}
+
+\section*{Decision-style summary}
+\begin{description}
+    \item[Novelty:] Good and nontrivial, especially in the audit-disclosure setting.
+    \item[Contribution:] Potentially strong once narrowed and stated more precisely.
+    \item[Convincingness of results:] Reasonably convincing on the baseline reduced-form relationship; less convincing on mechanism.
+    \item[Theory:] Useful core result, but the ambiguity extension currently has a real internal inconsistency.
+    \item[Proofs:] Core proofs are mathematically fine; the issue is mismatch between what is proved and what the text later claims.
+    \item[Writing:] Intelligent and well informed, but too repetitive and occasionally overclaims.
+    \item[Recommendation:] Revise substantially; the paper has real promise if the theory--empirics link is tightened and the claims are disciplined.
+\end{description}
+
+\end{document}

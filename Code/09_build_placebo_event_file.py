@@ -68,7 +68,8 @@ MAX_RETRIES   = 3
 ROOT            = Path(__file__).resolve().parent.parent
 OUT_FILE        = ROOT / "Data/Processed/placebo_events_raw.parquet"
 LOG_FILE        = ROOT / "Data/Processed/09_placebo_parse_log.csv"
-CHECKPOINT_FILE = ROOT / "Data/Processed/09_checkpoint.csv"
+CHECKPOINT_FILE  = ROOT / "Data/Processed/09_checkpoint.csv"
+CANDIDATES_CACHE = ROOT / "Data/Processed/09_candidates.parquet"
 CHECKPOINT_EVERY = 100
 
 # EFTS search phrase: the distinctive first clause of the Item 5.02 title.
@@ -429,17 +430,25 @@ def main() -> None:
     log.info("=== 09_build_placebo_event_file.py  start ===")
     log.info("Item 5.02 placebo events, %d–%d", START_YEAR, END_YEAR)
 
-    # Step 1
-    log.info("Step 1: EFTS pre-filter (phrase: '%s')", EFTS_PHRASE)
-    efts_set = build_efts_candidate_set()
+    # Steps 1-3: Build candidate list (cached to avoid re-downloading on restart)
+    if CANDIDATES_CACHE.exists():
+        candidates = pd.read_parquet(CANDIDATES_CACHE)
+        log.info("Loaded cached candidates: %d rows from %s", len(candidates), CANDIDATES_CACHE)
+    else:
+        # Step 1
+        log.info("Step 1: EFTS pre-filter (phrase: '%s')", EFTS_PHRASE)
+        efts_set = build_efts_candidate_set()
 
-    # Step 2
-    log.info("Step 2: Download quarterly indexes")
-    index = build_quarterly_index()
+        # Step 2
+        log.info("Step 2: Download quarterly indexes")
+        index = build_quarterly_index()
 
-    # Step 3
-    log.info("Step 3: Intersect EFTS candidates with index")
-    candidates = intersect_with_index(efts_set, index)
+        # Step 3
+        log.info("Step 3: Intersect EFTS candidates with index")
+        candidates = intersect_with_index(efts_set, index)
+
+        candidates.to_parquet(CANDIDATES_CACHE, index=False)
+        log.info("Candidates cached to %s", CANDIDATES_CACHE)
 
     # Step 4: Parse with checkpointing
     log.info("Step 4: Parse %d candidate filings", len(candidates))
@@ -447,9 +456,11 @@ def main() -> None:
     if CHECKPOINT_FILE.exists() and CHECKPOINT_FILE.stat().st_size > 0:
         try:
             completed = pd.read_csv(CHECKPOINT_FILE)
-            done_accs = set(completed["acc_nodash"].astype(str))
+            completed["acc_nodash"] = completed["acc_nodash"].astype(str).str.zfill(18)
+            completed = completed.drop_duplicates(subset="acc_nodash", keep="last")
+            done_accs = set(completed["acc_nodash"])
             results   = completed.to_dict("records")
-            log.info("Resuming from checkpoint: %d already parsed", len(results))
+            log.info("Resuming from checkpoint: %d unique already parsed", len(results))
         except Exception as exc:
             log.warning("Checkpoint unreadable (%s); starting fresh.", exc)
             done_accs = set()

@@ -13,6 +13,10 @@ INPUTS:
     Data/Processed/pol_presidential.parquet         (from 02b_build_presidential_polarization.py)
     Data/Processed/analysis_sample_county.parquet  (from 10_build_county_polarization.py)
     Data/Processed/ibes_dispersion.parquet          (from 11_build_ibes.py)
+    Data/Processed/pre_event_turnover.parquet       (from 12_build_turnover.py)
+    Data/Processed/incorp_state.parquet             (from 13_build_incorp_state.py)
+    Data/Processed/post_event_car.parquet           (from 14_build_post_event_car.py)
+    Data/Processed/institutional_ownership.parquet  (from 18_build_institutional_ownership.py)
 
 OUTPUTS:
     Output/Tables/tab01_summary_stats.tex
@@ -22,7 +26,10 @@ OUTPUTS:
     Output/Tables/tab05_robustness.tex
     Output/Tables/tab06_affective.tex
     Output/Tables/tab07_permutation.tex           (permutation test, 5,000 draws)
-    Output/Tables/tab08_dispersion_interaction.tex (analyst dispersion mechanism test)
+    Output/Tables/tab08_dispersion_interaction.tex (analyst dispersion mechanism test — skipped if no IBES)
+    Output/Tables/tab08_local_bias.tex             (local investor relevance test — not included in paper)
+    Output/Tables/tab09_reversal.tex              (post-event CAR reversal test — skipped if no post_event_car.parquet)
+    Output/Tables/tab10_audit_credibility.tex     (audit credibility interaction test — skipped if no moderators)
     Data/Processed/analysis_sample.parquet        (merged estimation sample)
 
 SPECIFICATION:
@@ -65,6 +72,12 @@ AP_FILE        = PROC / "affective_polarization.parquet"
 PRES_POL_FILE  = PROC / "pol_presidential.parquet"
 SAMPLE_FILE    = PROC / "analysis_sample.parquet"
 IBES_FILE      = PROC / "ibes_dispersion.parquet"
+TURNOVER_FILE  = PROC / "pre_event_turnover.parquet"
+INCORP_FILE    = PROC / "incorp_state.parquet"
+POST_CAR_FILE  = PROC / "post_event_car.parquet"
+AUDIT_CRED_FILE = PROC / "audit_credibility_moderators.parquet"
+SHORT_INT_FILE  = PROC / "short_interest.parquet"
+INST_OWN_FILE   = PROC / "institutional_ownership.parquet"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -156,12 +169,33 @@ def load_and_merge() -> pd.DataFrame:
     # er_pres = D_share × R_share (ER index at state level from county returns)
     # margin  = |D_share - R_share| (partisan homogeneity; higher = one-party state)
     # Both have ~13× more cross-sectional variation than House ER index.
-    pres_merge = pres_pol[["year", "state_abbr", "er_pres", "margin"]].rename(
+    pres_merge = pres_pol[["year", "state_abbr", "er_pres", "margin", "county_sd"]].rename(
         columns={"year": "event_year", "state_abbr": "state"}
     )
     crsp = crsp.merge(pres_merge, on=["event_year", "state"], how="left")
-    log.info("After presidential pol merge: %d with er_pres, %d with margin",
-             crsp["er_pres"].notna().sum(), crsp["margin"].notna().sum())
+    log.info("After presidential pol merge: %d with er_pres, %d with margin, %d with county_sd",
+             crsp["er_pres"].notna().sum(), crsp["margin"].notna().sum(),
+             crsp["county_sd"].notna().sum())
+
+    # ── Merge incorporation state → incorporation-state polarization (placebo) ─
+    # incorp is the 2-letter state of incorporation (from comp.company via script 13).
+    # We map it to the same presidential ER polarization measure used for HQ state.
+    # Prediction: incorp-state polarization should NOT predict market reactions
+    # (incorporation state is chosen for legal/tax reasons, not investor base).
+    if INCORP_FILE.exists():
+        incorp = pd.read_parquet(INCORP_FILE)
+        crsp = crsp.merge(incorp, on="gvkey", how="left")
+        incorp_pol_merge = pol_merge.rename(
+            columns={"state": "incorp", "pol_er_alpha10": "incorp_pol"}
+        )[["event_year", "incorp", "incorp_pol"]]
+        crsp = crsp.merge(incorp_pol_merge, on=["event_year", "incorp"], how="left")
+        log.info("After incorp-state pol merge: %d with incorp_pol",
+                 crsp["incorp_pol"].notna().sum())
+    else:
+        crsp["incorp"]     = None
+        crsp["incorp_pol"] = float("nan")
+        log.warning("incorp_state.parquet not found; run 13_build_incorp_state.py "
+                    "to enable the incorporation-state placebo.")
 
     # ── Merge Compustat controls ───────────────────────────────────────────────
     # Match to fiscal year ending in the calendar year prior to the event
@@ -452,14 +486,14 @@ def run_main_results(df: pd.DataFrame) -> None:
     fe   = "C(year_str) + C(sic2_str)"
 
     specs = {
-        # (1) |CAR|, no controls, year FE only
-        "m1": run_ols(f"absCar ~ competitive_std + C(year_str)", df),
-        # (2) |CAR|, controls + year FE + industry FE
-        "m2": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
-        # (3) AbVol, no controls, year FE only
-        "m3": run_ols(f"abvol ~ competitive_std + C(year_str)", df),
-        # (4) AbVol, controls + year FE + industry FE
-        "m4": run_ols(f"abvol ~ competitive_std + {ctrl} + {fe}", df),
+        # (1) AbVol, no controls, year FE only
+        "m1": run_ols(f"abvol ~ competitive_std + C(year_str)", df),
+        # (2) AbVol, controls + year FE + industry FE
+        "m2": run_ols(f"abvol ~ competitive_std + {ctrl} + {fe}", df),
+        # (3) |CAR|, no controls, year FE only
+        "m3": run_ols(f"absCar ~ competitive_std + C(year_str)", df),
+        # (4) |CAR|, controls + year FE + industry FE
+        "m4": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
     }
 
     for k, m in specs.items():
@@ -475,7 +509,7 @@ def run_main_results(df: pd.DataFrame) -> None:
         "loss":        "Loss",
         "sales_growth":"Sales Growth",
     }
-    dep_labels = [r"$|CAR|$", r"$|CAR|$", r"AbVol", r"AbVol"]
+    dep_labels = [r"AbVol", r"AbVol", r"$|CAR|$", r"$|CAR|$"]
     extra_rows = {
         "Year FE":     ["Yes", "Yes", "Yes", "Yes"],
         "Industry FE": ["No",  "Yes", "No",  "Yes"],
@@ -502,10 +536,12 @@ def run_event_type(df: pd.DataFrame) -> None:
     qual_up     = df[df["quality_up"] == 1]
 
     specs = {
-        "m1": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", dismissals),
-        "m2": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", resignations),
-        "m3": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", qual_down),
-        "m4": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", qual_up),
+        # AbVol first (primary outcome)
+        "m1": run_ols(f"abvol ~ competitive_std + {ctrl} + {fe}", dismissals),
+        "m2": run_ols(f"abvol ~ competitive_std + {ctrl} + {fe}", resignations),
+        # |CAR| second
+        "m3": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", dismissals),
+        "m4": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", resignations),
     }
 
     for k, m in specs.items():
@@ -513,12 +549,10 @@ def run_event_type(df: pd.DataFrame) -> None:
                  m.params["competitive_std"], m.pvalues["competitive_std"])
 
     coef_map = {"competitive_std": r"\textit{Polarization}"}
-    # "Resignations" subsample is df[dismissal==0], which includes both
-    # resignations and unclassified events; label accurately as Non-dismissals.
-    dep_labels = [r"$|CAR|$\newline Dismissals",
-                  r"$|CAR|$\newline Non-dismissals",
-                  r"$|CAR|$\newline Big4$\to$Non",
-                  r"$|CAR|$\newline Non$\to$Big4"]
+    dep_labels = [r"AbVol\newline Dismissals",
+                  r"AbVol\newline Non-dism.",
+                  r"$|CAR|$\newline Dismissals",
+                  r"$|CAR|$\newline Non-dism."]
     extra_rows = {
         "Year + Industry FE": ["Yes"] * 4,
         "Controls":           ["Yes"] * 4,
@@ -542,11 +576,14 @@ def run_ambiguity(df: pd.DataFrame) -> None:
     lo_amb = df[df["high_ambiguity"] == 0]
 
     specs = {
-        "m1": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
-        "m2": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", hi_amb),
-        "m3": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", lo_amb),
-        "m4": run_ols(f"abvol  ~ competitive_std + {ctrl} + {fe}", hi_amb),
-        "m5": run_ols(f"abvol  ~ competitive_std + {ctrl} + {fe}", lo_amb),
+        # AbVol first (primary outcome)
+        "m1": run_ols(f"abvol  ~ competitive_std + {ctrl} + {fe}", df),
+        "m2": run_ols(f"abvol  ~ competitive_std + {ctrl} + {fe}", hi_amb),
+        "m3": run_ols(f"abvol  ~ competitive_std + {ctrl} + {fe}", lo_amb),
+        # |CAR| second
+        "m4": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
+        "m5": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", hi_amb),
+        "m6": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", lo_amb),
     }
 
     for k, m in specs.items():
@@ -555,14 +592,15 @@ def run_ambiguity(df: pd.DataFrame) -> None:
                  int(m.nobs))
 
     coef_map = {"competitive_std": r"\textit{Polarization}"}
-    dep_labels = [r"$|CAR|$\newline Full",
-                  r"$|CAR|$\newline High Amb.",
-                  r"$|CAR|$\newline Low Amb.",
+    dep_labels = [r"AbVol\newline Full",
                   r"AbVol\newline High Amb.",
-                  r"AbVol\newline Low Amb."]
+                  r"AbVol\newline Low Amb.",
+                  r"$|CAR|$\newline Full",
+                  r"$|CAR|$\newline High Amb.",
+                  r"$|CAR|$\newline Low Amb."]
     extra_rows = {
-        "Year + Industry FE": ["Yes"] * 5,
-        "Controls":           ["Yes"] * 5,
+        "Year + Industry FE": ["Yes"] * 6,
+        "Controls":           ["Yes"] * 6,
     }
     reg_table(
         list(specs.values()), dep_labels, coef_map,
@@ -582,81 +620,184 @@ def run_robustness(df: pd.DataFrame) -> None:
 
     # All polarization columns are already standardized in main() before this runs.
 
-    specs = {
-        # (1) Baseline (repeat for comparison; primary measure)
-        "m1": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
-        # (2) Pres. ER index (quadratic alternative to linear competitiveness)
-        "m2": run_ols(f"absCar ~ er_pres_std + {ctrl} + {fe}", df),
-        # (3) House ER index (alternative geographic scale; much lower cross-sectional variation)
-        "m3": run_ols(f"absCar ~ pol_std + {ctrl} + {fe}", df),
-        # (4) DW-NOMINATE: state-level cross-party gap (roll-call based alternative)
-        "m4": run_ols(f"absCar ~ dw_std + {ctrl} + {fe}", df),
-        # (5) DW-NOMINATE: national gap (time-series pol variation only)
-        "m5": run_ols(f"absCar ~ dw_national_std + {ctrl} + {fe}", df),
-        # (6) Add state FEs to baseline spec (absorbs cross-state confounders)
-        "m6": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe_st}", df),
-        # (7) State-level clustered SEs (pol measure varies at state x year level)
-        "m7": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", df,
-                      cluster_var="state_str"),
-        # (8) Two-way clustered SEs: firm × state (Cameron, Gelbach & Miller 2011)
-        "m8": run_ols_twoway(f"absCar ~ competitive_std + {ctrl} + {fe}", df),
-        # (9) County-level competitiveness (finer geographic alternative; N=659)
-        "m9": run_ols(f"absCar ~ county_comp_std + {ctrl} + {fe}",
-                      df[df["county_comp_std"].notna()].copy()),
-        # (10) Small-firm subsample: below-median log assets.
-        # The local equity bias channel predicts stronger effects for smaller firms,
-        # whose marginal investors are more likely to be local retail investors.
-        "m10": run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}",
-                       df[df["size"] < df["size"].median()].copy()),
-    }
+    # Build interaction: competitiveness × within-state county SD
+    # Both variables are already standardized; the interaction captures
+    # whether the effect concentrates in states that are BOTH competitive
+    # AND internally polarized (high geographic partisan sorting).
+    if "county_sd_std" in df.columns and df["county_sd_std"].notna().sum() > 0:
+        df = df.copy()
+        df["comp_x_ctysd"] = df["competitive_std"] * df["county_sd_std"]
+        has_county_sd = True
+    else:
+        has_county_sd = False
 
     size_median = df["size"].median()
+    df_small  = df[df["size"] < size_median].copy()
+    df_county = df[df["county_comp_std"].notna()].copy()
     log.info("Small-firm cutoff (median log assets): %.3f; N_small=%d",
-             size_median, (df["size"] < size_median).sum())
+             size_median, len(df_small))
 
-    for k, m in specs.items():
-        pol_param = next((p for p in ["competitive_std", "er_pres_std", "pol_std",
-                                       "dw_std", "dw_national_std", "county_comp_std"]
-                          if p in m.params), None)
-        if pol_param:
-            log.info("Robustness %s: %s coef=%.4f p=%.3f",
-                     k, pol_param, m.params[pol_param], m.pvalues[pol_param])
-    log.info("(m8 two-way: competitive_std coef=%.4f p=%.3f)",
-             specs["m8"].params["competitive_std"],
-             specs["m8"].pvalues["competitive_std"])
+    # Run identical battery for both outcomes; AbVol first (primary), then |CAR|.
+    all_models   = []
+    all_labels   = []
+    all_fe       = []
+    all_st       = []
+    all_cl       = []
+    all_ctrl     = []
+    all_samp     = []
+
+    for depvar, dep_tag in [("abvol", "AbVol"), ("absCar", r"$|CAR|$")]:
+        specs = {
+            # (1) Baseline
+            "m1": run_ols(f"{depvar} ~ competitive_std + {ctrl} + {fe}", df),
+            # (2) Pres. ER index
+            "m2": run_ols(f"{depvar} ~ er_pres_std + {ctrl} + {fe}", df),
+            # (3) DW-NOMINATE
+            "m3": run_ols(f"{depvar} ~ dw_std + {ctrl} + {fe}", df),
+            # (4) State FEs
+            "m4": run_ols(f"{depvar} ~ competitive_std + {ctrl} + {fe_st}", df),
+            # (5) State-level clustered SEs
+            "m5": run_ols(f"{depvar} ~ competitive_std + {ctrl} + {fe}", df,
+                          cluster_var="state_str"),
+            # (6) Two-way clustered SEs
+            "m6": run_ols_twoway(f"{depvar} ~ competitive_std + {ctrl} + {fe}", df),
+            # (7) County-level competitiveness
+            "m7": run_ols(f"{depvar} ~ county_comp_std + {ctrl} + {fe}", df_county),
+            # (8) Small-firm subsample
+            "m8": run_ols(f"{depvar} ~ competitive_std + {ctrl} + {fe}", df_small),
+        }
+        if has_county_sd:
+            # (9) County vote-share SD
+            specs["m9"] = run_ols(f"{depvar} ~ county_sd_std + {ctrl} + {fe}", df)
+            # (10) Competitiveness × County SD interaction
+            specs["m10"] = run_ols(
+                f"{depvar} ~ competitive_std + county_sd_std + comp_x_ctysd + {ctrl} + {fe}", df)
+
+        # Log results
+        for k, m in specs.items():
+            pol_param = next((p for p in ["competitive_std", "er_pres_std",
+                                           "dw_std", "county_comp_std",
+                                           "county_sd_std", "comp_x_ctysd"]
+                              if p in m.params), None)
+            if pol_param:
+                log.info("Robustness %s [%s]: %s coef=%.4f p=%.3f",
+                         k, dep_tag, pol_param, m.params[pol_param], m.pvalues[pol_param])
+
+        # Collect for table
+        col_tags = ["Baseline", "Pres. ER", "DW State", "+State FE",
+                    "State Clust", "2-Way Clust", "County", "Small Firm"]
+        fe_vals  = ["Yes"] * 8
+        st_vals  = ["No", "No", "No", "Yes", "No", "No", "No", "No"]
+        cl_vals  = ["Firm"] * 4 + ["State", "Firm$\\times$State", "Firm", "Firm"]
+        ct_vals  = ["Yes"] * 8
+        sa_vals  = ["Full"] * 7 + ["Small firms"]
+
+        if has_county_sd:
+            col_tags += ["Cty Vote SD", "Interaction"]
+            fe_vals  += ["Yes", "Yes"]
+            st_vals  += ["No", "No"]
+            cl_vals  += ["Firm", "Firm"]
+            ct_vals  += ["Yes", "Yes"]
+            sa_vals  += ["Full", "Full"]
+
+        all_models.extend(specs.values())
+        all_labels.extend([rf"{dep_tag}\newline {t}" for t in col_tags])
+        all_fe   += fe_vals
+        all_st   += st_vals
+        all_cl   += cl_vals
+        all_ctrl += ct_vals
+        all_samp += sa_vals
 
     coef_map = {
         "competitive_std":  r"Polarization (baseline)",
         "er_pres_std":      r"Pres. ER Polarization",
-        "pol_std":          r"House ER Polarization",
         "dw_std":           r"DW-NOMINATE (state gap)",
-        "dw_national_std":  r"DW-NOMINATE (national gap)",
         "county_comp_std":  r"County Competitiveness",
+        "county_sd_std":    r"County Vote SD",
+        "comp_x_ctysd":    r"Polarization $\times$ County SD",
     }
-    dep_labels = [r"$|CAR|$\newline Compete.",
-                  r"$|CAR|$\newline Pres. ER",
-                  r"$|CAR|$\newline House ER",
-                  r"$|CAR|$\newline DW State",
-                  r"$|CAR|$\newline DW Natl",
-                  r"$|CAR|$\newline +State FE",
-                  r"$|CAR|$\newline State Clust",
-                  r"$|CAR|$\newline 2-Way Clust",
-                  r"$|CAR|$\newline County",
-                  r"$|CAR|$\newline Small Firm"]
-    extra_rows = {
-        "Year + Industry FE": ["Yes"] * 10,
-        "State FE":           ["No", "No", "No", "No", "No", "Yes", "No", "No", "No", "No"],
-        "Cluster":            ["Firm"] * 6 + ["State", "Firm$\\times$State", "Firm", "Firm"],
-        "Controls":           ["Yes"] * 10,
-        "Sample":             ["Full"] * 9 + ["Small firms"],
-    }
-    reg_table(
-        list(specs.values()), dep_labels, coef_map,
-        caption="Robustness Tests",
-        label="tab:robustness",
-        out_path=OUT_TABS / "tab05_robustness.tex",
-        extra_rows=extra_rows,
-    )
+
+    # ── Build two-panel table ──
+    # Split collected lists at the midpoint (AbVol panel, then CAR panel).
+    n_per_panel = len(all_models) // 2
+    panels = [
+        ("Panel A: Abnormal Volume (AbVol)", "AbVol",
+         all_models[:n_per_panel], all_labels[:n_per_panel],
+         all_fe[:n_per_panel], all_st[:n_per_panel],
+         all_cl[:n_per_panel], all_ctrl[:n_per_panel],
+         all_samp[:n_per_panel]),
+        (r"Panel B: Absolute Abnormal Return ($|CAR|$)", r"$|CAR|$",
+         all_models[n_per_panel:], all_labels[n_per_panel:],
+         all_fe[n_per_panel:], all_st[n_per_panel:],
+         all_cl[n_per_panel:], all_ctrl[n_per_panel:],
+         all_samp[n_per_panel:]),
+    ]
+
+    lines = []
+    lines.append(r"\begin{table}[htbp]")
+    lines.append(r"\centering")
+    lines.append(r"\caption{Robustness and Alternative Proxies}")
+    lines.append(r"\label{tab:robustness}")
+
+    for panel_title, _, models, dep_labels_p, p_fe, p_st, p_cl, p_ct, p_sa in panels:
+        ncols = len(models)
+        # Strip dep-var prefix from column labels (already in panel title)
+        short_labels = [lbl.split(r"\newline ")[-1] if r"\newline " in lbl else lbl
+                        for lbl in dep_labels_p]
+
+        lines.append("")
+        lines.append(rf"\textit{{{panel_title}}}")
+        lines.append(r"\vspace{2pt}")
+        lines.append(r"\begin{tabular}{l" + "c" * ncols + "}")
+        lines.append(r"\toprule")
+        header = " & " + " & ".join(f"({i+1})" for i in range(ncols)) + r" \\"
+        lines.append(header)
+        dep_row = " & " + " & ".join(short_labels) + r" \\"
+        lines.append(dep_row)
+        lines.append(r"\midrule")
+
+        # Coefficients
+        for param, display in coef_map.items():
+            coef_cells = []
+            se_cells   = []
+            for m in models:
+                if param in m.params:
+                    c = m.params[param]
+                    p = m.pvalues[param]
+                    s = m.bse[param]
+                    coef_cells.append(f"{fmt(c)}{stars(p)}")
+                    se_cells.append(f"({fmt(s)})")
+                else:
+                    coef_cells.append("")
+                    se_cells.append("")
+            lines.append(f"{display} & " + " & ".join(coef_cells) + r" \\")
+            lines.append(" & " + " & ".join(se_cells) + r" \\")
+
+        lines.append(r"\midrule")
+
+        # Extra rows
+        extra = {"Year + Industry FE": p_fe, "State FE": p_st,
+                 "Cluster": p_cl, "Controls": p_ct, "Sample": p_sa}
+        for row_label, vals in extra.items():
+            lines.append(f"{row_label} & " + " & ".join(str(v) for v in vals) + r" \\")
+
+        n_row  = "N & " + " & ".join(f"{int(m.nobs):,}" for m in models) + r" \\"
+        r2_row = r"$R^2$ & " + " & ".join(fmt(m.rsquared) for m in models) + r" \\"
+        lines.append(n_row)
+        lines.append(r2_row)
+        lines.append(r"\bottomrule")
+        lines.append(r"\end{tabular}")
+
+    lines.append(r"\begin{flushleft}")
+    lines.append(r"\footnotesize Notes: Standard errors clustered at the firm level "
+                 r"in parentheses. $^{***}$, $^{**}$, $^{*}$ denote significance "
+                 r"at 1\%, 5\%, 10\%.")
+    lines.append(r"\end{flushleft}")
+    lines.append(r"\end{table}")
+
+    out_path = OUT_TABS / "tab05_robustness.tex"
+    out_path.write_text("\n".join(lines))
+    log.info("Table written: %s", out_path)
 
 
 # ── Step 8: Permutation test for baseline coefficient (Table 7) ───────────────
@@ -664,16 +805,16 @@ def run_robustness(df: pd.DataFrame) -> None:
 def run_permutation_test(df: pd.DataFrame, n_perm: int = 5_000,
                          seed: int = 42) -> None:
     """
-    Randomization/permutation test for the baseline |CAR| result.
+    Randomization/permutation test for both baseline outcomes (AbVol and |CAR|).
 
     Procedure:
-      1. Estimate the baseline OLS coefficient on competitive_std.
+      1. Estimate the baseline OLS coefficient on competitive_std for each outcome.
       2. Permute the competitive_std column across observations n_perm times
          (holding all other variables fixed) and re-estimate β each time.
       3. The permutation p-value is the fraction of permuted β̂ values that
          are ≥ the actual β̂ (one-sided, since we predict β > 0).
-      4. Write a LaTeX snippet with the actual coefficient, clustered SE p-value,
-         and permutation p-value.
+      4. Write a LaTeX table with actual coefficients, clustered SE p-values,
+         and permutation p-values for both outcomes.
 
     This addresses concerns about finite-sample bias in the baseline t-test:
     if the actual β is genuinely non-zero, it should fall in the extreme tail
@@ -685,57 +826,66 @@ def run_permutation_test(df: pd.DataFrame, n_perm: int = 5_000,
     """
     ctrl = " + ".join(CONTROLS)
     fe   = "C(year_str) + C(sic2_str)"
-    formula = f"absCar ~ competitive_std + {ctrl} + {fe}"
 
-    # Actual coefficient (clustered SE)
-    m_actual = run_ols(formula, df)
-    beta_actual = m_actual.params["competitive_std"]
-    p_actual    = m_actual.pvalues["competitive_std"]
-    se_actual   = m_actual.bse["competitive_std"]
-    log.info("Permutation test — actual β=%.4f SE=%.4f p(clustered)=%.3f",
-             beta_actual, se_actual, p_actual)
+    # Run for both outcomes; AbVol first (primary)
+    outcomes = [("abvol", "AbVol"), ("absCar", r"$|CAR|$")]
+    actual_results = {}
 
-    # Permutation draws (OLS, no clustering — coefficient invariant to SE method)
-    rng = np.random.default_rng(seed)
-    perm_betas = []
-    comp_vals = df["competitive_std"].values.copy()
-    formula_plain = formula  # same formula; statsmodels draws from df
+    for depvar, label in outcomes:
+        formula = f"{depvar} ~ competitive_std + {ctrl} + {fe}"
+        m_actual = run_ols(formula, df)
+        beta_actual = m_actual.params["competitive_std"]
+        p_actual    = m_actual.pvalues["competitive_std"]
+        se_actual   = m_actual.bse["competitive_std"]
+        log.info("Permutation test [%s] — actual β=%.4f SE=%.4f p(clustered)=%.3f",
+                 label, beta_actual, se_actual, p_actual)
 
-    perm_df = df.copy()
-    for _ in range(n_perm):
-        perm_df["competitive_std"] = rng.permutation(comp_vals)
-        m_perm = smf.ols(formula_plain, data=perm_df).fit()
-        perm_betas.append(m_perm.params["competitive_std"])
+        # Permutation draws
+        rng = np.random.default_rng(seed)
+        perm_betas = []
+        comp_vals = df["competitive_std"].values.copy()
+        perm_df = df.copy()
+        for _ in range(n_perm):
+            perm_df["competitive_std"] = rng.permutation(comp_vals)
+            m_perm = smf.ols(formula, data=perm_df).fit()
+            perm_betas.append(m_perm.params["competitive_std"])
 
-    perm_betas = np.array(perm_betas)
-    perm_p = (perm_betas >= beta_actual).mean()
-    log.info("Permutation p-value (one-sided): %.4f  (β_actual=%.4f falls at "
-             "%.1f-th percentile of null)", perm_p, beta_actual,
-             100 * (1 - perm_p))
+        perm_betas = np.array(perm_betas)
+        perm_p = (perm_betas >= beta_actual).mean()
+        log.info("Permutation p-value [%s] (one-sided): %.4f  (β_actual=%.4f at "
+                 "%.1f-th percentile)", label, perm_p, beta_actual,
+                 100 * (1 - perm_p))
 
-    # Write a minimal LaTeX table
+        actual_results[depvar] = {
+            "beta": beta_actual, "se": se_actual,
+            "p_clust": p_actual, "p_perm": perm_p,
+        }
+
+    # Write a two-column LaTeX table (AbVol, |CAR|)
+    vol = actual_results["abvol"]
+    car = actual_results["absCar"]
     lines = [
         r"\begin{table}[htbp]",
         r"\centering",
-        r"\caption{Permutation Test for Baseline Coefficient}",
+        r"\caption{Permutation Test for Baseline Coefficients}",
         r"\label{tab:permutation}",
         r"\begin{tabular}{lcc}",
         r"\toprule",
-        r" & Actual & Permutation null \\",
+        r" & AbVol & $|CAR|$ \\",
         r"\midrule",
-        rf"$\hat{{\beta}}$ (Competitiveness) & {fmt(beta_actual)} & --- \\",
-        rf"SE (firm-clustered) & ({fmt(se_actual)}) & --- \\",
-        rf"$p$-value (clustered $t$-test) & {fmt(p_actual, 3)} & --- \\",
-        rf"$p$-value (permutation, one-sided) & {fmt(perm_p, 3)} & --- \\",
-        rf"Permutations & & {n_perm:,} \\",
+        rf"$\hat{{\beta}}$ (Competitiveness) & {fmt(vol['beta'])} & {fmt(car['beta'])} \\",
+        rf"SE (firm-clustered) & ({fmt(vol['se'])}) & ({fmt(car['se'])}) \\",
+        rf"$p$-value (clustered $t$-test) & {fmt(vol['p_clust'], 3)} & {fmt(car['p_clust'], 3)} \\",
+        rf"$p$-value (permutation, one-sided) & {fmt(vol['p_perm'], 3)} & {fmt(car['p_perm'], 3)} \\",
+        rf"Permutations & {n_perm:,} & {n_perm:,} \\",
         r"\bottomrule",
         r"\end{tabular}",
         r"\begin{flushleft}",
         r"\footnotesize Notes: The permutation $p$-value is the fraction of "
         r"5{,}000 random reshufflings of the \textit{Competitiveness} variable "
         r"that produce a coefficient estimate $\geq$ the actual $\hat{\beta}$. "
-        r"The outcome variable is $|CAR[-1,+1]|$; controls and fixed effects "
-        r"match the baseline specification (Table~\ref{tab:main}, column~2). "
+        r"Controls and fixed effects match the baseline specification "
+        r"(Table~\ref{tab:main}, columns~2 and~4). "
         r"Permuted draws use OLS without clustering; the coefficient estimate "
         r"is invariant to the choice of standard error.",
         r"\end{flushleft}",
@@ -778,29 +928,39 @@ def run_affective_test(df: pd.DataFrame) -> None:
     ap_df = df.dropna(subset=["ap_x_exposure"]).copy()
     log.info("Affective test sample: %d events", len(ap_df))
 
+    # Full spec formula template
+    full_formula = (
+        "{depvar} ~ competitive_std + high_ambiguity"
+        " + competitive_std:high_ambiguity"
+        " + ap_x_exposure + ap_x_exp_x_amb + {ctrl} + {fe}"
+    )
+
     specs = {
-        # (1) Ideological pol only (baseline, for comparison)
+        # AbVol columns first (primary outcome)
+        # (1) AbVol: ideological pol only (baseline)
         "m1": run_ols(
+            f"abvol ~ competitive_std + {ctrl} + {fe}", ap_df
+        ),
+        # (2) AbVol: + AP × Exposure
+        "m2": run_ols(
+            f"abvol ~ competitive_std + ap_x_exposure + {ctrl} + {fe}", ap_df
+        ),
+        # (3) AbVol: full spec
+        "m3": run_ols(
+            full_formula.format(depvar="abvol", ctrl=ctrl, fe=fe), ap_df
+        ),
+        # |CAR| columns second (secondary outcome)
+        # (4) |CAR|: ideological pol only (baseline)
+        "m4": run_ols(
             f"absCar ~ competitive_std + {ctrl} + {fe}", ap_df
         ),
-        # (2) Add AP × Exposure (no ambiguity interaction)
-        "m2": run_ols(
+        # (5) |CAR|: + AP × Exposure
+        "m5": run_ols(
             f"absCar ~ competitive_std + ap_x_exposure + {ctrl} + {fe}", ap_df
         ),
-        # (3) Add ambiguity split for ideological pol
-        "m3": run_ols(
-            f"absCar ~ competitive_std + high_ambiguity + competitive_std:high_ambiguity"
-            f" + {ctrl} + {fe}", ap_df
-        ),
-        # (4) Full spec: ideological + affective + ambiguity interactions
-        "m4": run_ols(
-            f"absCar ~ competitive_std + high_ambiguity + competitive_std:high_ambiguity"
-            f" + ap_x_exposure + ap_x_exp_x_amb + {ctrl} + {fe}", ap_df
-        ),
-        # (5) AbVol outcome, full spec
-        "m5": run_ols(
-            f"abvol ~ competitive_std + high_ambiguity + competitive_std:high_ambiguity"
-            f" + ap_x_exposure + ap_x_exp_x_amb + {ctrl} + {fe}", ap_df
+        # (6) |CAR|: full spec
+        "m6": run_ols(
+            full_formula.format(depvar="absCar", ctrl=ctrl, fe=fe), ap_df
         ),
     }
 
@@ -818,20 +978,22 @@ def run_affective_test(df: pd.DataFrame) -> None:
         "ap_x_exp_x_amb":                r"$AP \times Exposure \times$ Ambiguity",
     }
     dep_labels = [
+        r"AbVol\newline Ideo. only",
+        r"AbVol\newline +Affective",
+        r"AbVol\newline Full",
         r"$|CAR|$\newline Ideo. only",
         r"$|CAR|$\newline +Affective",
-        r"$|CAR|$\newline +Amb. $\times$ Ideo.",
         r"$|CAR|$\newline Full",
-        r"AbVol\newline Full",
     ]
     extra_rows = {
-        "Year + Industry FE": ["Yes"] * 5,
-        "Controls":           ["Yes"] * 5,
+        "Year + Industry FE": ["Yes"] * 6,
+        "Controls":           ["Yes"] * 6,
     }
     reg_table(
         list(specs.values()), dep_labels, coef_map,
         caption=(
             r"Supplementary Affective Polarization Test. "
+            r"Columns~(1)--(3) use abnormal volume; columns~(4)--(6) use $|CAR|$. "
             r"$AP \times Exposure$ is the product of the standardized national "
             r"ANES feeling-thermometer differential and the standardized "
             r"state long-run presidential vote margin. "
@@ -950,6 +1112,650 @@ def run_dispersion_interaction_test(df: pd.DataFrame) -> None:
     )
 
 
+# ── Step 11: Local investor relevance test (Table 8) ─────────────────────────
+
+def run_local_bias_test(df: pd.DataFrame) -> None:
+    """
+    Test whether the polarization effect is stronger where local / retail
+    investors are more likely to be the marginal trader.
+
+    Motivation
+    ----------
+    The paper uses headquarters-state polarization as a proxy for the investor
+    political environment. This mapping is valid if local investors drive the
+    event-window reaction, but breaks down if nationally diversified institutions
+    dominate trading (institutions are not politically local). This test directly
+    addresses that concern: if local investor relevance amplifies the polarization
+    effect, it validates the geographic identification strategy.
+
+    Proxies for local / retail investor dominance
+    ---------------------------------------------
+    small_firm    : below-median log assets. Small firms attract less institutional
+                    coverage and more retail-investor participation.
+    low_turnover  : below-median pre-event average daily turnover (from script 12).
+                    Low turnover signals less active institutional trading; the
+                    marginal trader in these stocks is more likely to be local and
+                    retail-oriented (Huberman 2001, Coval & Moskowitz 1999).
+
+    Specifications (all use baseline controls + year + industry FE)
+    ---------------------------------------------------------------
+    (1) Polarization × Small-firm interaction
+    (2) Polarization × Low-turnover interaction  (requires turnover data)
+    (3) Both interactions simultaneously         (requires turnover data)
+    (4)--(5) Same as (1)--(2) but for AbVol outcome
+
+    Prediction: the interaction coefficients should be positive (stronger
+    polarization effect in small / low-turnover firms). If both proxies point in
+    the same direction, the evidence for the local-bias channel is robust to the
+    choice of proxy.
+    """
+    ctrl = " + ".join(CONTROLS)
+    fe   = "C(year_str) + C(sic2_str)"
+
+    has_turnover = df["low_turnover"].notna().any()
+
+    # --- Interaction specifications ---
+    specs = {}
+
+    # (1) |CAR| × Small firm
+    specs["m1"] = run_ols(
+        f"absCar ~ competitive_std + small_firm + competitive_std:small_firm"
+        f" + {ctrl} + {fe}", df
+    )
+
+    # (2) |CAR| × Low turnover
+    if has_turnover:
+        to_df = df.dropna(subset=["low_turnover"]).copy()
+        specs["m2"] = run_ols(
+            f"absCar ~ competitive_std + low_turnover + competitive_std:low_turnover"
+            f" + {ctrl} + {fe}", to_df
+        )
+        # (3) Both interactions simultaneously
+        specs["m3"] = run_ols(
+            f"absCar ~ competitive_std + small_firm + competitive_std:small_firm"
+            f" + low_turnover + competitive_std:low_turnover + {ctrl} + {fe}", to_df
+        )
+
+    # (4) AbVol × Small firm
+    specs["m4"] = run_ols(
+        f"abvol ~ competitive_std + small_firm + competitive_std:small_firm"
+        f" + {ctrl} + {fe}", df
+    )
+
+    # (5) AbVol × Low turnover
+    if has_turnover:
+        specs["m5"] = run_ols(
+            f"abvol ~ competitive_std + low_turnover + competitive_std:low_turnover"
+            f" + {ctrl} + {fe}", to_df
+        )
+
+    for k, m in specs.items():
+        for param in ["competitive_std",
+                      "competitive_std:small_firm",
+                      "competitive_std:low_turnover"]:
+            if param in m.params:
+                log.info("Local bias %s [%s]: coef=%.4f p=%.3f N=%d",
+                         k, param, m.params[param], m.pvalues[param], int(m.nobs))
+
+    coef_map = {
+        "competitive_std":                  r"\textit{Polarization}",
+        "small_firm":                       r"Small Firm",
+        "competitive_std:small_firm":       r"\textit{Polarization} $\times$ Small",
+        "low_turnover":                     r"Low Turnover",
+        "competitive_std:low_turnover":     r"\textit{Polarization} $\times$ Low Turn.",
+    }
+
+    if has_turnover:
+        dep_labels = [
+            r"$|CAR|$\newline $\times$ Small",
+            r"$|CAR|$\newline $\times$ Turn.",
+            r"$|CAR|$\newline Both",
+            r"AbVol\newline $\times$ Small",
+            r"AbVol\newline $\times$ Turn.",
+        ]
+    else:
+        dep_labels = [
+            r"$|CAR|$\newline $\times$ Small",
+            r"AbVol\newline $\times$ Small",
+        ]
+
+    extra_rows = {
+        "Year + Industry FE": ["Yes"] * len(specs),
+        "Controls":           ["Yes"] * len(specs),
+    }
+
+    caption = (
+        r"Local Investor Relevance Test. "
+        r"\textit{Small Firm} equals one if the firm's log total assets is below "
+        r"the estimation-sample median. "
+        r"\textit{Low Turnover} equals one if mean pre-event daily share turnover "
+        r"(average of vol\,/\,(shrout\,$\times$\,1{,}000) over the 365 to 22 calendar "
+        r"days before the event) is below the estimation-sample median; "
+        r"events with fewer than 60 valid trading days are excluded from columns "
+        r"using this variable. "
+        r"Both proxies capture settings where local and retail investors "
+        r"are more likely to be the marginal trader. "
+        r"The prediction from the local-bias channel is that "
+        r"\textit{Polarization} $\times$ Small and "
+        r"\textit{Polarization} $\times$ Low Turnover are both positive."
+    )
+
+    reg_table(
+        list(specs.values()), dep_labels, coef_map,
+        caption=caption,
+        label="tab:local_bias",
+        out_path=OUT_TABS / "tab08_local_bias.tex",
+        extra_rows=extra_rows,
+    )
+
+
+# ── Step 12: Audit credibility interaction test (Table 10) ────────────────────
+
+def run_audit_credibility_test(df: pd.DataFrame) -> None:
+    """
+    Test whether the polarization effect is stronger when audit credibility
+    is more salient, using firm-level accounting quality and distress measures.
+
+    Prediction: the interaction coefficient should be positive for each
+    moderator --- polarization amplifies investor disagreement most when the
+    filing forces investors to evaluate the reliability of accounting
+    oversight, not when the auditor change is a routine formality.
+
+    Moderators (all from script 16):
+        high_distress  : below-median Altman Z-score (more financial distress
+                         → audit credibility more salient)
+        high_daccruals : above-median |DA| from Modified Jones model (higher
+                         accounting opacity → more room for politically shaped
+                         inferences about audit quality)
+        gc_opinion     : prior going-concern modification (direct audit
+                         credibility flag; very small N, likely underpowered)
+
+    Six columns:
+        (1) |CAR| × High Distress
+        (2) |CAR| × High Discretionary Accruals
+        (3) |CAR| × GC Opinion
+        (4) |CAR| × Distress + Accruals (both interactions simultaneously)
+        (5) AbVol × Distress
+        (6) AbVol × Accruals
+    """
+    ctrl = " + ".join(CONTROLS)
+    fe   = "C(year_str) + C(sic2_str)"
+
+    specs = {}
+
+    # (1) |CAR| × High Distress
+    z_df = df.dropna(subset=["high_distress"]).copy()
+    log.info("Audit credibility sample: distress N=%d", len(z_df))
+    specs["m1"] = run_ols(
+        f"absCar ~ competitive_std + high_distress"
+        f" + competitive_std:high_distress + {ctrl} + {fe}", z_df
+    )
+
+    # (2) |CAR| × High Discretionary Accruals
+    da_df = df.dropna(subset=["high_daccruals"]).copy()
+    log.info("Audit credibility sample: accruals N=%d", len(da_df))
+    specs["m2"] = run_ols(
+        f"absCar ~ competitive_std + high_daccruals"
+        f" + competitive_std:high_daccruals + {ctrl} + {fe}", da_df
+    )
+
+    # (3) |CAR| × GC Opinion (may be very small N with gc_opinion=1)
+    gc_df = df.dropna(subset=["gc_opinion"]).copy()
+    n_gc1 = int(gc_df["gc_opinion"].sum())
+    log.info("Audit credibility sample: GC N=%d (gc_opinion=1: %d)", len(gc_df), n_gc1)
+    if n_gc1 >= 10:
+        specs["m3"] = run_ols(
+            f"absCar ~ competitive_std + gc_opinion"
+            f" + competitive_std:gc_opinion + {ctrl} + {fe}", gc_df
+        )
+    else:
+        log.warning("Too few GC opinions (%d); skipping column 3", n_gc1)
+
+    # (4) |CAR| × Distress + Accruals (both simultaneously)
+    both_df = df.dropna(subset=["high_distress", "high_daccruals"]).copy()
+    specs["m4"] = run_ols(
+        f"absCar ~ competitive_std + high_distress + competitive_std:high_distress"
+        f" + high_daccruals + competitive_std:high_daccruals + {ctrl} + {fe}", both_df
+    )
+
+    # (5) AbVol × High Distress
+    specs["m5"] = run_ols(
+        f"abvol ~ competitive_std + high_distress"
+        f" + competitive_std:high_distress + {ctrl} + {fe}", z_df
+    )
+
+    # (6) AbVol × High Accruals
+    specs["m6"] = run_ols(
+        f"abvol ~ competitive_std + high_daccruals"
+        f" + competitive_std:high_daccruals + {ctrl} + {fe}", da_df
+    )
+
+    # Log key results
+    for k, m in specs.items():
+        for param in ["competitive_std",
+                      "competitive_std:high_distress",
+                      "competitive_std:high_daccruals",
+                      "competitive_std:gc_opinion"]:
+            if param in m.params:
+                log.info("Audit cred %s [%s]: coef=%.4f p=%.3f N=%d",
+                         k, param, m.params[param], m.pvalues[param],
+                         int(m.nobs))
+
+    coef_map = {
+        "competitive_std":                   r"\textit{Polarization}",
+        "high_distress":                     r"High Distress",
+        "competitive_std:high_distress":     r"\textit{Polarization} $\times$ High Distress",
+        "high_daccruals":                    r"High Disc.\ Accruals",
+        "competitive_std:high_daccruals":    r"\textit{Polarization} $\times$ High Accruals",
+        "gc_opinion":                        r"Going Concern",
+        "competitive_std:gc_opinion":        r"\textit{Polarization} $\times$ Going Concern",
+    }
+
+    model_list = [specs[k] for k in ["m1", "m2"] +
+                  (["m3"] if "m3" in specs else []) +
+                  ["m4", "m5", "m6"]]
+    n_models = len(model_list)
+
+    if "m3" in specs:
+        dep_labels = [
+            r"$|CAR|$\newline $\times$ Distress",
+            r"$|CAR|$\newline $\times$ Accruals",
+            r"$|CAR|$\newline $\times$ GC",
+            r"$|CAR|$\newline Both",
+            r"AbVol\newline $\times$ Distress",
+            r"AbVol\newline $\times$ Accruals",
+        ]
+    else:
+        dep_labels = [
+            r"$|CAR|$\newline $\times$ Distress",
+            r"$|CAR|$\newline $\times$ Accruals",
+            r"$|CAR|$\newline Both",
+            r"AbVol\newline $\times$ Distress",
+            r"AbVol\newline $\times$ Accruals",
+        ]
+
+    extra_rows = {
+        "Year + Industry FE": ["Yes"] * n_models,
+        "Controls":           ["Yes"] * n_models,
+    }
+
+    caption = (
+        r"Audit Credibility Salience: Interaction Tests. "
+        r"\textit{High Distress} equals one if the firm's Altman Z-score "
+        r"(computed from Compustat fiscal-year data for the year prior to the event) "
+        r"is below the estimation-sample median; financially distressed firms face greater "
+        r"scrutiny of audit quality. "
+        r"\textit{High Disc.\ Accruals} equals one if the absolute value of Modified "
+        r"Jones model discretionary accruals exceeds the sample median; high accruals "
+        r"signal greater accounting opacity and make audit oversight more salient. "
+        r"\textit{Going Concern} equals one if the prior-year audit opinion "
+        r"included a going-concern modification. "
+        r"The interpretation channel predicts positive interaction coefficients: "
+        r"polarization should amplify investor disagreement specifically when the "
+        r"auditor-change filing forces investors to evaluate the reliability of "
+        r"accounting oversight."
+    )
+
+    reg_table(
+        model_list, dep_labels, coef_map,
+        caption=caption,
+        label="tab:audit_credibility",
+        out_path=OUT_TABS / "tab10_audit_credibility.tex",
+        extra_rows=extra_rows,
+    )
+
+
+# ── Step 13: Short interest disagreement test (Table 11) ─────────────────────
+
+def run_short_interest_test(df: pd.DataFrame) -> None:
+    """
+    Test the disagreement channel using short interest data.
+
+    Two complementary tests:
+
+    A. Moderator: Is the polarization effect on |CAR| stronger when pre-event
+       short interest is high? High SI signals active disagreement about firm
+       value; the interaction should be positive if polarization amplifies
+       heterogeneous interpretation.
+
+    B. Outcome: Does polarization predict changes in the short interest ratio
+       around the auditor-change event? If polarized investors form more
+       dispersed posteriors, pessimistic investors should increase short
+       positions. This test uses the full sample (no splitting) and captures
+       disagreement directly via revealed trading behavior.
+
+    Columns:
+        (1) |CAR| × High SI          — moderator (interaction)
+        (2) |CAR| × High SI + ctrls  — with controls
+        (3) ΔSI ~ Pol               — outcome (SI change)
+        (4) ΔSI ~ Pol + ctrls       — outcome with controls
+    """
+    ctrl = " + ".join(CONTROLS)
+    fe   = "C(year_str) + C(sic2_str)"
+
+    # --- Moderator tests ---
+    si_df = df.dropna(subset=["high_si"]).copy()
+    log.info("Short interest moderator sample: N=%d", len(si_df))
+
+    specs = {}
+
+    # (1) |CAR| × High SI — no controls
+    specs["m1"] = run_ols(
+        f"absCar ~ competitive_std + high_si"
+        f" + competitive_std:high_si + C(year_str)", si_df
+    )
+
+    # (2) |CAR| × High SI — with controls + FE
+    specs["m2"] = run_ols(
+        f"absCar ~ competitive_std + high_si"
+        f" + competitive_std:high_si + {ctrl} + {fe}", si_df
+    )
+
+    # --- Outcome tests (SI change as dependent variable) ---
+    chg_df = df.dropna(subset=["si_change"]).copy()
+    log.info("Short interest outcome sample: N=%d", len(chg_df))
+
+    # (3) ΔSI ~ Pol — year FE only
+    specs["m3"] = run_ols(
+        f"si_change ~ competitive_std + C(year_str)", chg_df
+    )
+
+    # (4) ΔSI ~ Pol — controls + FE
+    specs["m4"] = run_ols(
+        f"si_change ~ competitive_std + {ctrl} + {fe}", chg_df
+    )
+
+    for k, m in specs.items():
+        for param in ["competitive_std", "competitive_std:high_si"]:
+            if param in m.params:
+                log.info("Short interest %s [%s]: coef=%.6f p=%.3f N=%d",
+                         k, param, m.params[param], m.pvalues[param],
+                         int(m.nobs))
+
+    coef_map = {
+        "competitive_std":              r"\textit{Polarization}",
+        "high_si":                      r"High Short Interest",
+        "competitive_std:high_si":      r"\textit{Polarization} $\times$ High SI",
+    }
+    dep_labels = [
+        r"$|CAR|$\newline No ctrls",
+        r"$|CAR|$\newline Full ctrls",
+        r"$\Delta SI$\newline No ctrls",
+        r"$\Delta SI$\newline Full ctrls",
+    ]
+    extra_rows = {
+        "Year FE":             ["Yes", "Yes", "Yes", "Yes"],
+        "Industry FE":         ["No",  "Yes", "No",  "Yes"],
+        "Controls":            ["No",  "Yes", "No",  "Yes"],
+    }
+
+    caption = (
+        r"Short Interest and the Disagreement Channel. "
+        r"Columns~(1)--(2) test whether the polarization effect on $|CAR(-1,+1)|$ "
+        r"is stronger for firms with above-median pre-event short interest ratio, "
+        r"measured over calendar days $[-90,-15]$ before the event. "
+        r"\textit{High Short Interest} equals one if the pre-event short interest "
+        r"ratio (split-adjusted shares short divided by shares outstanding) exceeds "
+        r"the sample median. "
+        r"Columns~(3)--(4) use the change in short interest ratio as the dependent "
+        r"variable, computed as the difference between the first post-event report "
+        r"(calendar days $[+15,+90]$) and the pre-event mean. "
+        r"A positive coefficient on \textit{Polarization} in columns~(3)--(4) "
+        r"indicates that auditor-change events in more polarized states trigger "
+        r"larger increases in short selling, consistent with polarization amplifying "
+        r"investor disagreement."
+    )
+
+    reg_table(
+        list(specs.values()), dep_labels, coef_map,
+        caption=caption,
+        label="tab:short_interest",
+        out_path=OUT_TABS / "tab11_short_interest.tex",
+        extra_rows=extra_rows,
+    )
+
+
+# ── Step 13b: Institutional ownership / retail fraction test ─────────────────
+
+def run_institutional_ownership_test(df: pd.DataFrame) -> None:
+    """
+    Test whether the polarization effect is stronger among firms with
+    higher retail ownership (= lower institutional ownership).
+
+    Retail investors are more likely to be influenced by local political
+    environment. If polarization amplifies heterogeneous interpretation
+    primarily through retail investors, the interaction of Pol x high_retail
+    should be positive.
+
+    Specifications:
+        (1) |CAR| ~ Pol + high_retail + Pol x high_retail + year FE
+        (2) |CAR| ~ Pol + high_retail + Pol x high_retail + controls + FE
+        (3) AbVol ~ Pol + high_retail + Pol x high_retail + year FE
+        (4) AbVol ~ Pol + high_retail + Pol x high_retail + controls + FE
+
+    No table is generated — results are logged only for now.
+    """
+    ctrl = " + ".join(CONTROLS)
+    fe   = "C(year_str) + C(sic2_str)"
+
+    ret_df = df.dropna(subset=["high_retail"]).copy()
+    log.info("Institutional ownership moderator sample: N=%d", len(ret_df))
+
+    if len(ret_df) < 50:
+        log.warning("Too few observations with institutional ownership data; skipping.")
+        return
+
+    # (1) |CAR| ~ Pol + high_retail + Pol x high_retail — year FE only
+    m1 = run_ols(
+        f"absCar ~ competitive_std + high_retail"
+        f" + competitive_std:high_retail + C(year_str)", ret_df
+    )
+
+    # (2) |CAR| ~ Pol + high_retail + Pol x high_retail — full controls + FE
+    m2 = run_ols(
+        f"absCar ~ competitive_std + high_retail"
+        f" + competitive_std:high_retail + {ctrl} + {fe}", ret_df
+    )
+
+    # (3) AbVol ~ Pol + high_retail + Pol x high_retail — year FE only
+    m3 = run_ols(
+        f"abvol ~ competitive_std + high_retail"
+        f" + competitive_std:high_retail + C(year_str)", ret_df
+    )
+
+    # (4) AbVol ~ Pol + high_retail + Pol x high_retail — full controls + FE
+    m4 = run_ols(
+        f"abvol ~ competitive_std + high_retail"
+        f" + competitive_std:high_retail + {ctrl} + {fe}", ret_df
+    )
+
+    # Log results (no table for now)
+    specs = {"m1_absCar_noCtrl": m1, "m2_absCar_fullCtrl": m2,
+             "m3_abvol_noCtrl": m3, "m4_abvol_fullCtrl": m4}
+    for label, m in specs.items():
+        for param in ["competitive_std", "high_retail", "competitive_std:high_retail"]:
+            if param in m.params:
+                log.info("InstOwn %s [%s]: coef=%.6f  se=%.6f  p=%.3f  N=%d",
+                         label, param, m.params[param], m.bse[param],
+                         m.pvalues[param], int(m.nobs))
+
+    # Log median ownership stats for context
+    med_retail = df.loc[df["retail_pct"].notna(), "retail_pct"].median()
+    mean_inst  = df.loc[df["inst_own_pct"].notna(), "inst_own_pct"].mean()
+    log.info("InstOwn: median retail_pct=%.4f  mean inst_own_pct=%.4f",
+             med_retail, mean_inst)
+
+
+# ── Step 14: Post-event CAR reversal test (Table 9) ──────────────────────────
+
+def run_reversal_test(df: pd.DataFrame) -> None:
+    """
+    Test whether the polarization effect reflects disagreement / overreaction by
+    checking for post-event price reversals.
+
+    If headquarters-state polarization causes investors to overreact at the
+    event date (inflated |CAR| due to disagreement-driven trading), prices
+    should partially mean-revert in the weeks after the event. A reversal is
+    consistent with the interpretation that polarized investors disagree about
+    the signal's valence, causing temporary price pressure that subsequently
+    unwinds.
+
+    Specification:
+        CAR[+2,+T]_i = β₁·competitive_std_i + β₂·car_m1p1_i
+                     + γ'·X_i + FE + ε_i
+
+    where CAR[+2,+T] is the signed market-model CAR for trading days [+2,+T],
+    car_m1p1 is the event-window signed CAR (-1,+1), competitive_std is the
+    standardized polarization proxy (one-SD units), and X is the standard
+    control vector.
+
+    Controlling for car_m1p1 partials out the tendency of large initial
+    reactions to mean-revert regardless of polarization (price-pressure
+    effect). β₁ < 0 is the prediction: high-polarization events show more
+    post-event reversal beyond that mechanical relationship.
+
+    Four columns:
+        (1) [+2,+20] short window, controlling for signed event-window CAR
+        (2) [+2,+60] long window, controlling for signed event-window CAR
+        (3) [+2,+20] controlling for |CAR| magnitude instead of signed CAR
+        (4) [+2,+60] controlling for |CAR| magnitude instead of signed CAR
+
+    Columns (3)-(4) use absCar to test whether polarization predicts reversal
+    beyond what the magnitude of initial price movement would imply.
+    """
+    ctrl = " + ".join(CONTROLS)
+    fe   = "C(year_str) + C(sic2_str)"
+
+    # Drop missing post-event CAR
+    rev_df = df.dropna(subset=["car_p2p20", "car_p2p60"]).copy()
+    log.info("Reversal test sample: %d events", len(rev_df))
+
+    specs = {
+        "m1": run_ols(
+            f"car_p2p20 ~ competitive_std + car + {ctrl} + {fe}", rev_df
+        ),
+        "m2": run_ols(
+            f"car_p2p60 ~ competitive_std + car + {ctrl} + {fe}", rev_df
+        ),
+        "m3": run_ols(
+            f"car_p2p20 ~ competitive_std + absCar + {ctrl} + {fe}", rev_df
+        ),
+        "m4": run_ols(
+            f"car_p2p60 ~ competitive_std + absCar + {ctrl} + {fe}", rev_df
+        ),
+    }
+
+    for k, m in specs.items():
+        for param in ["competitive_std", "car", "absCar"]:
+            if param in m.params:
+                log.info("Reversal %s [%s]: coef=%.4f p=%.3f N=%d",
+                         k, param, m.params[param], m.pvalues[param],
+                         int(m.nobs))
+
+    coef_map = {
+        "competitive_std": r"\textit{Polarization}",
+        "car":             r"$CAR(-1,+1)$",
+        "absCar":          r"$|CAR(-1,+1)|$",
+    }
+    dep_labels = [
+        r"$CAR[+2,+20]$\newline Signed ctrl.",
+        r"$CAR[+2,+60]$\newline Signed ctrl.",
+        r"$CAR[+2,+20]$\newline $|CAR|$ ctrl.",
+        r"$CAR[+2,+60]$\newline $|CAR|$ ctrl.",
+    ]
+    extra_rows = {
+        "Window":             ["[+2,+20]", "[+2,+60]", "[+2,+20]", "[+2,+60]"],
+        "Event-CAR control":  ["Signed", "Signed", "$|CAR|$", "$|CAR|$"],
+        "Year + Industry FE": ["Yes"] * 4,
+        "Controls":           ["Yes"] * 4,
+    }
+
+    caption = (
+        r"Post-Event CAR Reversal Test. "
+        r"The dependent variable is the signed market-model CAR computed over "
+        r"trading days $[+2,+T]$ relative to the 8-K filing date, where $T=20$ "
+        r"(approximately one month) or $T=60$ (approximately three months). "
+        r"\textit{Polarization} is the standardized headquarters-state "
+        r"presidential Esteban-Ray index. "
+        r"Columns (1)--(2) control for the signed event-window $CAR(-1,+1)$ "
+        r"to partial out mechanical mean reversion; "
+        r"columns (3)--(4) control for $|CAR(-1,+1)|$. "
+        r"A negative \textit{Polarization} coefficient is consistent with "
+        r"short-lived disagreement-driven overreaction in high-polarization states. "
+        r"Market model parameters ($\hat\alpha$, $\hat\beta$) are the same as in "
+        r"the main analysis (estimation window $[-252,-46]$ trading days). "
+        r"Standard errors clustered at the firm level."
+    )
+
+    reg_table(
+        list(specs.values()), dep_labels, coef_map,
+        caption=caption,
+        label="tab:reversal",
+        out_path=OUT_TABS / "tab09_reversal.tex",
+        extra_rows=extra_rows,
+    )
+
+
+# ── Step 15: Regulatory shock tests (SOX/PCAOB) ──────────────────────────────
+
+def run_regulatory_shock_test(df: pd.DataFrame) -> None:
+    """
+    Test whether the polarization effect differs before vs. after SOX/PCAOB.
+
+    SOX was enacted July 2002; the PCAOB became operational in 2003-2004.
+    We define post_sox = 1 for events in 2003+ (first full year after enactment).
+
+    Three specifications per outcome:
+      (1) Pre-SOX subsample only
+      (2) Post-SOX subsample only
+      (3) Full sample with Pol × PostSOX interaction
+
+    This tests whether the institutional-trust channel (which invokes trust in
+    the PCAOB) operates differently before the PCAOB existed.
+
+    Caveat: the pre-SOX period (2001-2002) coincides with the Enron/Andersen
+    crisis, which independently affected market reactions to auditor changes.
+    """
+    ctrl = " + ".join(CONTROLS)
+    fe   = "C(year_str) + C(sic2_str)"
+
+    df = df.copy()
+    df["post_sox"] = (df["event_year"] >= 2003).astype(int)
+    df["pol_x_postsox"] = df["competitive_std"] * df["post_sox"]
+
+    pre  = df[df["post_sox"] == 0].copy()
+    post = df[df["post_sox"] == 1].copy()
+
+    log.info("SOX split: pre-SOX N=%d (2001-2002), post-SOX N=%d (2003+)",
+             len(pre), len(post))
+
+    # |CAR| specs
+    m1_car = run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", pre)
+    m2_car = run_ols(f"absCar ~ competitive_std + {ctrl} + {fe}", post)
+    m3_car = run_ols(
+        f"absCar ~ competitive_std + post_sox + pol_x_postsox + {ctrl} + {fe}",
+        df)
+
+    # AbVol specs
+    m1_vol = run_ols(f"abvol ~ competitive_std + {ctrl} + {fe}", pre)
+    m2_vol = run_ols(f"abvol ~ competitive_std + {ctrl} + {fe}", post)
+    m3_vol = run_ols(
+        f"abvol ~ competitive_std + post_sox + pol_x_postsox + {ctrl} + {fe}",
+        df)
+
+    for label, m in [("Pre-SOX |CAR|", m1_car), ("Post-SOX |CAR|", m2_car),
+                     ("Full |CAR| interaction", m3_car),
+                     ("Pre-SOX AbVol", m1_vol), ("Post-SOX AbVol", m2_vol),
+                     ("Full AbVol interaction", m3_vol)]:
+        pol_p = m.params.get("competitive_std", float("nan"))
+        pol_pv = m.pvalues.get("competitive_std", float("nan"))
+        log.info("SOX test %s: competitive_std coef=%.4f p=%.3f N=%d",
+                 label, pol_p, pol_pv, int(m.nobs))
+        if "pol_x_postsox" in m.params:
+            log.info("  pol_x_postsox coef=%.4f p=%.3f",
+                     m.params["pol_x_postsox"], m.pvalues["pol_x_postsox"])
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -992,6 +1798,8 @@ def main() -> None:
         ("er_pres",           "er_pres_std"),
         ("margin",            "margin_std"),
         ("county_comp",       "county_comp_std"),
+        ("county_sd",         "county_sd_std"),
+        ("incorp_pol",        "incorp_pol_std"),
     ]:
         if raw_col in df.columns and df[raw_col].notna().sum() > 0:
             mu  = df[raw_col].mean()
@@ -999,6 +1807,13 @@ def main() -> None:
             df[std_col] = (df[raw_col] - mu) / sig
         else:
             df[std_col] = np.nan
+
+    # Election-year indicator: all federal election years (even calendar years).
+    # Prediction: political salience peaks in election years, so the same level of
+    # state polarization should generate stronger reactions when national political
+    # attention is highest. Interaction competitive_std:election_year tests this.
+    df["election_year"] = (df["event_year"] % 2 == 0).astype(int)
+    log.info("Election-year events: %d / %d", df["election_year"].sum(), len(df))
 
     # Competitiveness = −margin: positive scale so higher = more competitive/polarized.
     # Algebraically identical to margin regression; coefficient sign flips to positive,
@@ -1048,6 +1863,171 @@ def main() -> None:
         log.warning("ibes_dispersion.parquet not found; run 11_build_ibes.py "
                     "to enable the dispersion mechanism test (Table 8).")
 
+    # Pre-event share turnover (from 12_build_turnover.py).
+    # Merge on gvkey × event_date. Construct low_turnover indicator.
+    if TURNOVER_FILE.exists():
+        turn = pd.read_parquet(TURNOVER_FILE)
+        turn["event_date"] = pd.to_datetime(turn["event_date"])
+        df = df.merge(turn[["gvkey", "event_date", "turnover_pre", "turnover_days"]],
+                      on=["gvkey", "event_date"], how="left")
+        n_turn = df["turnover_pre"].notna().sum()
+        log.info("Turnover merge: %d / %d events matched", n_turn, len(df))
+
+        med_turn = df["turnover_pre"].median()
+        df["low_turnover"] = (df["turnover_pre"] < med_turn).astype(float)
+        df.loc[df["turnover_pre"].isna(), "low_turnover"] = np.nan
+        log.info("Turnover: median=%.6f  low_turnover N=%d",
+                 med_turn, df["low_turnover"].notna().sum())
+    else:
+        df["turnover_pre"] = np.nan
+        df["turnover_days"] = np.nan
+        df["low_turnover"] = np.nan
+        log.warning("pre_event_turnover.parquet not found; run 12_build_turnover.py "
+                    "to enable turnover columns in the local bias test.")
+
+    # Small-firm indicator (below-median log assets in estimation sample)
+    med_size = df["size"].median()
+    df["small_firm"] = (df["size"] < med_size).astype(float)
+    log.info("Small-firm indicator: median size=%.3f  N_small=%d",
+             med_size, df["small_firm"].sum())
+
+    # Post-event CARs (from 14_build_post_event_car.py).
+    # Merge on permno × event_date. Columns: car_p2p20, car_p2p60, n_days_20, n_days_60.
+    # If the file does not exist, reversal test is skipped at runtime.
+    if POST_CAR_FILE.exists():
+        post_car = pd.read_parquet(POST_CAR_FILE)
+        post_car["event_date"] = pd.to_datetime(post_car["event_date"])
+        post_car["permno"] = post_car["permno"].astype(int)
+        # Deduplicate on (permno, event_date) before merging.
+        # post_event_car.parquet may have been built from a differently-filtered
+        # analysis_sample; duplicate (permno, event_date) pairs would expand N.
+        # CARs are identical across rows for the same (permno, event_date),
+        # so keeping first is safe.
+        n_pre_dedup = len(post_car)
+        post_car = post_car.drop_duplicates(subset=["permno", "event_date"], keep="first")
+        if len(post_car) < n_pre_dedup:
+            log.warning("post_event_car: dropped %d duplicate (permno, event_date) rows",
+                        n_pre_dedup - len(post_car))
+        n_before_merge = len(df)
+        df = df.merge(post_car[["permno", "event_date",
+                                 "car_p2p20", "car_p2p60",
+                                 "n_days_20", "n_days_60"]],
+                      on=["permno", "event_date"], how="left")
+        if len(df) != n_before_merge:
+            raise RuntimeError(
+                f"post_event_car merge expanded N from {n_before_merge} to {len(df)}. "
+                "Remaining duplicate (permno, event_date) pairs — check post_event_car.parquet."
+            )
+        n_p20 = df["car_p2p20"].notna().sum()
+        n_p60 = df["car_p2p60"].notna().sum()
+        log.info("Post-event CAR merge: car_p2p20 non-null=%d / %d, car_p2p60 non-null=%d / %d",
+                 n_p20, len(df), n_p60, len(df))
+    else:
+        df["car_p2p20"] = np.nan
+        df["car_p2p60"] = np.nan
+        df["n_days_20"] = np.nan
+        df["n_days_60"] = np.nan
+        log.warning("post_event_car.parquet not found; run 14_build_post_event_car.py "
+                    "to enable the reversal test (Table 9).")
+
+    # Audit credibility moderators (from 16_build_audit_credibility_moderators.py).
+    # Merge on gvkey × comp_year (comp_year = event_year - 1, already in df).
+    # Moderators: altman_z, abs_da, gc_opinion.
+    if AUDIT_CRED_FILE.exists():
+        acred = pd.read_parquet(AUDIT_CRED_FILE)
+        acred = acred.rename(columns={"fyear": "comp_year"})
+        df = df.merge(acred, on=["gvkey", "comp_year"], how="left")
+
+        # Construct above/below-median indicators on estimation sample
+        # high_distress = below-median Z (lower Z = more distress)
+        med_z = df["altman_z"].median()
+        df["high_distress"] = (df["altman_z"] < med_z).astype(float)
+        df.loc[df["altman_z"].isna(), "high_distress"] = np.nan
+
+        # high_daccruals = above-median |DA|
+        med_da = df["abs_da"].median()
+        df["high_daccruals"] = (df["abs_da"] > med_da).astype(float)
+        df.loc[df["abs_da"].isna(), "high_daccruals"] = np.nan
+
+        # gc_opinion already 0/1 from script 16
+        n_z  = df["high_distress"].notna().sum()
+        n_da = df["high_daccruals"].notna().sum()
+        n_gc = df["gc_opinion"].notna().sum()
+        gc_n = int(df["gc_opinion"].sum()) if n_gc > 0 else 0
+        log.info("Audit credibility merge: Z valid=%d, |DA| valid=%d, GC valid=%d (GC=1: %d)",
+                 n_z, n_da, n_gc, gc_n)
+        log.info("  median Altman Z = %.3f, median |DA| = %.4f", med_z, med_da)
+    else:
+        df["altman_z"]      = np.nan
+        df["abs_da"]        = np.nan
+        df["gc_opinion"]    = np.nan
+        df["high_distress"] = np.nan
+        df["high_daccruals"] = np.nan
+        log.warning("audit_credibility_moderators.parquet not found; "
+                    "run 16_build_audit_credibility_moderators.py.")
+
+    # Short interest (from 17_build_short_interest.py).
+    # Merge on gvkey × event_date.
+    if SHORT_INT_FILE.exists():
+        si = pd.read_parquet(SHORT_INT_FILE)
+        si["event_date"] = pd.to_datetime(si["event_date"])
+        df = df.merge(
+            si[["gvkey", "event_date", "si_ratio_pre", "si_ratio_post", "si_change"]],
+            on=["gvkey", "event_date"], how="left"
+        )
+        n_si = df["si_ratio_pre"].notna().sum()
+        n_chg = df["si_change"].notna().sum()
+
+        # high_si = above-median pre-event short interest ratio
+        med_si = df["si_ratio_pre"].median()
+        df["high_si"] = (df["si_ratio_pre"] > med_si).astype(float)
+        df.loc[df["si_ratio_pre"].isna(), "high_si"] = np.nan
+
+        # Standardize si_change for use as outcome
+        si_mu  = df["si_change"].mean()
+        si_sig = df["si_change"].std()
+        df["si_change_std"] = (df["si_change"] - si_mu) / si_sig if si_sig > 0 else np.nan
+
+        log.info("Short interest merge: pre SI valid=%d / %d, SI change valid=%d / %d",
+                 n_si, len(df), n_chg, len(df))
+        log.info("  median si_ratio_pre = %.6f", med_si)
+    else:
+        df["si_ratio_pre"]  = np.nan
+        df["si_ratio_post"] = np.nan
+        df["si_change"]     = np.nan
+        df["si_change_std"] = np.nan
+        df["high_si"]       = np.nan
+        log.warning("short_interest.parquet not found; "
+                    "run 17_build_short_interest.py.")
+
+    # Institutional ownership (from 18_build_institutional_ownership.py).
+    # Merge on permno × event_date.
+    if INST_OWN_FILE.exists():
+        inst = pd.read_parquet(INST_OWN_FILE)
+        inst["event_date"] = pd.to_datetime(inst["event_date"])
+        inst["permno"] = inst["permno"].astype(int)
+        df = df.merge(
+            inst[["permno", "event_date", "inst_own_pct", "retail_pct"]],
+            on=["permno", "event_date"], how="left"
+        )
+        n_inst = df["inst_own_pct"].notna().sum()
+
+        # high_retail = above-median retail ownership fraction
+        med_retail = df["retail_pct"].median()
+        df["high_retail"] = (df["retail_pct"] > med_retail).astype(float)
+        df.loc[df["retail_pct"].isna(), "high_retail"] = np.nan
+
+        log.info("Institutional ownership merge: %d / %d events matched",
+                 n_inst, len(df))
+        log.info("  median retail_pct = %.4f  high_retail N=%d",
+                 med_retail, df["high_retail"].notna().sum())
+    else:
+        df["inst_own_pct"] = np.nan
+        df["retail_pct"]   = np.nan
+        df["high_retail"]  = np.nan
+        log.warning("institutional_ownership.parquet not found; "
+                    "run 18_build_institutional_ownership.py.")
+
     # Save analysis sample
     df.to_parquet(SAMPLE_FILE, index=False)
     log.info("Analysis sample saved: %s  (%d events, %d unique firms)",
@@ -1088,12 +2068,52 @@ def main() -> None:
     log.info("Running Table 6: Affective polarization validation")
     run_affective_test(df)
 
-    # Analyst dispersion mechanism test — Table 8
+    # Analyst dispersion mechanism test — skipped (no IBES access)
     if df["high_disp"].notna().any():
-        log.info("Running Table 8: Analyst dispersion mechanism test")
+        log.info("Running Table 8 (dispersion): Analyst dispersion mechanism test")
         run_dispersion_interaction_test(df)
     else:
-        log.warning("Skipping Table 8 (no IBES data). Run 11_build_ibes.py first.")
+        log.warning("Skipping dispersion test (no IBES data). Run 11_build_ibes.py first.")
+
+    # Local investor relevance test — Table 8
+    log.info("Running Table 8: Local investor relevance test")
+    run_local_bias_test(df)
+
+    # Audit credibility interaction test — Table 10 (skipped if no moderators)
+    if df["high_distress"].notna().any():
+        log.info("Running Table 10: Audit credibility interaction test")
+        run_audit_credibility_test(df)
+    else:
+        log.warning("Skipping audit credibility test (no moderator data). "
+                    "Run 16_build_audit_credibility_moderators.py first.")
+
+    # Short interest disagreement test — Table 11 (skipped if no short_interest.parquet)
+    if df["high_si"].notna().any():
+        log.info("Running Table 11: Short interest disagreement test")
+        run_short_interest_test(df)
+    else:
+        log.warning("Skipping short interest test (no SI data). "
+                    "Run 17_build_short_interest.py first.")
+
+    # Institutional ownership / retail fraction test (skipped if no inst ownership data)
+    if df["high_retail"].notna().any():
+        log.info("Running institutional ownership interaction test")
+        run_institutional_ownership_test(df)
+    else:
+        log.warning("Skipping institutional ownership test (no ownership data). "
+                    "Run 18_build_institutional_ownership.py first.")
+
+    # Post-event CAR reversal test — Table 9 (skipped if no post_event_car.parquet)
+    if df["car_p2p20"].notna().any():
+        log.info("Running Table 9: Post-event CAR reversal test")
+        run_reversal_test(df)
+    else:
+        log.warning("Skipping reversal test (no post-event CAR data). "
+                    "Run 14_build_post_event_car.py first.")
+
+    # Regulatory shock tests — SOX/PCAOB interaction
+    log.info("Running regulatory shock tests (SOX/PCAOB)")
+    run_regulatory_shock_test(df)
 
     log.info("=== done — tables written to %s ===", OUT_TABS)
 

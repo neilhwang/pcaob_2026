@@ -1,0 +1,28 @@
+\begin{table}[htbp]
+\centering
+\caption{Earnings-Announcement Placebo Test. Columns~(1)--(3) use abnormal trading volume; columns~(4)--(6) use $|CAR[-1,+1]|$. Columns~(1) and~(4) replicate the baseline specification from Table~\ref{tab:main}. Columns~(2) and~(5) apply the identical specification to quarterly earnings announcements (\texttt{rdq} from Compustat) for the same firms over the same period. Columns~(3) and~(6) pool both event types and add an \textit{Auditor Change} indicator and its interaction with \textit{Polarization}. Events within 30 calendar days of an auditor-change event for the same firm are excluded from the placebo sample.}
+\label{tab:placebo_8k}
+\begin{tabular}{lcccccc}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & AbVol\newline Aud. chg. & AbVol\newline Earnings & AbVol\newline Pooled & $|CAR|$\newline Aud. chg. & $|CAR|$\newline Earnings & $|CAR|$\newline Pooled \\
+\midrule
+\textit{Polarization} & 0.111*** & -0.010 & -0.010 & 0.005** & -0.000 & -0.000 \\
+ & (0.043) & (0.012) & (0.012) & (0.002) & (0.001) & (0.001) \\
+Auditor Change &  &  & -0.384*** &  &  & -0.024*** \\
+ &  &  & (0.050) &  &  & (0.003) \\
+\textit{Polarization} $\times$ Auditor Change &  &  & 0.141*** &  &  & 0.008*** \\
+ &  &  & (0.046) &  &  & (0.003) \\
+\midrule
+Year + Industry FE & Yes & Yes & Yes & Yes & Yes & Yes \\
+Controls & Yes & Yes & Yes & Yes & Yes & Yes \\
+Cluster & Firm & Firm & Firm & Firm & Firm & Firm \\
+Sample & Aud. chg. & Earnings & Pooled & Aud. chg. & Earnings & Pooled \\
+N & 678 & 20,800 & 21,478 & 678 & 20,800 & 21,478 \\
+$R^2$ & 0.175 & 0.033 & 0.037 & 0.172 & 0.059 & 0.060 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize Notes: Standard errors clustered at the firm level in parentheses. $^{***}$, $^{**}$, $^{*}$ denote significance at 1\%, 5\%, 10\%. \textit{Polarization} is the standardized headquarters-state presidential-election competitiveness index (mean zero, unit standard deviation computed within each column's estimation sample). The market model is estimated over trading days $[-252,-46]$ relative to each announcement date using the CRSP value-weighted return.
+\end{flushleft}
+\end{table}

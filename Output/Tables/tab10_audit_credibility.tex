@@ -1,0 +1,34 @@
+\begin{table}[htbp]
+\centering
+\caption{Audit Credibility Salience: Interaction Tests. \textit{High Distress} equals one if the firm's Altman Z-score (computed from Compustat fiscal-year data for the year prior to the event) is below the estimation-sample median; financially distressed firms face greater scrutiny of audit quality. \textit{High Disc.\ Accruals} equals one if the absolute value of Modified Jones model discretionary accruals exceeds the sample median; high accruals signal greater accounting opacity and make audit oversight more salient. \textit{Going Concern} equals one if the prior-year audit opinion included a going-concern modification. The interpretation channel predicts positive interaction coefficients: polarization should amplify investor disagreement specifically when the auditor-change filing forces investors to evaluate the reliability of accounting oversight.}
+\label{tab:audit_credibility}
+\begin{tabular}{lcccccc}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $|CAR|$\newline $\times$ Distress & $|CAR|$\newline $\times$ Accruals & $|CAR|$\newline $\times$ GC & $|CAR|$\newline Both & AbVol\newline $\times$ Distress & AbVol\newline $\times$ Accruals \\
+\midrule
+\textit{Polarization} & 0.004 & 0.008* & -0.001 & 0.007 & 0.124** & 0.108 \\
+ & (0.003) & (0.005) & (0.004) & (0.006) & (0.051) & (0.069) \\
+High Distress & 0.006 &  &  & 0.006 & -0.059 &  \\
+ & (0.009) &  &  & (0.009) & (0.131) &  \\
+\textit{Polarization} $\times$ High Distress & 0.002 &  &  & 0.002 & -0.016 &  \\
+ & (0.005) &  &  & (0.004) & (0.082) &  \\
+High Disc.\ Accruals &  & -0.012 &  & -0.012 &  & 0.045 \\
+ &  & (0.009) &  & (0.009) &  & (0.108) \\
+\textit{Polarization} $\times$ High Accruals &  & -0.005 &  & -0.005 &  & 0.002 \\
+ &  & (0.005) &  & (0.005) &  & (0.081) \\
+Going Concern &  &  & -0.006 &  &  &  \\
+ &  &  & (0.012) &  &  &  \\
+\textit{Polarization} $\times$ Going Concern &  &  & 0.008 &  &  &  \\
+ &  &  & (0.009) &  &  &  \\
+\midrule
+Year + Industry FE & Yes & Yes & Yes & Yes & Yes & Yes \\
+Controls & Yes & Yes & Yes & Yes & Yes & Yes \\
+N & 668 & 675 & 199 & 665 & 668 & 675 \\
+$R^2$ & 0.174 & 0.177 & 0.395 & 0.179 & 0.183 & 0.174 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize Notes: Standard errors clustered at the firm level in parentheses. $^{***}$, $^{**}$, $^{*}$ denote significance at 1\%, 5\%, 10\%.
+\end{flushleft}
+\end{table}

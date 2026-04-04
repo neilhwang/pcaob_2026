@@ -1,0 +1,28 @@
+\begin{table}[htbp]
+\centering
+\caption{Post-Event CAR Reversal Test. The dependent variable is the signed market-model CAR computed over trading days $[+2,+T]$ relative to the 8-K filing date, where $T=20$ (approximately one month) or $T=60$ (approximately three months). \textit{Polarization} is the standardized headquarters-state presidential Esteban-Ray index. Columns (1)--(2) control for the signed event-window $CAR(-1,+1)$ to partial out mechanical mean reversion; columns (3)--(4) control for $|CAR(-1,+1)|$. A negative \textit{Polarization} coefficient is consistent with short-lived disagreement-driven overreaction in high-polarization states. Market model parameters ($\hat\alpha$, $\hat\beta$) are the same as in the main analysis (estimation window $[-252,-46]$ trading days). Standard errors clustered at the firm level.}
+\label{tab:reversal}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+ & $CAR[+2,+20]$\newline Signed ctrl. & $CAR[+2,+60]$\newline Signed ctrl. & $CAR[+2,+20]$\newline $|CAR|$ ctrl. & $CAR[+2,+60]$\newline $|CAR|$ ctrl. \\
+\midrule
+\textit{Polarization} & 0.013 & 0.019 & 0.014* & 0.019 \\
+ & (0.008) & (0.015) & (0.008) & (0.014) \\
+$CAR(-1,+1)$ & -0.233 & -0.480* &  &  \\
+ & (0.153) & (0.266) &  &  \\
+$|CAR(-1,+1)|$ &  &  & -0.086 & 0.019 \\
+ &  &  & (0.253) & (0.443) \\
+\midrule
+Window & [+2,+20] & [+2,+60] & [+2,+20] & [+2,+60] \\
+Event-CAR control & Signed & Signed & $|CAR|$ & $|CAR|$ \\
+Year + Industry FE & Yes & Yes & Yes & Yes \\
+Controls & Yes & Yes & Yes & Yes \\
+N & 678 & 678 & 678 & 678 \\
+$R^2$ & 0.123 & 0.128 & 0.115 & 0.116 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize Notes: Standard errors clustered at the firm level in parentheses. $^{***}$, $^{**}$, $^{*}$ denote significance at 1\%, 5\%, 10\%.
+\end{flushleft}
+\end{table}

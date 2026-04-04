@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering
+\caption{Short Interest and the Disagreement Channel. Columns~(1)--(2) test whether the polarization effect on $|CAR(-1,+1)|$ is stronger for firms with above-median pre-event short interest ratio, measured over calendar days $[-90,-15]$ before the event. \textit{High Short Interest} equals one if the pre-event short interest ratio (split-adjusted shares short divided by shares outstanding) exceeds the sample median. Columns~(3)--(4) use the change in short interest ratio as the dependent variable, computed as the difference between the first post-event report (calendar days $[+15,+90]$) and the pre-event mean. A positive coefficient on \textit{Polarization} in columns~(3)--(4) indicates that auditor-change events in more polarized states trigger larger increases in short selling, consistent with polarization amplifying investor disagreement.}
+\label{tab:short_interest}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+ & $|CAR|$\newline No ctrls & $|CAR|$\newline Full ctrls & $\Delta SI$\newline No ctrls & $\Delta SI$\newline Full ctrls \\
+\midrule
+\textit{Polarization} & -0.002 & -0.005 & 0.001 & -0.001 \\
+ & (0.005) & (0.008) & (0.004) & (0.007) \\
+High Short Interest & 0.003 & -0.013 &  &  \\
+ & (0.009) & (0.011) &  &  \\
+\textit{Polarization} $\times$ High SI & -0.001 & -0.006 &  &  \\
+ & (0.008) & (0.012) &  &  \\
+\midrule
+Year FE & Yes & Yes & Yes & Yes \\
+Industry FE & No & Yes & No & Yes \\
+Controls & No & Yes & No & Yes \\
+N & 122 & 122 & 122 & 122 \\
+$R^2$ & 0.196 & 0.536 & 0.098 & 0.328 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize Notes: Standard errors clustered at the firm level in parentheses. $^{***}$, $^{**}$, $^{*}$ denote significance at 1\%, 5\%, 10\%.
+\end{flushleft}
+\end{table}
