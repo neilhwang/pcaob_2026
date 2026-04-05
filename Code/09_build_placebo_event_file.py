@@ -502,6 +502,11 @@ def main() -> None:
             date_filed   = lambda d: pd.to_datetime(d["date_filed"]),
             filing_year  = lambda d: d["date_filed"].dt.year,
             is_amendment = lambda d: d["form_type"] == "8-K/A",
+            # Force cik to zero-padded 10-digit string so pyarrow doesn't
+            # auto-infer int64 (which fails when some values contain leading
+            # zeros or non-numeric characters).
+            cik          = lambda d: d["cik"].astype(str).str.zfill(10),
+            acc_nodash   = lambda d: d["acc_nodash"].astype(str).str.zfill(18),
         )
         .sort_values("date_filed")
         .reset_index(drop=True)

@@ -13,10 +13,16 @@ INPUTS
 
 OUTPUTS
 -------
-  Data/Processed/ibes_dispersion.parquet  -- one row per (gvkey, comp_year) with:
-      analyst_coverage  : number of EPS forecasts (numest) as of the pre-event consensus
-      disp_raw          : raw forecast standard deviation (stdev)
-      disp_scaled       : stdev / |meanest| when |meanest| >= 0.01, else NaN
+  Data/Processed/ibes_dispersion.parquet  -- one row per (gvkey, comp_year) with
+      pre-event and post-event analyst dispersion:
+      analyst_coverage       : numest as of pre-event consensus
+      disp_raw_pre           : pre-event stdev (most recent statpers <= event_date)
+      disp_scaled_pre        : disp_raw_pre / |meanest_pre|
+      disp_raw_post          : post-event stdev (first statpers in event+[1,90])
+      disp_scaled_post       : disp_raw_post / |meanest_post|
+      disp_change_scaled     : disp_scaled_post - disp_scaled_pre
+      (post values are NaN if no IBES observation falls within 90 days after
+      the event date)
 
 LINK STRATEGY
 -------------
@@ -176,18 +182,29 @@ def pull_ibes_by_cusip(db, cusips, comp_years):
 # Step 4: Match each event to the right IBES observation
 # ---------------------------------------------------------------------------
 
+def _compute_disp(numest, stdev, meanest):
+    """Return (disp_raw, disp_scaled) with NaN guards."""
+    if (pd.notna(stdev) and pd.notna(meanest) and pd.notna(numest)
+            and numest >= 2 and abs(meanest) >= 0.01):
+        return float(stdev), float(stdev) / abs(float(meanest))
+    return (float(stdev) if pd.notna(stdev) else np.nan, np.nan)
+
+
 def build_dispersion(sample, crsp_names, ibes):
     """
-    For each (gvkey, comp_year) in sample:
+    For each (gvkey, comp_year) in sample, extract PRE- and POST-event
+    analyst dispersion:
       1. Find the ncusip(s) active for the firm's permno at event_date
-         (from crsp_names, using the namedt–nameendt date range).
-      2. Filter ibes rows to those CUSIPs where fy_end_year == comp_year
-         and statpers <= event_date.
-      3. Take the most recent statpers row; compute dispersion.
+         (from crsp_names, using the namedt-nameendt date range).
+      2. Pre-event: most recent statpers <= event_date.
+      3. Post-event: first statpers in (event_date, event_date + 90 days].
+      4. Compute disp_scaled = stdev / |meanest| for each.
 
-    Returns a DataFrame with one row per (gvkey, comp_year).
+    Returns one row per (gvkey, comp_year) with pre-, post-, and change
+    measures. Post values are NaN if no IBES observation falls in window.
     """
     results = []
+    post_window_end = pd.Timedelta(days=90)
 
     for _, row in sample.iterrows():
         gvkey      = row["gvkey"]
@@ -195,7 +212,6 @@ def build_dispersion(sample, crsp_names, ibes):
         event_date = row["event_date"]
         comp_year  = row["comp_year"]
 
-        # --- find CUSIP(s) active at event_date for this permno ---
         active_cusips = crsp_names.loc[
             (crsp_names["permno"]   == permno)
             & (crsp_names["namedt"]   <= event_date)
@@ -203,50 +219,48 @@ def build_dispersion(sample, crsp_names, ibes):
             "ncusip",
         ].unique().tolist()
 
+        base = dict(
+            gvkey=gvkey, comp_year=comp_year,
+            analyst_coverage=np.nan,
+            disp_raw_pre=np.nan, disp_scaled_pre=np.nan,
+            disp_raw_post=np.nan, disp_scaled_post=np.nan,
+            disp_change_scaled=np.nan,
+        )
+
         if not active_cusips:
-            results.append(dict(gvkey=gvkey, comp_year=comp_year,
-                                analyst_coverage=np.nan, disp_raw=np.nan,
-                                disp_scaled=np.nan))
+            results.append(base)
             continue
 
-        # --- find best IBES row for this firm-year ---
-        candidates = ibes[
-            (ibes["cusip"].isin(active_cusips))
-            & (ibes["fy_end_year"] == comp_year)
-            & (ibes["statpers"] <= event_date)
-        ]
-        if candidates.empty:
-            results.append(dict(gvkey=gvkey, comp_year=comp_year,
-                                analyst_coverage=np.nan, disp_raw=np.nan,
-                                disp_scaled=np.nan))
-            continue
+        cusip_mask = ibes["cusip"].isin(active_cusips) & (ibes["fy_end_year"] == comp_year)
 
-        # Most recent statpers satisfying the constraints
-        best = candidates.loc[candidates["statpers"].idxmax()]
+        # ── Pre-event: most recent statpers <= event_date ──
+        pre = ibes[cusip_mask & (ibes["statpers"] <= event_date)]
+        if not pre.empty:
+            best = pre.loc[pre["statpers"].idxmax()]
+            base["analyst_coverage"] = (
+                float(best["numest"]) if pd.notna(best["numest"]) else np.nan
+            )
+            base["disp_raw_pre"], base["disp_scaled_pre"] = _compute_disp(
+                best["numest"], best["stdev"], best["meanest"]
+            )
 
-        numest  = best["numest"]
-        stdev   = best["stdev"]
-        meanest = best["meanest"]
+        # ── Post-event: first statpers in (event_date, event_date + 90d] ──
+        post = ibes[cusip_mask
+                    & (ibes["statpers"] > event_date)
+                    & (ibes["statpers"] <= event_date + post_window_end)]
+        if not post.empty:
+            best = post.loc[post["statpers"].idxmin()]
+            base["disp_raw_post"], base["disp_scaled_post"] = _compute_disp(
+                best["numest"], best["stdev"], best["meanest"]
+            )
 
-        # disp_scaled: stdev / |meanest|; NaN when numest < 2 or |meanest| < 0.01
-        if (
-            pd.notna(stdev)
-            and pd.notna(meanest)
-            and pd.notna(numest)
-            and numest >= 2
-            and abs(meanest) >= 0.01
-        ):
-            disp_scaled = stdev / abs(meanest)
-        else:
-            disp_scaled = np.nan
+        # ── Change: post - pre (scaled) ──
+        if pd.notna(base["disp_scaled_pre"]) and pd.notna(base["disp_scaled_post"]):
+            base["disp_change_scaled"] = (
+                base["disp_scaled_post"] - base["disp_scaled_pre"]
+            )
 
-        results.append(dict(
-            gvkey=gvkey,
-            comp_year=comp_year,
-            analyst_coverage=numest if pd.notna(numest) else np.nan,
-            disp_raw=stdev if pd.notna(stdev) else np.nan,
-            disp_scaled=disp_scaled,
-        ))
+        results.append(base)
 
     return pd.DataFrame(results)
 

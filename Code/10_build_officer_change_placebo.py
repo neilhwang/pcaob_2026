@@ -17,9 +17,9 @@ disagreement specifically through the institutional-trust channel.
 DESIGN
 ------
   Six columns in the output table (AbVol cols 1-3, |CAR| cols 4-6):
-    (1)/(4) Main sample baseline — replicates Table 2 for comparison
-    (2)/(5) Officer-change placebo — same specification, Item 5.02 events
-    (3)/(6) Pooled — stacks both samples with an Auditor Change indicator
+    (1)/(4) Main sample baseline -- replicates Table 2 for comparison
+    (2)/(5) Officer-change placebo -- same specification, Item 5.02 events
+    (3)/(6) Pooled -- stacks both samples with an Auditor Change indicator
             and a Polarization × Auditor Change interaction
 
 INPUTS
@@ -28,14 +28,14 @@ INPUTS
   Data/Processed/placebo_events_raw.parquet       (from 09_build_placebo_event_file.py)
   Data/Processed/pol_presidential.parquet         (from 02b_build_presidential_polarization.py)
   Data/Processed/compustat_controls.parquet       (from 04_build_compustat_controls.py)
-  WRDS: comp.company + comp.funda + crsp.stocknames  — CIK→PERMNO link
-  WRDS: crsp.dsf                                     — daily stock returns + volume
-  WRDS: crsp.dsi                                     — market returns (vwretd)
+  WRDS: comp.company + comp.funda + crsp.stocknames  -- CIK->PERMNO link
+  WRDS: crsp.dsf                                     -- daily stock returns + volume
+  WRDS: crsp.dsi                                     -- market returns (vwretd)
 
 OUTPUTS
 -------
-  Data/Processed/officer_change_placebo.parquet   — placebo event-level dataset
-  Output/Tables/tab_placebo_502.tex               — placebo regression table
+  Data/Processed/officer_change_placebo.parquet   -- placebo event-level dataset
+  Output/Tables/tab_placebo_502.tex               -- placebo regression table
 
 WRDS USERNAME: nhwang
 """
@@ -64,7 +64,7 @@ OUT_TABLE       = OUT_TABS / "tab_placebo_502.tex"
 
 WRDS_USERNAME = "nhwang"
 
-# Market model parameters — identical to 03_build_crsp_sample.py
+# Market model parameters -- identical to 03_build_crsp_sample.py
 EST_WINDOW_START = -252
 EST_WINDOW_END   = -46
 MIN_EST_DAYS     = 100
@@ -142,28 +142,28 @@ def load_placebo_events():
     df["cik"] = df["cik"].astype(str).str.strip().str.zfill(10)
 
     print(f"  Item 5.02 events loaded: {len(df):,}")
-    print(f"  Date range: {df['date_filed'].min().date()} — {df['date_filed'].max().date()}")
+    print(f"  Date range: {df['date_filed'].min().date()} -- {df['date_filed'].max().date()}")
     return df
 
 
-# ── Step 3: CIK → PERMNO link (same approach as 03_build_crsp_sample.py) ────
+# ── Step 3: CIK -> PERMNO link (same approach as 03_build_crsp_sample.py) ────
 
 def build_cik_permno_link(db, ciks):
-    """CIK → gvkey (comp.company) → cusip (comp.funda) → permno (crsp.stocknames)."""
+    """CIK -> gvkey (comp.company) -> cusip (comp.funda) -> permno (crsp.stocknames)."""
     print(f"  Linking {len(ciks):,} unique CIKs to PERMNOs...")
 
-    # CIK → gvkey
+    # CIK -> gvkey
     records = []
     for chunk in batch_list(ciks, 500):
         sql = f"SELECT cik, gvkey FROM comp.company WHERE cik IN {sql_in_str(chunk)}"
         records.append(db.raw_sql(sql))
     cik_gvkey = pd.concat(records, ignore_index=True)
-    print(f"    CIK → gvkey: {cik_gvkey['cik'].nunique():,} / {len(ciks):,} CIKs matched")
+    print(f"    CIK -> gvkey: {cik_gvkey['cik'].nunique():,} / {len(ciks):,} CIKs matched")
 
     if cik_gvkey.empty:
-        raise ValueError("No CIK → gvkey matches found.")
+        raise ValueError("No CIK -> gvkey matches found.")
 
-    # gvkey → most-recent CUSIP
+    # gvkey -> most-recent CUSIP
     gvkeys = cik_gvkey["gvkey"].unique().tolist()
     records = []
     for chunk in batch_list(gvkeys, 500):
@@ -177,9 +177,9 @@ def build_cik_permno_link(db, ciks):
         records.append(db.raw_sql(sql))
     gvkey_cusip = pd.concat(records, ignore_index=True)
     cik_gvkey = cik_gvkey.merge(gvkey_cusip, on="gvkey", how="inner")
-    print(f"    gvkey → cusip: {gvkey_cusip['gvkey'].nunique():,} matched")
+    print(f"    gvkey -> cusip: {gvkey_cusip['gvkey'].nunique():,} matched")
 
-    # CUSIP → PERMNO via crsp.stocknames
+    # CUSIP -> PERMNO via crsp.stocknames
     cik_gvkey["ncusip8"] = cik_gvkey["cusip"].str[:8]
     ncusips = cik_gvkey["ncusip8"].dropna().unique().tolist()
     records = []
@@ -246,7 +246,7 @@ def exclude_near_auditor_changes(placebo, analysis_df):
 # ── Step 5: Pull CRSP data ───────────────────────────────────────────────────
 
 def pull_crsp_daily(db, permnos, start_date, end_date):
-    print(f"  Date range: {start_date} → {end_date}")
+    print(f"  Date range: {start_date} -> {end_date}")
     print(f"  PERMNOs: {len(permnos):,}")
     records = []
     for i, chunk in enumerate(batch_list(permnos, 200)):
@@ -386,7 +386,7 @@ def merge_and_filter(placebo, car_df, pres_pol, comp):
     df = df[df["car_m1p1"].notna()].copy()
     df["event_year"] = df["event_date"].dt.year
 
-    # State from gvkey → Compustat (headquarters state)
+    # State from gvkey -> Compustat (headquarters state)
     state_col = "state_abbr" if "state_abbr" in comp.columns else "state"
     comp_state = comp[["gvkey", "fyear", state_col]].dropna(subset=[state_col])
     comp_state = comp_state.rename(columns={"fyear": "comp_year", state_col: "state"})
@@ -427,7 +427,7 @@ def merge_and_filter(placebo, car_df, pres_pol, comp):
     df = df.dropna(subset=["absCar", "abvol", "margin", "sic2"] + CONTROLS)
     print(f"  After dropping missing: {len(df):,} (dropped {n0 - len(df):,})")
 
-    # SIC exclusions — same as main analysis
+    # SIC exclusions -- same as main analysis
     n1 = len(df)
     df = df[~df["sic2"].isin(range(60, 70)) & ~df["sic2"].isin(range(49, 50))]
     print(f"  After SIC exclusions: {len(df):,} (dropped {n1 - len(df):,})")
@@ -546,8 +546,8 @@ def main():
     print("\n[3] Connecting to WRDS...")
     db = wrds.Connection(wrds_username=WRDS_USERNAME)
 
-    # ── [3] CIK → PERMNO ────────────────────────────────────────────────────
-    print("\n[4] Building CIK → PERMNO link...")
+    # ── [3] CIK -> PERMNO ────────────────────────────────────────────────────
+    print("\n[4] Building CIK -> PERMNO link...")
     ciks = placebo_raw["cik"].unique().tolist()
     link = build_cik_permno_link(db, ciks)
 

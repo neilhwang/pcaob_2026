@@ -1,25 +1,25 @@
 \begin{table}[htbp]
 \centering
-\caption{Post-Event CAR Reversal Test. The dependent variable is the signed market-model CAR computed over trading days $[+2,+T]$ relative to the 8-K filing date, where $T=20$ (approximately one month) or $T=60$ (approximately three months). \textit{Polarization} is the standardized headquarters-state partisan competitiveness measure ($1 - |D - R|$). Columns (1)--(2) control for the signed event-window $CAR(-1,+1)$ to partial out mechanical mean reversion; columns (3)--(4) control for $|CAR(-1,+1)|$. A negative \textit{Polarization} coefficient is consistent with short-lived disagreement-driven overreaction in high-polarization states. Market model parameters ($\hat\alpha$, $\hat\beta$) are the same as in the main analysis (estimation window $[-252,-46]$ trading days). Standard errors clustered at the firm level.}
+\caption{Post-Event CAR Reversal Test. The dependent variable is the signed market-model CAR computed over trading days $[+2,+T]$ relative to the 8-K filing date, where $T=20$ (approximately one month) or $T=60$ (approximately three months). \textit{Polarization} is the standardized headquarters-state presidential Esteban-Ray index. Columns (1)--(2) control for the signed event-window $CAR(-1,+1)$ to partial out mechanical mean reversion; columns (3)--(4) control for $|CAR(-1,+1)|$. A negative \textit{Polarization} coefficient is consistent with short-lived disagreement-driven overreaction in high-polarization states. Market model parameters ($\hat\alpha$, $\hat\beta$) are the same as in the main analysis (estimation window $[-252,-46]$ trading days). Standard errors clustered at the firm level.}
 \label{tab:reversal}
 \begin{tabular}{lcccc}
 \toprule
  & (1) & (2) & (3) & (4) \\
  & $CAR[+2,+20]$\newline Signed ctrl. & $CAR[+2,+60]$\newline Signed ctrl. & $CAR[+2,+20]$\newline $|CAR|$ ctrl. & $CAR[+2,+60]$\newline $|CAR|$ ctrl. \\
 \midrule
-\textit{Polarization} & 0.013 & 0.019 & 0.014* & 0.019 \\
- & (0.0080) & (0.0147) & (0.0080) & (0.0144) \\
-$CAR(-1,+1)$ & -0.233 & -0.480* &  &  \\
- & (0.153) & (0.266) &  &  \\
-$|CAR(-1,+1)|$ &  &  & -0.086 & 0.019 \\
- &  &  & (0.253) & (0.443) \\
+\textit{Polarization} & 0.013* & 0.020 & 0.014* & 0.020 \\
+ & (0.0079) & (0.0146) & (0.0079) & (0.0143) \\
+$CAR(-1,+1)$ & -0.233 & -0.477* &  &  \\
+ & (0.151) & (0.262) &  &  \\
+$|CAR(-1,+1)|$ &  &  & -0.102 & 0.015 \\
+ &  &  & (0.252) & (0.438) \\
 \midrule
 Window & [+2,+20] & [+2,+60] & [+2,+20] & [+2,+60] \\
 Event-CAR control & Signed & Signed & $|CAR|$ & $|CAR|$ \\
 Year + Industry FE & Yes & Yes & Yes & Yes \\
 Controls & Yes & Yes & Yes & Yes \\
-N & 678 & 678 & 678 & 678 \\
-$R^2$ & 0.123 & 0.128 & 0.115 & 0.116 \\
+N & 724 & 724 & 724 & 724 \\
+$R^2$ & 0.129 & 0.137 & 0.121 & 0.125 \\
 \bottomrule
 \end{tabular}
 \begin{flushleft}

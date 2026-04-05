@@ -49,7 +49,9 @@
       "Bash(rm -f /c/Users/neilh/documents/pcaob_2026/Data/Raw/sec_13f/quarterly_holdings/*.parquet)",
       "Bash(tee Data/Raw/sec_13f/run_log.txt)",
       "Bash(curl -s \"https://api.openalex.org/works?search=Political+Polarization+Financial+News+Goldman+Gupta+Israelsen&per_page=5\")",
-      "Bash(curl -s \"https://api.openalex.org/works?search=Political+Polarization+Investor+Disagreement+Hao+Nain&per_page=5\")"
+      "Bash(curl -s \"https://api.openalex.org/works?search=Political+Polarization+Investor+Disagreement+Hao+Nain&per_page=5\")",
+      "Bash(wc -l tab*.tex)",
+      "Bash(xargs -r kill)"
     ]
   }
 }
