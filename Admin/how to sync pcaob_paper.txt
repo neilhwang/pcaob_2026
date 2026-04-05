@@ -2,6 +2,92 @@ to sync pcaob_paper (small repo for generating pdf) with pcaob_2026 (big repo)
 
 .\sync_overleaf.ps1
 
+wrds: 
 
 
 
+
+  Issue 1 (County-level AbVol null): Still present. The robustness section (lines ~1105-1111) has the rationalization but it's a weak spot. Still
+  outstanding.
+
+  Issue 2 (Permutation test): Fixed — now includes both AbVol ($p = 0.004$) and CAR ($p = 0.029$). Resolved.
+
+  Issue 3 (Placebo test): Fixed — now includes both AbVol and CAR. Resolved.
+
+  Issue 4 (Table number references): The draft uses \ref{tab:robustness}, \ref{tab:main}, etc. throughout, which LaTeX resolves automatically. Let me
+  check for any hardcoded table numbers.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Good — no hardcoded table numbers. Resolved.
+
+  Issue 5 (No discussion section): Let me check the current structure.
+
+  The paper goes: Results (§5) → Conclusion (§6). Limitations are spread across the identification subsection (§4.5) and inline footnotes. This is a
+  style choice — some RAS papers have a separate discussion section, others don't. Low priority, style preference.
+
+  Issue 6 (Conclusion doesn't reflect affective result):
+
+  Read 1 file (ctrl+o to expand)
+
+● Lines 1371-1376 frame distinguishing ideological vs. affective polarization as "a further promising direction" — but the paper now has Table 6 that
+  does exactly this and finds the affective channel is null. Still outstanding.
+
+  Issue 7 (Event-type heterogeneity is awkward): Let me check the current text.
+
+  The current draft (lines 990-1008) discusses this honestly — AbVol significant for dismissals but not non-dismissals, CAR the opposite. The
+  interpretation is acknowledged as post-hoc. The draft also added the ambiguity-materiality confound discussion (lines 474-487) and P3 was softened
+  (lines 520-535). This has been substantially improved. Partially addressed — the framing is honest, but the pattern remains awkward.
+
+  Issue 8 (Sample attrition): Already addressed with footnote on Panel B comparison (lines 630-643). Resolved.
+
+  Issue 3b (Script 09 status): Let me check.
+
+  Read 3 files (ctrl+o to expand)
+
+● That's a huge checkpoint — 1.7M lines, likely because the deduplication fix hasn't been applied to the running process (old code was running when we
+  made the fix). The final output (placebo_events_raw.parquet) doesn't exist yet, so script 09 either hasn't finished or crashed again.
+
+  Here's the updated assessment of actually outstanding issues:
+
+  1. County-level AbVol null. The robustness section has a rationalization but it's the one result that doesn't fit. Low risk — a reviewer might note it
+   but it doesn't undermine the paper.
+
+  2. Conclusion still frames affective polarization as future work. Lines 1371-1376 say "a further promising direction is to distinguish the roles of
+  ideological and affective polarization" — but the paper now has Table 6 showing exactly this. The conclusion should note the finding (affective
+  channel is null, ideological baseline unchanged) rather than frame it as unresolved.
+
+  3. Script 09 (Item 5.02 placebo) not yet complete. The candidates cache exists (so Steps 1-3 succeeded), but the final output doesn't exist. The
+  checkpoint has 1.7M lines — likely still accumulating duplicates from the old code. Neil may need to re-run with the fixed code.
+
+  4. The lit review (line 275-276) still says "Distinguishing the separate contributions of ideological and affective polarization remains an important
+  direction for future work." Same issue as the conclusion — the paper now does this.
+
+  Issues 2 and 4 are quick text fixes. Want me to do those now?
+
+
+
+--------------------------------------------------
+
+There is no matching step. The attrition chain (8,621 → 6,901 → 1,220 → 678) comes from:
+  - 8,621 → 6,901: EDGAR 8-K events linked to CRSP (script 03, CIK→gvkey→PERMNO)
+  - 6,901 → 1,220: Events with valid CRSP return data in the event window (script 03)
+  - 1,220 → 678: apply_sample_filters() in script 05 — dropping observations missing absCar, abvol, er_pres, sic2, or any of the 6 controls, plus
+  excluding financials/utilities
+
+  So the 542-event drop isn't from propensity-score matching — it's from missing Compustat controls and polarization data, plus SIC exclusions. That
+  changes the calculus.
+
+  What this means
+
+  The "easy win" of running an unmatched sample doesn't apply since there's no matching. The missing observations are structurally missing — no state
+  mapping, no Compustat controls, or excluded industries.
+
+  Realistic options for N=678
+
+  1. Diagnose the biggest source of attrition — Run a quick check to see how many are lost to each filter (missing state, missing controls, SIC
+  exclusions). If one category dominates, we might recover some.
+  2. Relaxed controls specification — Drop one or two controls that cause the most missingness (e.g., sales_growth or btm often have spotty Compustat
+  coverage). Report as a robustness column showing the main result holds with a larger N.
+  3. Emphasize what's already in the paper — Permutation inference, multiple clustering, and the fact that significant results at N=678 imply large,
+  detectable effect sizes. Add a sentence on ex-post power if needed.

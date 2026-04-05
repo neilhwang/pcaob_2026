@@ -25,7 +25,31 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(powershell.exe -File sync_overleaf.ps1)",
-      "Bash(del:*)"
+      "Bash(del:*)",
+      "Bash(/c/Users/neilh/documents/pcaob_2026/Code/_check_shortint.py:*)",
+      "Bash(pdflatex -interaction=nonstopmode draft.tex)",
+      "Bash(python3:*)",
+      "WebSearch",
+      "WebFetch(domain:www.cooley.com)",
+      "WebFetch(domain:corporate.findlaw.com)",
+      "WebFetch(domain:www.dorsey.com)",
+      "WebFetch(domain:www.whitefordlaw.com)",
+      "WebFetch(domain:www.alston.com)",
+      "WebFetch(domain:www3.nd.edu)",
+      "WebFetch(domain:academicweb.nd.edu)",
+      "WebFetch(domain:www.sec.gov)",
+      "WebFetch(domain:www.federalregister.gov)",
+      "WebFetch(domain:www.securexfilings.com)",
+      "WebFetch(domain:www.upcounsel.com)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "Bash(find C:Usersneilhdocumentspcaob_2026 -name *.log -o -name *results*)",
+      "Bash(find C:Usersneilhdocumentspcaob_2026Code -name *_Session_Logs* -o -name *Session*)",
+      "Bash(python -c \":*)",
+      "Bash(taskkill //F //PID 44740)",
+      "Bash(rm -f /c/Users/neilh/documents/pcaob_2026/Data/Raw/sec_13f/quarterly_holdings/*.parquet)",
+      "Bash(tee Data/Raw/sec_13f/run_log.txt)",
+      "Bash(curl -s \"https://api.openalex.org/works?search=Political+Polarization+Financial+News+Goldman+Gupta+Israelsen&per_page=5\")",
+      "Bash(curl -s \"https://api.openalex.org/works?search=Political+Polarization+Investor+Disagreement+Hao+Nain&per_page=5\")"
     ]
   }
 }

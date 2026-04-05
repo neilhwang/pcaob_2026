@@ -274,7 +274,7 @@ def make_summary_stats(df: pd.DataFrame) -> pd.DataFrame:
         "absCar":       "|CAR(-1,+1)|",
         "car":          "CAR(-1,+1)",
         "abvol":        "Abn. Volume",
-        "margin":         "Partisan Margin $|D-R|$ (= 1 $-$ Competitiveness)",
+        "margin":         "Partisan Margin $|D-R|$ (= 1 $-$ Polarization)",
         "size":         "Size (log assets)",
         "leverage":     "Leverage",
         "roa":          "ROA",
@@ -320,7 +320,16 @@ def to_latex_table(df: pd.DataFrame, caption: str, label: str,
     tex = tex.replace(
         r"\end{tabular}",
         r"\end{tabular}" + "\n" + r"\begin{flushleft}" + "\n"
-        r"\footnotesize Notes: [PLACEHOLDER]" + "\n"
+        r"\footnotesize Notes: Sample consists of 678 auditor-change events "
+        r"(Form~8-K Item~4.01) from 2001--2023, matched to CRSP and Compustat. "
+        r"Financial firms (SIC 6000--6999) and utilities (SIC 4900--4999) are excluded. "
+        r"$|CAR(-1,+1)|$ and $CAR(-1,+1)$ are cumulative abnormal returns from a "
+        r"market model estimated over trading days $[-252, -46]$. "
+        r"Abn.\ Volume is the mean daily volume in the event window $[-1, +1]$ "
+        r"minus the estimation-window mean, scaled by estimation-window standard deviation. "
+        r"Partisan Margin is $|D - R|$ from state-level presidential returns "
+        r"(MIT Election Lab); Polarization $= 1 -$ Margin. "
+        r"Firm controls are measured as of the fiscal year preceding the event." + "\n"
         r"\end{flushleft}",
     )
     out_path.write_text(tex, encoding="utf-8")
@@ -447,7 +456,10 @@ def reg_table(models: list, dep_labels: list, coef_map: dict,
                 p = m.pvalues[param]
                 s = m.bse[param]
                 coef_cells.append(f"{fmt(c)}{stars(p)}")
-                se_cells.append(f"({fmt(s)})")
+                # Use 4 decimal places for SEs when rounding to 3 would
+                # alter the implied t-statistic's significance band (M4 fix).
+                se_digits = 4 if abs(s) < 0.1 else 3
+                se_cells.append(f"({fmt(s, se_digits)})")
             else:
                 coef_cells.append("")
                 se_cells.append("")
@@ -712,7 +724,7 @@ def run_robustness(df: pd.DataFrame) -> None:
         "competitive_std":  r"Polarization (baseline)",
         "er_pres_std":      r"Pres. ER Polarization",
         "dw_std":           r"DW-NOMINATE (state gap)",
-        "county_comp_std":  r"County Competitiveness",
+        "county_comp_std":  r"County Polarization",
         "county_sd_std":    r"County Vote SD",
         "comp_x_ctysd":    r"Polarization $\times$ County SD",
     }
@@ -738,6 +750,7 @@ def run_robustness(df: pd.DataFrame) -> None:
     lines.append(r"\centering")
     lines.append(r"\caption{Robustness and Alternative Proxies}")
     lines.append(r"\label{tab:robustness}")
+    lines.append(r"\small")
 
     for panel_title, _, models, dep_labels_p, p_fe, p_st, p_cl, p_ct, p_sa in panels:
         ncols = len(models)
@@ -873,7 +886,7 @@ def run_permutation_test(df: pd.DataFrame, n_perm: int = 5_000,
         r"\toprule",
         r" & AbVol & $|CAR|$ \\",
         r"\midrule",
-        rf"$\hat{{\beta}}$ (Competitiveness) & {fmt(vol['beta'])} & {fmt(car['beta'])} \\",
+        rf"$\hat{{\beta}}$ (Polarization) & {fmt(vol['beta'])} & {fmt(car['beta'])} \\",
         rf"SE (firm-clustered) & ({fmt(vol['se'])}) & ({fmt(car['se'])}) \\",
         rf"$p$-value (clustered $t$-test) & {fmt(vol['p_clust'], 3)} & {fmt(car['p_clust'], 3)} \\",
         rf"$p$-value (permutation, one-sided) & {fmt(vol['p_perm'], 3)} & {fmt(car['p_perm'], 3)} \\",
@@ -882,7 +895,7 @@ def run_permutation_test(df: pd.DataFrame, n_perm: int = 5_000,
         r"\end{tabular}",
         r"\begin{flushleft}",
         r"\footnotesize Notes: The permutation $p$-value is the fraction of "
-        r"5{,}000 random reshufflings of the \textit{Competitiveness} variable "
+        r"5{,}000 random reshufflings of the \textit{Polarization} variable "
         r"that produce a coefficient estimate $\geq$ the actual $\hat{\beta}$. "
         r"Controls and fixed effects match the baseline specification "
         r"(Table~\ref{tab:main}, columns~2 and~4). "
@@ -973,7 +986,7 @@ def run_affective_test(df: pd.DataFrame) -> None:
     coef_map = {
         "competitive_std":                   r"\textit{Polarization}",
         "high_ambiguity":                    r"High Ambiguity",
-        "competitive_std:high_ambiguity":    r"\textit{Competitiveness} $\times$ Ambiguity",
+        "competitive_std:high_ambiguity":    r"\textit{Polarization} $\times$ Ambiguity",
         "ap_x_exposure":                 r"$AP \times Exposure$",
         "ap_x_exp_x_amb":                r"$AP \times Exposure \times$ Ambiguity",
     }

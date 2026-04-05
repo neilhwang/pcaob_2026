@@ -1,0 +1,222 @@
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\setstretch{1.08}
+\setlength{\parskip}{0.55em}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Review Report on the Revised Draft}}\\[0.4em]
+{\normalsize Prepared based on the current uploaded \texttt{draft.tex}}
+\end{center}
+
+\section*{Overall assessment}
+
+The revised draft is moving in the right direction conceptually. Relative to earlier versions, it now has a clearer reduced-form posture, a better focused abstract, and a more plausible central framing: political polarization affects how investors interpret ambiguous audit-related disclosures. That is a sensible and potentially publishable accounting idea.
+
+At the same time, the draft is still not ready for submission to a top accounting journal in its current state. The most immediate reason is practical: the paper still contains large placeholders in the introduction and results section, including the main result sentence and the core heterogeneity tables. A referee cannot evaluate the paper as a finished article while those sections remain incomplete. Beyond that, several substantive issues remain: the theory still leans beyond what is formally established, the empirical design is presented as both district-level and state-level in ways that are not fully consistent, and the event-type heterogeneity discussion is not yet disciplined enough for a high-level accounting audience.
+
+My overall view is:
+
+\begin{quote}
+\textbf{Promising revised draft, but still clearly below top-journal submission readiness.}
+\end{quote}
+
+The strongest next step is not to add more ideas. It is to complete the paper, narrow the claims further, and sharply distinguish between the clean main result and the exploratory heterogeneity evidence.
+
+\section*{1. What has improved in the revised draft}
+
+The revised draft has several meaningful improvements.
+
+\textbf{First, the core framing is cleaner.} The abstract now presents the paper as asking whether polarization affects how investors interpret auditor-related information, rather than trying to prove too many distinct mechanisms at once. That is a better starting point for a reduced-form accounting paper.
+
+\textbf{Second, the setting is still strong.} Auditor-change disclosures remain a reasonable setting for this question because they are public, mandatory, and often open to interpretation despite standardized disclosure requirements.
+
+\textbf{Third, the paper now more openly acknowledges that investor-level political identity is not observed directly.} The phrase that the headquarters political environment is a reduced-form proxy for the investor and stakeholder context is materially better than earlier language that sounded closer to direct identification.
+
+\textbf{Fourth, the paper still has a real empirical hook.} If the baseline result remains stable in the finished tables, the idea that market reactions to auditor-change disclosures are stronger in more polarized environments is interesting enough to matter.
+
+\section*{2. Main issues that still need attention}
+
+\subsection*{2.1 The paper is not yet complete}
+
+The most obvious issue is that core sections are still unfinished. The introduction still contains a placeholder where the main result should appear, and the results section contains placeholders for the baseline regressions, event-type heterogeneity, signal ambiguity, and robustness tables. That prevents a referee from evaluating whether the prose matches the evidence. A top-journal submission cannot go out in this form.
+
+\textbf{Actionable implication.} Before any further polishing, complete every table discussion and make the abstract, introduction, results, and conclusion numerically and interpretively consistent with the final estimates.
+
+\subsection*{2.2 The paper's reduced-form stance is better, but not yet fully carried through}
+
+The revised draft is closer to the right posture, but it still occasionally sounds stronger than the design warrants. The introduction says polarization increases heterogeneity in priors, institutional trust, and perceived signal precision, and the theory section still presents several channels as if they were jointly carried by the same framework. The problem is not that these channels are implausible. The problem is that the paper does not separately identify them.
+
+\textbf{Recommendation.} The paper should explicitly say that the design is a reduced-form test of whether polarized environments are associated with stronger reactions to audit-related disclosures, and that the cross-sectional evidence is most consistent with heterogeneous interpretation, not conclusive proof of it.
+
+\subsection*{2.3 Geographic measurement is still not fully coherent}
+
+The draft currently says the political environment is measured ``at the congressional district level'' using House-election returns, but then says the headquarters-state environment serves as the reduced-form proxy, and later describes annual state-level regressions. This is fixable, but the current wording leaves uncertainty about what exactly the main regressor is.
+
+\textbf{Recommendation.} State once, clearly and identically across sections, the following:
+\begin{enumerate}[leftmargin=1.5em]
+    \item the underlying raw political data source,
+    \item the level at which the index is first constructed,
+    \item the level at which it is aggregated for the baseline specification,
+    \item and what alternative geographic levels are used only in robustness tests.
+\end{enumerate}
+
+\subsection*{2.4 The theory is still stronger than the cleanest empirical implications}
+
+The revised draft still uses the disagreement framework to motivate both abnormal volume and absolute returns. The volume result remains the more natural implication of the heterogeneous-interpretation story. The return result can remain in the paper, but it should still be treated more carefully unless the theory explicitly adds the frictions needed to translate disagreement into larger absolute price movements.
+
+\textbf{Recommendation.} Make abnormal trading volume the main theory-backed outcome. Treat absolute abnormal returns as important but less directly implied, unless the theory is expanded.
+
+\subsection*{2.5 The paper still risks trying to do too much}
+
+The draft now touches auditing, belief heterogeneity, political polarization, institutional trust, perceived precision, regulation, and disclosure design. These all connect, but the paper will only work if one central claim dominates:
+
+\begin{quote}
+Polarized environments amplify the market response to ambiguous auditor-change disclosures.
+\end{quote}
+
+Everything else should support that sentence rather than compete with it.
+
+\section*{3. Evaluation of the event-type heterogeneity criticism}
+
+The reviewer criticism is:
+
+\begin{quote}
+\emph{``AbVol significant for dismissals but not non-dismissals, CAR the opposite. and it gives the post-hoc interpretation.''}
+\end{quote}
+
+This is a legitimate criticism.
+
+If one outcome loads on dismissals while the other loads on non-dismissals, then the event-type split does \emph{not} provide clean mechanism confirmation. At that point, the heterogeneity evidence is mixed. It may still be interesting, but it no longer cleanly validates the same ambiguity-based story for both outcomes. A careful referee will see that immediately.
+
+The risk is not merely that the pattern is untidy. The deeper problem is that a paper can appear to shift interpretive language after seeing the data. That is exactly what top-journal referees are trained to detect.
+
+My judgment on the criticism is therefore:
+
+\begin{quote}
+\textbf{The criticism is fair, and the paper should not present the event-type split as a clean validation of the mechanism if the two main outcomes point in opposite directions.}
+\end{quote}
+
+\section*{4. Evaluation of the author's proposed response}
+
+The author's response is, in substance, that the pattern is what it is; forcing a cleaner explanation would look worse than acknowledging the result transparently; and the best defense is that the main result and the broader robustness battery are strong, while event-type heterogeneity is secondary and exploratory.
+
+I think this response is \textbf{strategically right in spirit}, but only \textbf{conditionally adequate}.
+
+\subsection*{4.1 What is correct in the response}
+
+The instinct not to force a clean story onto messy heterogeneity evidence is the right instinct. Referees usually trust a paper more when it acknowledges an awkward cross-sectional pattern than when it stretches theory to make every split appear perfectly confirming.
+
+So the following part of the response is good:
+\begin{quote}
+present it transparently, offer one interpretation, acknowledge it is post hoc, and move on.
+\end{quote}
+
+That is often better than over-rationalizing.
+
+\subsection*{4.2 What is incomplete or risky in the response}
+
+The response works only if the paper is rewritten to match that posture. Right now, the draft does not yet do that consistently.
+
+The event-type analysis is still introduced as hypothesis-driven heterogeneity, and the abstract and introduction continue to emphasize stronger effects for more ambiguous signals in a way that suggests confirmatory mechanism evidence. If the actual split is mixed across $|CAR|$ and $AbVol$, the paper cannot continue to lean on that split as though it cleanly confirms the story.
+
+There is also a second issue: the author's defense refers to an earnings placebo, a permutation test, and a broader robustness battery. Those may indeed strengthen the paper if they exist in the current results package. But in the uploaded draft, they are not yet actually presented in the text. A referee can only be persuaded by what is in the manuscript, not by what the author says exists outside it.
+
+\subsection*{4.3 My assessment of the response}
+
+My assessment is:
+
+\begin{quote}
+\textbf{The response is the right strategic posture, but it is not sufficient unless the manuscript fully follows through on it.}
+\end{quote}
+
+To make the response work, the paper must do four things.
+
+\textbf{First, demote the event-type split from confirmatory to exploratory.} If the outcome pattern differs across $|CAR|$ and $AbVol$, the event-type section should be labeled explicitly as exploratory heterogeneity rather than framed as a formal test that the mechanism passes.
+
+\textbf{Second, stop using the event-type split as a major selling point in the abstract and introduction.} The main evidence should be the baseline result plus the ambiguity evidence that works more consistently, not the event-type split.
+
+\textbf{Third, present both outcomes side by side and state the inconsistency plainly.} For example:
+\begin{quote}
+The event-type heterogeneity is mixed: the return response is stronger in one subsample, while the volume response is stronger in the other. We therefore treat these splits as descriptive rather than as decisive evidence on mechanism.
+\end{quote}
+
+\textbf{Fourth, include the claimed supporting evidence in the paper itself.} If the earnings placebo and permutation test are important to the paper's credibility, they need to appear in the draft and not merely in discussion outside it.
+
+\section*{5. What the paper should do with the event-type results}
+
+I would recommend the following concrete treatment.
+
+\subsection*{5.1 Main text treatment}
+
+Keep the event-type results in the paper, but cut back the rhetoric around them. The section should be short, transparent, and explicit that the evidence is not fully aligned across outcomes.
+
+A useful template would be:
+
+\begin{quote}
+Event-type heterogeneity yields a mixed pattern. One outcome shows a stronger relation in dismissals, while the other is more pronounced in non-dismissals. We therefore do not view these splits as decisive evidence on the ambiguity channel; instead, we treat them as exploratory evidence that the relation between polarization and event-time reactions may vary with how the market classifies auditor changes.
+\end{quote}
+
+\subsection*{5.2 Mechanism hierarchy}
+
+The paper should build the mechanism discussion around a hierarchy:
+\begin{enumerate}[leftmargin=1.5em]
+    \item baseline reduced-form result,
+    \item cleaner ambiguity-based tests,
+    \item additional supporting evidence such as forecast-dispersion or analyst-disagreement style tests if available,
+    \item event-type heterogeneity as exploratory only.
+\end{enumerate}
+
+That ordering would be much more convincing than letting the event-type split do heavy mechanism work.
+
+\subsection*{5.3 If forecast-dispersion evidence is added}
+
+If the paper can add a targeted forecast-dispersion or analyst-dispersion test, that would be much more useful than trying to squeeze more interpretive weight out of the dismissal/non-dismissal split. It would give the paper direct supporting evidence on disagreement, which is closer to the core mechanism than event labels are.
+
+\section*{6. Additional manuscript-level suggestions}
+
+\subsection*{6.1 Tighten the abstract}
+
+The current abstract is improved, but it still overstates the paper's theoretical richness relative to the evidence. I would simplify it further so that it highlights:
+\begin{enumerate}[leftmargin=1.5em]
+    \item the baseline reduced-form result,
+    \item the ambiguity interpretation,
+    \item and the regulatory implication,
+\end{enumerate}
+without listing multiple mechanism channels in the opening paragraph.
+
+\subsection*{6.2 Tighten the introduction}
+
+The introduction should avoid saying the paper shows polarization affects priors, trust, and perceived precision unless these are explicitly treated as possible channels rather than as established findings. Better phrasing would say that polarization may affect investor interpretation through these margins.
+
+\subsection*{6.3 Make the robustness evidence visible}
+
+If the main defense of the paper includes state fixed effects, alternative polarization proxies, placebo tests, or permutation/randomization inference, then these need to be visible in the draft. Right now the reader is still being asked to trust placeholders.
+
+\subsection*{6.4 Keep the conclusion narrow}
+
+The conclusion should not imply that the paper proves a general theory of politically conditioned interpretation of regulated disclosure. It should say that this setting provides reduced-form evidence consistent with that mechanism.
+
+\section*{7. Bottom-line recommendation}
+
+The revised draft has a credible path to becoming a stronger paper, but it is not there yet. The paper's best version is a disciplined reduced-form study with one clean main result, one restrained mechanism story, and transparent treatment of mixed heterogeneity evidence.
+
+On the specific reviewer criticism, my view is:
+
+\begin{quote}
+\textbf{The criticism is valid. The author's response is sensible as a matter of strategy, but only if the manuscript fully demotes the event-type split to exploratory status and stops presenting it as strong mechanism confirmation.}
+\end{quote}
+
+If the paper does that, the awkward split does not have to be fatal. If it does not, referees will likely view the discussion as post-hoc rationalization.
+
+\end{document}

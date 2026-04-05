@@ -1,0 +1,50 @@
+\begin{table}[htbp]
+\centering
+\caption{Supplementary Robustness Tests: Geographic Horse-Race and Regulatory Regime Stability}
+\label{tab:supplementary}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{2}{c}{Horse-Race} & \multicolumn{2}{c}{SOX Interaction} & \multicolumn{2}{c}{SOX Subsamples} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & AbVol & $|CAR|$ & AbVol & $|CAR|$ & AbVol & $|CAR|$ \\
+ &       &         &       &         & Pre-SOX & Pre-SOX \\
+\midrule
+\textit{Polarization} (state) & 0.125** & 0.003 & 0.110* & 0.006* & 0.097 & 0.005 \\
+ & (0.050) & (0.002) & (0.059) & (0.004) & (0.060) & (0.004) \\
+\textit{Polarization} (county) & $-$0.030 & 0.004 &  &  &  &  \\
+ & (0.048) & (0.003) &  &  &  &  \\
+Post-SOX &  &  & 0.249 & $-$0.023* &  &  \\
+ &  &  & (0.171) & (0.012) &  &  \\
+\textit{Pol.} $\times$ Post-SOX &  &  & 0.003 & $-$0.003 &  &  \\
+ &  &  & (0.083) & (0.005) &  &  \\
+\midrule
+Year + Industry FE & Yes & Yes & Yes & Yes & Yes & Yes \\
+Controls & Yes & Yes & Yes & Yes & Yes & Yes \\
+N & 659 & 659 & 678 & 678 & 317 & 317 \\
+$R^2$ & 0.178 & 0.175 & 0.175 & 0.173 & --- & --- \\
+\midrule
+ & & & & & (7) & (8) \\
+ & & & & & AbVol & $|CAR|$ \\
+ & & & & & Post-SOX & Post-SOX \\
+\midrule
+\textit{Polarization} (state) & & & & & 0.120* & 0.003 \\
+ & & & & & (0.063) & (0.003) \\
+\midrule
+Year + Industry FE & & & & & Yes & Yes \\
+Controls & & & & & Yes & Yes \\
+N & & & & & 361 & 361 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize Notes: Standard errors clustered at the firm level in parentheses.
+$^{***}$, $^{**}$, $^{*}$ denote significance at 1\%, 5\%, 10\%.
+Columns (1)--(2) include both state-level and county-level partisan competitiveness
+simultaneously; the state-level measure dominates for AbVol while neither dominates
+for $|CAR|$, where both capture overlapping variation.
+Columns (3)--(4) interact polarization with a post-SOX indicator ($\geq$2003).
+Columns (5)--(8) report subsample estimates for pre-SOX (2001--2002) and post-SOX
+(2003--2023) events. The polarization coefficient is directionally positive in both subsamples.
+\end{flushleft}
+\end{table}

@@ -1,64 +1,41 @@
 """
-15_build_other_8k_placebo.py
-============================
-Constructs an earnings-announcement placebo test for the same firms as the
-main analysis sample.
+10_build_officer_change_placebo.py
+==================================
+Constructs an officer-change (Item 5.02) placebo test for the main
+auditor-change (Item 4.01) analysis.
 
 PURPOSE
 -------
-Validates that the polarization effect is specific to auditor-change disclosures
-rather than a general response to any corporate news in high-polarization states.
-Quarterly earnings announcements (Compustat rdq) carry unambiguous quantitative
-content — the reported EPS figure — leaving far less room for politically shaped
-interpretation. A null coefficient in the placebo regression is consistent with
-the paper's interpretation channel: politically heterogeneous investors disagree
-specifically when the signal is ambiguous, not when it is numerically precise.
-
-A significant positive interaction in the pooled column further identifies that
-the polarization effect is differentially stronger for auditor-change disclosures
-than for earnings announcements from the same firms.
+Validates that the polarization effect is specific to auditor-change
+disclosures rather than to any mandatory 8-K filing requiring interpretation.
+Item 5.02 officer-change filings are similarly mandatory, standardized, and
+information-relevant, but they are not institution-dependent signals about
+auditor credibility or regulatory oversight. A null coefficient in the
+placebo regression supports the claim that polarization amplifies
+disagreement specifically through the institutional-trust channel.
 
 DESIGN
 ------
-  Three columns in the output table:
-    (1) Main sample baseline — replicates Table 2 col. 2 for comparison
-    (2) Earnings placebo     — same specification, earnings-announcement events
-    (3) Pooled               — stacks both samples with an Auditor Change indicator
-                               and a Polarization × Auditor Change interaction;
-                               a positive interaction coefficient means the effect
-                               is significantly stronger for auditor changes
+  Six columns in the output table (AbVol cols 1-3, |CAR| cols 4-6):
+    (1)/(4) Main sample baseline — replicates Table 2 for comparison
+    (2)/(5) Officer-change placebo — same specification, Item 5.02 events
+    (3)/(6) Pooled — stacks both samples with an Auditor Change indicator
+            and a Polarization × Auditor Change interaction
 
 INPUTS
 ------
   Data/Processed/analysis_sample.parquet          (from 05_merge_and_estimate.py)
-  Data/Processed/polarization_state_year.parquet  (from 02_build_polarization.py)
+  Data/Processed/placebo_events_raw.parquet       (from 09_build_placebo_event_file.py)
   Data/Processed/pol_presidential.parquet         (from 02b_build_presidential_polarization.py)
   Data/Processed/compustat_controls.parquet       (from 04_build_compustat_controls.py)
-  WRDS: comp.fundq                                -- quarterly earnings dates (rdq)
-  WRDS: crsp.dsf                                  -- daily stock returns
-  WRDS: crsp.dsi                                  -- market returns (vwretd)
+  WRDS: comp.company + comp.funda + crsp.stocknames  — CIK→PERMNO link
+  WRDS: crsp.dsf                                     — daily stock returns + volume
+  WRDS: crsp.dsi                                     — market returns (vwretd)
 
 OUTPUTS
 -------
-  Data/Processed/earnings_placebo.parquet    -- placebo event-level dataset
-  Output/Tables/tab10_placebo_8k.tex         -- placebo regression table
-
-MARKET MODEL
-------------
-  Identical to 03_build_crsp_sample.py:
-    ret_{it} = alpha_i + beta_i * vwretd_t   estimated over [-252, -46]
-    CAR(-1,+1) = sum of AR over event window [-1, 0, +1]
-    Minimum 100 non-missing estimation-window trading days required.
-
-SAMPLE RESTRICTIONS
--------------------
-  - Restricted to gvkeys present in the main analysis sample
-  - Same fiscal year range as analysis sample (event_year in [year_min, year_max])
-  - Earnings events within 30 calendar days of the same firm's auditor change
-    event are excluded (contamination guard)
-  - Same SIC exclusions: no financials (SIC 6000-6999), no utilities (4900-4999)
-  - Compustat controls from fiscal year prior to event year (fyear = event_year-1)
-    must be non-missing
+  Data/Processed/officer_change_placebo.parquet   — placebo event-level dataset
+  Output/Tables/tab_placebo_502.tex               — placebo regression table
 
 WRDS USERNAME: nhwang
 """
@@ -79,11 +56,11 @@ OUT_TABS = ROOT / "Output" / "Tables"
 OUT_TABS.mkdir(parents=True, exist_ok=True)
 
 ANALYSIS_SAMPLE = PROC / "analysis_sample.parquet"
-POL_FILE        = PROC / "polarization_state_year.parquet"
-PRES_POL_FILE   = PROC / "pol_presidential.parquet"
+PLACEBO_RAW     = PROC / "placebo_events_raw.parquet"
+POL_FILE        = PROC / "pol_presidential.parquet"
 COMP_FILE       = PROC / "compustat_controls.parquet"
-OUT_EVENTS      = PROC / "earnings_placebo.parquet"
-OUT_TABLE       = OUT_TABS / "tab10_placebo_8k.tex"
+OUT_EVENTS      = PROC / "officer_change_placebo.parquet"
+OUT_TABLE       = OUT_TABS / "tab_placebo_502.tex"
 
 WRDS_USERNAME = "nhwang"
 
@@ -98,7 +75,7 @@ CONTROLS = ["size", "leverage", "roa", "btm", "loss", "sales_growth"]
 EXCLUSION_DAYS = 30
 
 # Calendar-day buffer before earliest event to ensure full estimation window
-CRSP_LEAD_DAYS = 380   # 252 trading days ≈ 355 calendar days; 380 is safe
+CRSP_LEAD_DAYS = 380
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -110,13 +87,11 @@ def batch_list(lst, size=200):
 
 
 def sql_in_str(values):
-    """SQL IN clause for character varying columns (e.g. gvkey)."""
     escaped = ["'" + str(v).replace("'", "''") + "'" for v in values]
     return "(" + ", ".join(escaped) + ")"
 
 
 def sql_in_int(values):
-    """SQL IN clause for integer columns (e.g. permno)."""
     return "(" + ", ".join(str(v) for v in values) + ")"
 
 
@@ -146,91 +121,129 @@ def load_analysis_metadata():
     return df
 
 
-# ── Step 2: Pull earnings announcement dates (comp.fundq) ─────────────────────
+# ── Step 2: Load and prepare Item 5.02 events ───────────────────────────────
 
-def pull_earnings_dates(db, gvkeys, year_min, year_max):
-    """
-    Pull quarterly earnings announcement dates from comp.fundq.
-    Filtered to gvkeys in analysis sample and event year range.
-    One row per (gvkey, fyearq, fqtr).
-    """
-    print(f"  Querying comp.fundq for {len(gvkeys):,} gvkeys, "
-          f"fyearq {year_min}–{year_max}...")
+def load_placebo_events():
+    if not PLACEBO_RAW.exists():
+        raise FileNotFoundError(
+            f"Placebo event file not found: {PLACEBO_RAW}\n"
+            "Run 09_build_placebo_event_file.py first."
+        )
+    df = pd.read_parquet(PLACEBO_RAW)
+    df["date_filed"] = pd.to_datetime(df["date_filed"])
+
+    # Drop amendments
+    if "is_amendment" in df.columns:
+        n0 = len(df)
+        df = df[~df["is_amendment"]].copy()
+        print(f"  Dropped {n0 - len(df)} amendments")
+
+    # Normalize CIK to 10-digit zero-padded string (matches comp.company.cik)
+    df["cik"] = df["cik"].astype(str).str.strip().str.zfill(10)
+
+    print(f"  Item 5.02 events loaded: {len(df):,}")
+    print(f"  Date range: {df['date_filed'].min().date()} — {df['date_filed'].max().date()}")
+    return df
+
+
+# ── Step 3: CIK → PERMNO link (same approach as 03_build_crsp_sample.py) ────
+
+def build_cik_permno_link(db, ciks):
+    """CIK → gvkey (comp.company) → cusip (comp.funda) → permno (crsp.stocknames)."""
+    print(f"  Linking {len(ciks):,} unique CIKs to PERMNOs...")
+
+    # CIK → gvkey
+    records = []
+    for chunk in batch_list(ciks, 500):
+        sql = f"SELECT cik, gvkey FROM comp.company WHERE cik IN {sql_in_str(chunk)}"
+        records.append(db.raw_sql(sql))
+    cik_gvkey = pd.concat(records, ignore_index=True)
+    print(f"    CIK → gvkey: {cik_gvkey['cik'].nunique():,} / {len(ciks):,} CIKs matched")
+
+    if cik_gvkey.empty:
+        raise ValueError("No CIK → gvkey matches found.")
+
+    # gvkey → most-recent CUSIP
+    gvkeys = cik_gvkey["gvkey"].unique().tolist()
     records = []
     for chunk in batch_list(gvkeys, 500):
         sql = f"""
-            SELECT gvkey, rdq, fyearq, fqtr
-            FROM comp.fundq
+            SELECT DISTINCT ON (gvkey) gvkey, cusip
+            FROM comp.funda
             WHERE gvkey IN {sql_in_str(chunk)}
-              AND rdq IS NOT NULL
-              AND fyearq BETWEEN {year_min} AND {year_max}
-              AND indfmt  = 'INDL'
-              AND datafmt = 'STD'
-              AND popsrc  = 'D'
-              AND consol  = 'C'
+              AND cusip IS NOT NULL
+            ORDER BY gvkey, datadate DESC
         """
         records.append(db.raw_sql(sql))
-    rdq = pd.concat(records, ignore_index=True)
-    rdq["rdq"] = pd.to_datetime(rdq["rdq"])
-    # One row per firm-quarter (drop any Compustat data-format duplicates)
-    rdq = rdq.drop_duplicates(subset=["gvkey", "fyearq", "fqtr"])
-    print(f"  Earnings dates: {len(rdq):,} events, {rdq['gvkey'].nunique()} firms")
-    return rdq
+    gvkey_cusip = pd.concat(records, ignore_index=True)
+    cik_gvkey = cik_gvkey.merge(gvkey_cusip, on="gvkey", how="inner")
+    print(f"    gvkey → cusip: {gvkey_cusip['gvkey'].nunique():,} matched")
 
+    # CUSIP → PERMNO via crsp.stocknames
+    cik_gvkey["ncusip8"] = cik_gvkey["cusip"].str[:8]
+    ncusips = cik_gvkey["ncusip8"].dropna().unique().tolist()
+    records = []
+    for chunk in batch_list(ncusips, 500):
+        sql = f"""
+            SELECT permno, ncusip, namedt, nameenddt
+            FROM crsp.stocknames
+            WHERE ncusip IN {sql_in_str(chunk)}
+        """
+        records.append(db.raw_sql(sql))
+    stocknames = pd.concat(records, ignore_index=True)
+    stocknames["namedt"]    = pd.to_datetime(stocknames["namedt"].fillna("1900-01-01"))
+    stocknames["nameenddt"] = pd.to_datetime(stocknames["nameenddt"].fillna("2099-12-31"))
 
-# ── Step 3: Build placebo event list ─────────────────────────────────────────
-
-def build_placebo_events(rdq, analysis_df):
-    """
-    Attach permno and HQ state to each earnings event, then exclude
-    events within EXCLUSION_DAYS of an auditor-change event for the same firm.
-    """
-    # Most-recent state per gvkey (state is effectively time-invariant)
-    state_map = (
-        analysis_df[["gvkey", "state"]]
-        .drop_duplicates(subset="gvkey", keep="last")
+    link = (
+        cik_gvkey
+        .merge(stocknames, left_on="ncusip8", right_on="ncusip", how="inner")
+        .rename(columns={"namedt": "linkdt", "nameenddt": "linkenddt"})
+        [["cik", "gvkey", "permno", "linkdt", "linkenddt"]]
     )
-    # Permno per gvkey
-    permno_map = (
-        analysis_df[["gvkey", "permno"]]
-        .drop_duplicates(subset="gvkey", keep="last")
-    )
+    print(f"    Final link table: {len(link):,} rows, "
+          f"{link['cik'].nunique():,} unique CIKs with PERMNOs")
+    return link
 
-    placebo = (
-        rdq
-        .merge(state_map,  on="gvkey", how="inner")
-        .merge(permno_map, on="gvkey", how="inner")
-        .rename(columns={"rdq": "event_date"})
-    )
-    placebo["event_year"] = placebo["event_date"].dt.year
 
-    # Exclude earnings events close in time to an auditor-change event
-    ac = analysis_df[["gvkey", "event_date"]].rename(
-        columns={"event_date": "ac_date"}
+def apply_link(events, link):
+    """Match each event to the PERMNO active on date_filed."""
+    merged = events.merge(link, on="cik", how="left")
+    valid = (merged["date_filed"] >= merged["linkdt"]) & \
+            (merged["date_filed"] <= merged["linkenddt"])
+    matched = (
+        merged[valid].copy()
+        .sort_values("linkdt")
+        .drop_duplicates(subset=["cik", "acc_nodash"], keep="first")
     )
+    print(f"  Events matched to PERMNO: {len(matched):,} / {len(events):,}")
+    return matched
+
+
+# ── Step 4: Exclude events near auditor changes ─────────────────────────────
+
+def exclude_near_auditor_changes(placebo, analysis_df):
+    """Remove Item 5.02 events within EXCLUSION_DAYS of an auditor-change event
+    for the same firm (matched by gvkey)."""
+    ac = analysis_df[["gvkey", "event_date"]].rename(columns={"event_date": "ac_date"})
     merged = placebo.merge(ac, on="gvkey", how="left")
-    merged["gap"] = (merged["event_date"] - merged["ac_date"]).abs().dt.days
-
+    merged["gap"] = (merged["date_filed"] - merged["ac_date"]).abs().dt.days
     min_gap = (
-        merged.groupby(["gvkey", "event_date"])["gap"]
-        .min()
-        .reset_index(name="min_gap")
+        merged.groupby(["gvkey", "date_filed"])["gap"]
+        .min().reset_index(name="min_gap")
     )
-    n_before = len(placebo)
+    n0 = len(placebo)
     placebo = (
-        placebo
-        .merge(min_gap, on=["gvkey", "event_date"], how="left")
+        placebo.merge(min_gap, on=["gvkey", "date_filed"], how="left")
         .query("min_gap.isna() or min_gap > @EXCLUSION_DAYS")
         .drop(columns="min_gap")
         .reset_index(drop=True)
     )
-    print(f"  Excluded {n_before - len(placebo):,} events within "
-          f"{EXCLUSION_DAYS} days of an auditor change")
-    print(f"  Placebo events: {len(placebo):,}")
+    print(f"  Excluded {n0 - len(placebo):,} events within {EXCLUSION_DAYS} days "
+          f"of an auditor change")
     return placebo
 
 
-# ── Step 4: Pull CRSP data ───────────────────────────────────────────────────
+# ── Step 5: Pull CRSP data ───────────────────────────────────────────────────
 
 def pull_crsp_daily(db, permnos, start_date, end_date):
     print(f"  Date range: {start_date} → {end_date}")
@@ -265,10 +278,9 @@ def pull_market_returns(db, start_date, end_date):
     return mkt
 
 
-# ── Step 5: Compute CARs ─────────────────────────────────────────────────────
+# ── Step 6: Compute CARs and AbVol ──────────────────────────────────────────
 
 def trading_day_offset(event_date, trading_days, offset):
-    """Return trading day 'offset' slots from event_date. None if out of range."""
     idx    = trading_days.searchsorted(event_date)
     target = idx + offset
     if target < 0 or target >= len(trading_days):
@@ -277,39 +289,34 @@ def trading_day_offset(event_date, trading_days, offset):
 
 
 def compute_cars(placebo, daily, mkt):
-    """
-    Estimate market model and compute CAR(-1,+1) and AbVol(-1,+1) for every
-    placebo event. Same OLS methodology as 03_build_crsp_sample.py.
-    """
-    # Sorted trading-day calendar from combined CRSP data
+    """Compute CAR(-1,+1) and AbVol(-1,+1) for every placebo event."""
     trading_days = (
         pd.concat([daily["date"], mkt["date"]])
         .drop_duplicates().sort_values().reset_index(drop=True)
     )
-    mkt_dict  = mkt.set_index("date")["mkt_ret"].to_dict()
+    mkt_dict = mkt.set_index("date")["mkt_ret"].to_dict()
 
-    # Pre-compute log volume for AbVol
     daily = daily.copy()
     daily["logvol"] = np.log(daily["vol"].clip(lower=0) + 1)
-
     daily_idx = daily.set_index("permno")
 
     results  = []
     n_total  = len(placebo)
-    n_report = max(1, n_total // 10)   # progress every ~10%
+    n_report = max(1, n_total // 10)
 
     for i, (_, row) in enumerate(placebo.iterrows()):
-        gvkey      = row["gvkey"]
         permno     = row["permno"]
-        event_date = row["event_date"]
+        event_date = row["date_filed"]
 
         if i % n_report == 0:
             print(f"    {i:,} / {n_total:,} ({100*i/n_total:.0f}%)")
 
-        base = dict(gvkey=gvkey, permno=permno, event_date=event_date,
-                    car_m1p1=np.nan, abvol_m1p1=np.nan, n_est_days=0)
+        base = dict(
+            cik=row["cik"], gvkey=row["gvkey"], permno=permno,
+            event_date=event_date,
+            car_m1p1=np.nan, abvol_m1p1=np.nan, n_est_days=0,
+        )
 
-        # Resolve window boundaries
         est_start = trading_day_offset(event_date, trading_days, EST_WINDOW_START)
         est_end   = trading_day_offset(event_date, trading_days, EST_WINDOW_END)
         ev_start  = trading_day_offset(event_date, trading_days, -1)
@@ -317,7 +324,6 @@ def compute_cars(placebo, daily, mkt):
 
         if any(d is None for d in [est_start, est_end, ev_start, ev_end]):
             results.append(base); continue
-
         if permno not in daily_idx.index:
             results.append(base); continue
 
@@ -331,7 +337,7 @@ def compute_cars(placebo, daily, mkt):
         if len(est) < MIN_EST_DAYS:
             results.append(base); continue
 
-        # OLS: ret = alpha + beta * mkt_ret
+        # Market model OLS
         X = np.column_stack([np.ones(len(est)), est["mkt_ret"].values])
         y = est["ret"].values
         try:
@@ -340,11 +346,11 @@ def compute_cars(placebo, daily, mkt):
             results.append(base); continue
         alpha_hat, beta_hat = coef
 
-        # Estimation-window mean log volume (baseline for AbVol)
+        # Estimation-window mean log volume
         est_logvol = est["logvol"].dropna()
         mean_logvol = est_logvol.mean() if len(est_logvol) > 0 else np.nan
 
-        # Event window AR → CAR and AbVol
+        # Event window
         ev = firm[(firm["date"] >= ev_start) & (firm["date"] <= ev_end)].copy()
         ev["mkt_ret"] = ev["date"].map(mkt_dict)
         ev_ret = ev.dropna(subset=["ret", "mkt_ret"])
@@ -353,7 +359,6 @@ def compute_cars(placebo, daily, mkt):
 
         car = (ev_ret["ret"] - (alpha_hat + beta_hat * ev_ret["mkt_ret"])).sum()
 
-        # AbVol: mean(logvol - baseline) over event window
         ev_logvol = ev["logvol"].dropna()
         if len(ev_logvol) > 0 and not np.isnan(mean_logvol):
             abvol = (ev_logvol - mean_logvol).mean()
@@ -364,40 +369,53 @@ def compute_cars(placebo, daily, mkt):
                         "n_est_days": len(est)})
 
     out = pd.DataFrame(results)
-    n_valid_car  = out["car_m1p1"].notna().sum()
-    n_valid_vol  = out["abvol_m1p1"].notna().sum()
-    print(f"\n  Valid CARs:  {n_valid_car:,} / {n_total:,} ({n_valid_car/n_total:.1%})")
-    print(f"  Valid AbVol: {n_valid_vol:,} / {n_total:,} ({n_valid_vol/n_total:.1%})")
+    n_car = out["car_m1p1"].notna().sum()
+    n_vol = out["abvol_m1p1"].notna().sum()
+    print(f"\n  Valid CARs:  {n_car:,} / {n_total:,} ({n_car/n_total:.1%})")
+    print(f"  Valid AbVol: {n_vol:,} / {n_total:,} ({n_vol/n_total:.1%})")
     return out
 
 
-# ── Step 6: Merge polarization and controls ──────────────────────────────────
+# ── Step 7: Merge polarization and controls ──────────────────────────────────
 
 def merge_and_filter(placebo, car_df, pres_pol, comp):
-    """
-    Attach CARs, presidential-election polarization (margin), and Compustat
-    controls. Apply the same sample filters as the main analysis.
-    """
     df = placebo.merge(
-        car_df[["gvkey", "event_date", "car_m1p1", "abvol_m1p1", "n_est_days"]],
-        on=["gvkey", "event_date"], how="inner"
+        car_df[["cik", "event_date", "car_m1p1", "abvol_m1p1", "n_est_days"]],
+        on=["cik", "event_date"], how="inner"
     )
     df = df[df["car_m1p1"].notna()].copy()
+    df["event_year"] = df["event_date"].dt.year
 
-    # Presidential-election margin (same measure as main analysis: margin = |D-R|)
+    # State from gvkey → Compustat (headquarters state)
+    state_col = "state_abbr" if "state_abbr" in comp.columns else "state"
+    comp_state = comp[["gvkey", "fyear", state_col]].dropna(subset=[state_col])
+    comp_state = comp_state.rename(columns={"fyear": "comp_year", state_col: "state"})
+
+    # Presidential-election margin
     pres_merge = pres_pol[["year", "state_abbr", "margin"]].rename(
         columns={"year": "event_year", "state_abbr": "state"}
     )
-    df = df.merge(pres_merge, on=["event_year", "state"], how="left")
 
     # Compustat controls from fiscal year prior to event year
     df["comp_year"] = df["event_year"] - 1
+
+    # Get state from Compustat
+    if "state" not in df.columns:
+        state_map = (
+            comp_state.sort_values("comp_year")
+            .drop_duplicates(subset="gvkey", keep="last")
+            [["gvkey", "state"]]
+        )
+        df = df.merge(state_map, on="gvkey", how="left")
+
+    df = df.merge(pres_merge, on=["event_year", "state"], how="left")
+
     comp_merge = comp[["gvkey", "fyear", "sic2"] + CONTROLS].rename(
         columns={"fyear": "comp_year"}
     )
     df = df.merge(comp_merge, on=["gvkey", "comp_year"], how="left")
 
-    # FE string columns
+    # Derived columns
     df["year_str"]  = df["event_year"].astype(str)
     df["sic2_str"]  = df["sic2"].fillna(-1).astype(int).astype(str)
     df["gvkey_str"] = df["gvkey"].astype(str)
@@ -406,21 +424,20 @@ def merge_and_filter(placebo, car_df, pres_pol, comp):
 
     # Drop missing key variables
     n0 = len(df)
-    df = df.dropna(subset=["absCar", "margin", "sic2"] + CONTROLS)
-    print(f"  After dropping missing: {len(df):,} (dropped {n0-len(df):,})")
+    df = df.dropna(subset=["absCar", "abvol", "margin", "sic2"] + CONTROLS)
+    print(f"  After dropping missing: {len(df):,} (dropped {n0 - len(df):,})")
 
     # SIC exclusions — same as main analysis
     n1 = len(df)
     df = df[~df["sic2"].isin(range(60, 70)) & ~df["sic2"].isin(range(49, 50))]
-    print(f"  After SIC exclusions: {len(df):,} (dropped {n1-len(df):,})")
+    print(f"  After SIC exclusions: {len(df):,} (dropped {n1 - len(df):,})")
 
     return df.reset_index(drop=True)
 
 
-# ── Step 7: Regressions and table ────────────────────────────────────────────
+# ── Step 8: Regressions and table ────────────────────────────────────────────
 
 def run_ols(formula, df, cluster_var="gvkey_str"):
-    """OLS with firm-clustered standard errors."""
     import patsy
     _, X = patsy.dmatrices(formula, data=df, return_type="dataframe",
                             NA_action="drop")
@@ -432,10 +449,6 @@ def run_ols(formula, df, cluster_var="gvkey_str"):
 
 
 def write_table(models_list, out_path):
-    """
-    Write a 6-column LaTeX table: AbVol (cols 1-3) then |CAR| (cols 4-6),
-    each with main / earnings / pooled specifications.
-    """
     coef_map = {
         "competitive_std":                  r"\textit{Polarization}",
         "auditor_event":                    r"Auditor Change",
@@ -443,33 +456,33 @@ def write_table(models_list, out_path):
     }
     dep_labels = [
         r"AbVol\newline Aud. chg.",
-        r"AbVol\newline Earnings",
+        r"AbVol\newline Officer chg.",
         r"AbVol\newline Pooled",
         r"$|CAR|$\newline Aud. chg.",
-        r"$|CAR|$\newline Earnings",
+        r"$|CAR|$\newline Officer chg.",
         r"$|CAR|$\newline Pooled",
     ]
-    samples = ["Aud. chg.", "Earnings", "Pooled",
-               "Aud. chg.", "Earnings", "Pooled"]
+    samples = ["Aud. chg.", "Officer chg.", "Pooled",
+               "Aud. chg.", "Officer chg.", "Pooled"]
 
     lines = []
     lines.append(r"\begin{table}[htbp]")
     lines.append(r"\centering")
     lines.append(
-        r"\caption{Earnings-Announcement Placebo Test. "
+        r"\caption{Officer-Change (Item 5.02) Placebo Test. "
         r"Columns~(1)--(3) use abnormal trading volume; columns~(4)--(6) use "
         r"$|CAR[-1,+1]|$. "
-        r"Columns~(1) and~(4) replicate the baseline specification from "
-        r"Table~\ref{tab:main}. "
-        r"Columns~(2) and~(5) apply the identical specification to quarterly earnings "
-        r"announcements (\texttt{rdq} from Compustat) for the same firms over the "
-        r"same period. "
+        r"Columns~(1) and~(4) replicate the baseline auditor-change specification "
+        r"from Table~\ref{tab:main}. "
+        r"Columns~(2) and~(5) apply the identical specification to Form~8-K "
+        r"Item~5.02 officer-change filings (departures, elections, and appointments "
+        r"of directors and certain officers). "
         r"Columns~(3) and~(6) pool both event types and add an \textit{Auditor Change} "
         r"indicator and its interaction with \textit{Polarization}. "
-        r"Events within 30 calendar days of an auditor-change event for the same firm "
+        r"Events within 30 calendar days of the same firm's auditor-change event "
         r"are excluded from the placebo sample.}"
     )
-    lines.append(r"\label{tab:placebo_8k}")
+    lines.append(r"\label{tab:placebo_502}")
     ncols = len(models_list)
     lines.append(r"\begin{tabular}{l" + "c" * ncols + "}")
     lines.append(r"\toprule")
@@ -506,10 +519,9 @@ def write_table(models_list, out_path):
         r"\footnotesize Notes: Standard errors clustered at the firm level in "
         r"parentheses. $^{***}$, $^{**}$, $^{*}$ denote significance at "
         r"1\%, 5\%, 10\%. \textit{Polarization} is the standardized "
-        r"headquarters-state presidential-election polarization index (mean zero, "
-        r"unit standard deviation computed within each column's estimation sample). "
+        r"headquarters-state presidential-election competitiveness index. "
         r"The market model is estimated over trading days $[-252,-46]$ relative to "
-        r"each announcement date using the CRSP value-weighted return."
+        r"each filing date using the CRSP value-weighted return."
     )
     lines.append(r"\end{flushleft}")
     lines.append(r"\end{table}")
@@ -521,53 +533,60 @@ def write_table(models_list, out_path):
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
-    print("=== 15_build_other_8k_placebo.py ===")
+    print("=== 10_build_officer_change_placebo.py ===")
 
-    # ── [1] Load analysis sample ─────────────────────────────────────────────
+    # ── [1] Load data ────────────────────────────────────────────────────────
     print("\n[1] Loading analysis sample...")
     analysis = load_analysis_metadata()
-    gvkeys   = analysis["gvkey"].unique().tolist()
-    year_min = analysis["event_date"].dt.year.min()
-    year_max = analysis["event_date"].dt.year.max()
-    print(f"  Event year range in analysis sample: {year_min}–{year_max}")
+
+    print("\n[2] Loading Item 5.02 events...")
+    placebo_raw = load_placebo_events()
 
     # ── [2] WRDS connection ──────────────────────────────────────────────────
-    print("\n[2] Connecting to WRDS...")
+    print("\n[3] Connecting to WRDS...")
     db = wrds.Connection(wrds_username=WRDS_USERNAME)
 
-    # ── [3] Pull earnings dates ──────────────────────────────────────────────
-    print("\n[3] Pulling earnings announcement dates (comp.fundq)...")
-    rdq = pull_earnings_dates(db, gvkeys, year_min, year_max)
+    # ── [3] CIK → PERMNO ────────────────────────────────────────────────────
+    print("\n[4] Building CIK → PERMNO link...")
+    ciks = placebo_raw["cik"].unique().tolist()
+    link = build_cik_permno_link(db, ciks)
 
-    # ── [4] Build placebo event list ─────────────────────────────────────────
-    print("\n[4] Building placebo event list...")
-    placebo = build_placebo_events(rdq, analysis)
+    print("\n[5] Matching events to PERMNOs...")
+    placebo = apply_link(placebo_raw, link)
+
+    # ── [4] Exclude events near auditor changes ─────────────────────────────
+    print("\n[6] Excluding events near auditor changes...")
+    placebo = exclude_near_auditor_changes(placebo, analysis)
+    print(f"  Placebo events after exclusion: {len(placebo):,}")
 
     # ── [5] Pull CRSP data ───────────────────────────────────────────────────
     crsp_start = (
-        placebo["event_date"].min() - pd.Timedelta(days=CRSP_LEAD_DAYS)
+        placebo["date_filed"].min() - pd.Timedelta(days=CRSP_LEAD_DAYS)
     ).strftime("%Y-%m-%d")
     crsp_end = (
-        placebo["event_date"].max() + pd.Timedelta(days=5)
+        placebo["date_filed"].max() + pd.Timedelta(days=5)
     ).strftime("%Y-%m-%d")
-    permnos = placebo["permno"].unique().tolist()
+    permnos = placebo["permno"].astype(int).unique().tolist()
 
-    print(f"\n[5] Pulling CRSP daily stock returns ({crsp_start} → {crsp_end})...")
+    print(f"\n[7] Pulling CRSP daily stock returns...")
     daily = pull_crsp_daily(db, permnos, crsp_start, crsp_end)
 
-    print("\n[6] Pulling CRSP market returns...")
+    print("\n[8] Pulling CRSP market returns...")
     mkt = pull_market_returns(db, crsp_start, crsp_end)
 
     db.close()
 
-    # ── [6] Compute CARs ─────────────────────────────────────────────────────
-    print("\n[7] Computing market-model CARs for placebo events...")
+    # ── [6] Compute CARs and AbVol ───────────────────────────────────────────
+    print("\n[9] Computing market-model CARs and AbVol...")
     car_df = compute_cars(placebo, daily, mkt)
 
     # ── [7] Merge and filter ─────────────────────────────────────────────────
-    print("\n[8] Merging polarization and controls...")
-    pres_pol = pd.read_parquet(PRES_POL_FILE)
+    print("\n[10] Merging polarization and controls...")
+    pres_pol = pd.read_parquet(POL_FILE)
     comp     = pd.read_parquet(COMP_FILE)
+
+    # Script handles both state_abbr and state column names internally
+
     placebo_df = merge_and_filter(placebo, car_df, pres_pol, comp)
     print(f"\n  Final placebo sample: {len(placebo_df):,} events, "
           f"{placebo_df['gvkey'].nunique()} firms")
@@ -577,11 +596,9 @@ def main():
     sig_m = placebo_df["margin"].std()
     placebo_df["competitive_std"] = -(placebo_df["margin"] - mu_m) / sig_m
 
-    # Describe placebo |CAR| vs main |CAR|
-    print(f"\n  Placebo |CAR| mean = {placebo_df['absCar'].mean():.4f}, "
-          f"median = {placebo_df['absCar'].median():.4f}")
-    print(f"  Main   |CAR| mean = {analysis['absCar'].mean():.4f}, "
-          f"median = {analysis['absCar'].median():.4f}")
+    # Descriptives
+    print(f"\n  Placebo |CAR| mean = {placebo_df['absCar'].mean():.4f}")
+    print(f"  Placebo AbVol mean = {placebo_df['abvol'].mean():.4f}")
 
     placebo_df.to_parquet(OUT_EVENTS, index=False)
     print(f"\n  Saved: {OUT_EVENTS}")
@@ -590,9 +607,9 @@ def main():
     ctrl = " + ".join(CONTROLS)
     fe   = "C(year_str) + C(sic2_str)"
 
-    print("\n[9] Running regressions...")
+    print("\n[11] Running regressions...")
 
-    # Build pooled dataset (shared across both outcomes)
+    # Build pooled dataset
     keep_cols = ["gvkey", "gvkey_str", "absCar", "abvol", "margin",
                  "year_str", "sic2_str"] + CONTROLS
 
@@ -608,20 +625,16 @@ def main():
     sig_p  = pooled["margin"].std()
     pooled["competitive_std"] = -(pooled["margin"] - mu_p) / sig_p
 
-    # Run for both outcomes; AbVol first (primary), then |CAR|
     all_models = []
     for depvar, label in [("abvol", "AbVol"), ("absCar", "|CAR|")]:
-        # (a) Baseline: main sample
         m_main = run_ols(f"{depvar} ~ competitive_std + {ctrl} + {fe}", analysis)
-        print(f"  [{label}] Main:     β={m_main.params['competitive_std']:.4f}, "
+        print(f"  [{label}] Main:       β={m_main.params['competitive_std']:.4f}, "
               f"p={m_main.pvalues['competitive_std']:.3f}, N={int(m_main.nobs)}")
 
-        # (b) Placebo: earnings announcements
         m_placebo = run_ols(f"{depvar} ~ competitive_std + {ctrl} + {fe}", placebo_df)
-        print(f"  [{label}] Earnings: β={m_placebo.params['competitive_std']:.4f}, "
+        print(f"  [{label}] Officer chg: β={m_placebo.params['competitive_std']:.4f}, "
               f"p={m_placebo.pvalues['competitive_std']:.3f}, N={int(m_placebo.nobs)}")
 
-        # (c) Pooled: interaction
         m_pooled = run_ols(
             f"{depvar} ~ competitive_std + auditor_event"
             f" + competitive_std:auditor_event + {ctrl} + {fe}",
@@ -629,13 +642,13 @@ def main():
         )
         b_int = m_pooled.params.get("competitive_std:auditor_event", np.nan)
         p_int = m_pooled.pvalues.get("competitive_std:auditor_event", np.nan)
-        print(f"  [{label}] Pooled interaction: β={b_int:.4f}, p={p_int:.3f}, "
+        print(f"  [{label}] Pooled int:  β={b_int:.4f}, p={p_int:.3f}, "
               f"N={int(m_pooled.nobs)}")
 
         all_models.extend([m_main, m_placebo, m_pooled])
 
-    # ── [9] Write table ───────────────────────────────────────────────────────
-    print("\n[10] Writing LaTeX table...")
+    # ── [9] Write table ──────────────────────────────────────────────────────
+    print("\n[12] Writing LaTeX table...")
     write_table(all_models, OUT_TABLE)
 
     print("\n=== Done ===")
