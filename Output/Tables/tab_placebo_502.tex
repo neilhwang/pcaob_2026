@@ -1,0 +1,28 @@
+\begin{table}[htbp]
+\centering
+\caption{Officer-Change (Item 5.02) Placebo Test. Columns~(1)--(3) use abnormal trading volume; columns~(4)--(6) use $|CAR[-1,+1]|$. Columns~(1) and~(4) replicate the baseline auditor-change specification from Table~\ref{tab:main}. Columns~(2) and~(5) apply the identical specification to Form~8-K Item~5.02 officer-change filings (departures, elections, and appointments of directors and certain officers). Columns~(3) and~(6) pool both event types and add an \textit{Auditor Change} indicator and its interaction with \textit{Polarization}. Events within 30 calendar days of the same firm's auditor-change event are excluded from the placebo sample.}
+\label{tab:placebo_502}
+\begin{tabular}{lcccccc}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & AbVol\newline Aud. chg. & AbVol\newline Officer chg. & AbVol\newline Pooled & $|CAR|$\newline Aud. chg. & $|CAR|$\newline Officer chg. & $|CAR|$\newline Pooled \\
+\midrule
+\textit{Polarization} & 0.111*** & 0.016 & 0.012 & 0.005** & -0.000 & -0.000 \\
+ & (0.043) & (0.014) & (0.015) & (0.002) & (0.001) & (0.001) \\
+Auditor Change &  &  & -0.017 &  &  & -0.001 \\
+ &  &  & (0.089) &  &  & (0.004) \\
+\textit{Polarization} $\times$ Auditor Change &  &  & 0.110** &  &  & 0.006*** \\
+ &  &  & (0.043) &  &  & (0.002) \\
+\midrule
+Year + Industry FE & Yes & Yes & Yes & Yes & Yes & Yes \\
+Controls & Yes & Yes & Yes & Yes & Yes & Yes \\
+Cluster & Firm & Firm & Firm & Firm & Firm & Firm \\
+Sample & Aud. chg. & Officer chg. & Pooled & Aud. chg. & Officer chg. & Pooled \\
+N & 678 & 3,677 & 4,355 & 678 & 3,677 & 4,355 \\
+$R^2$ & 0.175 & 0.040 & 0.045 & 0.172 & 0.121 & 0.124 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize Notes: Standard errors clustered at the firm level in parentheses. $^{***}$, $^{**}$, $^{*}$ denote significance at 1\%, 5\%, 10\%. \textit{Polarization} is the standardized headquarters-state presidential-election competitiveness index. The market model is estimated over trading days $[-252,-46]$ relative to each filing date using the CRSP value-weighted return.
+\end{flushleft}
+\end{table}

@@ -51,7 +51,11 @@
       "Bash(curl -s \"https://api.openalex.org/works?search=Political+Polarization+Financial+News+Goldman+Gupta+Israelsen&per_page=5\")",
       "Bash(curl -s \"https://api.openalex.org/works?search=Political+Polarization+Investor+Disagreement+Hao+Nain&per_page=5\")",
       "Bash(wc -l tab*.tex)",
-      "Bash(xargs -r kill)"
+      "Bash(xargs -r kill)",
+      "Bash(taskkill //PID 948 //F)",
+      "Bash(kill -9 948)",
+      "Bash(sort -k6)",
+      "Bash(tee /tmp/s05.log)"
     ]
   }
 }

@@ -379,6 +379,9 @@ def compute_cars(placebo, daily, mkt):
 # ── Step 7: Merge polarization and controls ──────────────────────────────────
 
 def merge_and_filter(placebo, car_df, pres_pol, comp):
+    # Placebo uses date_filed; car_df uses event_date (set from date_filed
+    # in compute_cars). Rename placebo.date_filed -> event_date for merge.
+    placebo = placebo.rename(columns={"date_filed": "event_date"})
     df = placebo.merge(
         car_df[["cik", "event_date", "car_m1p1", "abvol_m1p1", "n_est_days"]],
         on=["cik", "event_date"], how="inner"
@@ -554,7 +557,18 @@ def main():
     print("\n[5] Matching events to PERMNOs...")
     placebo = apply_link(placebo_raw, link)
 
-    # ── [4] Exclude events near auditor changes ─────────────────────────────
+    # ── [5a] Filter to analysis-sample firms (within-firm placebo design) ──
+    # This matches the earnings-placebo (script 15) approach: same firms,
+    # different event type. Without this filter the script pulls CRSP data
+    # for ~10k firms and iterates over ~120k events, which is prohibitively
+    # slow and gives a cross-firm comparison rather than a within-firm test.
+    analysis_gvkeys = set(analysis["gvkey"].astype(str).unique())
+    n0 = len(placebo)
+    placebo = placebo[placebo["gvkey"].astype(str).isin(analysis_gvkeys)].copy()
+    print(f"\n[5a] Filtered to analysis-sample firms: {len(placebo):,} / {n0:,} "
+          f"({len(analysis_gvkeys):,} gvkeys)")
+
+    # ── [6] Exclude events near auditor changes ─────────────────────────────
     print("\n[6] Excluding events near auditor changes...")
     placebo = exclude_near_auditor_changes(placebo, analysis)
     print(f"  Placebo events after exclusion: {len(placebo):,}")
@@ -628,11 +642,11 @@ def main():
     all_models = []
     for depvar, label in [("abvol", "AbVol"), ("absCar", "|CAR|")]:
         m_main = run_ols(f"{depvar} ~ competitive_std + {ctrl} + {fe}", analysis)
-        print(f"  [{label}] Main:       β={m_main.params['competitive_std']:.4f}, "
+        print(f"  [{label}] Main:       beta={m_main.params['competitive_std']:.4f}, "
               f"p={m_main.pvalues['competitive_std']:.3f}, N={int(m_main.nobs)}")
 
         m_placebo = run_ols(f"{depvar} ~ competitive_std + {ctrl} + {fe}", placebo_df)
-        print(f"  [{label}] Officer chg: β={m_placebo.params['competitive_std']:.4f}, "
+        print(f"  [{label}] Officer chg: beta={m_placebo.params['competitive_std']:.4f}, "
               f"p={m_placebo.pvalues['competitive_std']:.3f}, N={int(m_placebo.nobs)}")
 
         m_pooled = run_ols(
@@ -642,7 +656,7 @@ def main():
         )
         b_int = m_pooled.params.get("competitive_std:auditor_event", np.nan)
         p_int = m_pooled.pvalues.get("competitive_std:auditor_event", np.nan)
-        print(f"  [{label}] Pooled int:  β={b_int:.4f}, p={p_int:.3f}, "
+        print(f"  [{label}] Pooled int:  beta={b_int:.4f}, p={p_int:.3f}, "
               f"N={int(m_pooled.nobs)}")
 
         all_models.extend([m_main, m_placebo, m_pooled])

@@ -2223,10 +2223,23 @@ def main() -> None:
                        "spread_change", "abvol_change", "roll_change"]
         pre_cols = ["pre_vol", "pre_parkinson", "pre_amihud",
                     "pre_spread", "pre_abvol", "pre_roll"]
+        # Deduplicate on (permno, event_date) to prevent merge fan-out
+        # (observed: 16 duplicate keys that inflate the sample from 678 to 724).
+        n_pre_dedup = len(unc)
+        unc = unc.drop_duplicates(subset=["permno", "event_date"], keep="first")
+        if len(unc) < n_pre_dedup:
+            log.warning("post_event_uncertainty: dropped %d duplicate "
+                        "(permno, event_date) rows", n_pre_dedup - len(unc))
+        n_before_merge = len(df)
         df = df.merge(
             unc[["permno", "event_date"] + change_cols + pre_cols],
             on=["permno", "event_date"], how="left"
         )
+        if len(df) != n_before_merge:
+            raise RuntimeError(
+                f"post_event_uncertainty merge expanded N from {n_before_merge} "
+                f"to {len(df)}. Remaining duplicate (permno, event_date) pairs."
+            )
         # Winsorize each change measure at 1st/99th percentiles
         for c in change_cols:
             mask = df[c].notna()
