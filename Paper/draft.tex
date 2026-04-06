@@ -501,8 +501,9 @@ constant while varying materiality, but our observable indicator captures
 both dimensions simultaneously.
 
 We construct a \texttt{high\_ambiguity} indicator from observable filing
-characteristics (defined formally in Section~\ref{sec:design}) and interact
-it with the polarization measure in P3 below.
+characteristics (defined formally in Section~\ref{sec:design}) and
+explore its interaction with the polarization measure in the empirical
+analysis.
 
 \subsection{Testable Predictions}
 
@@ -528,30 +529,18 @@ it with the polarization measure in P3 below.
     is the cleaner formal prediction. We test P2 by regressing $|CAR[-1,+1]|$
     on the state-year polarization measure, with the same controls and fixed
     effects as P1.
-
-    \item[\textbf{P3.}] \textit{Ambiguity amplification.} Per
-    Section~\ref{sec:ambiguity}, ambiguous filings induce greater dispersion
-    in perceived signal precision ($|\kappa_D - \kappa_R|$), because
-    investors must form their own assessments of how informative the
-    disclosure is. This wider dispersion amplifies the subjective
-    contribution to the cross-group gap in posterior log-odds
-    (Proposition~\ref{prop:precision}). Holding economic materiality
-    constant, polarization effects should therefore be larger for more
-    ambiguous events. We operationalize this as an interaction between
-    the polarization measure and a \texttt{high\_ambiguity} indicator
-    constructed from observable filing characteristics. A positive
-    interaction coefficient, above and beyond any polarization main
-    effect, would support the interpretation channel. However, as
-    discussed in Section~\ref{sec:ambiguity}, our indicator conflates
-    interpretive latitude with economic significance --- high-ambiguity
-    events tend also to be less consequential --- so the test has lower
-    power than an ideal experiment that varies ambiguity independently
-    of materiality. We complement this test with the event-type split
-    (P1--P2 by dismissal vs.\ non-dismissal), which holds materiality
-    more constant: both event types involve a consequential auditor
-    departure, but non-dismissals provide less filing-level guidance
-    about the cause of the separation.
 \end{itemize}
+
+The theoretical framework also suggests that polarization effects may be
+stronger when auditor-change filings leave greater interpretive latitude,
+because ambiguous filings widen the cross-group gap in perceived signal
+precision ($|\kappa_D - \kappa_R|$; see
+Section~\ref{sec:ambiguity} and Proposition~\ref{prop:precision}).
+We explore this possibility using filing-level informativeness measures
+constructed from the Item~4.01 text, but the resulting interaction tests
+are directionally mixed and statistically insignificant, so we do not
+treat them as confirming evidence on mechanism. We report them as
+exploratory analyses in Appendix~\ref{app:tables}.
 
 \textbf{Discussion.} The model formalizes one specific channel --- heterogeneous
 priors --- but the same comparative statics arise under the other two channels
@@ -564,17 +553,13 @@ function $\sigma(x) = 1/(1+e^{-x})$ is strictly increasing, so the group-level
 posterior means $\mu_g \equiv \sigma(X_g)$ satisfy $|\mu_D - \mu_R|$ increases
 strictly. It follows that
 posterior variance $\omega_D \omega_R (\mu_D - \mu_R)^2$ increases under any channel
-(see Appendix~\ref{app:proofs} for formal statements and proofs). The core prediction is therefore
-channel-agnostic: polarization amplifies belief-dispersion-driven trading and
-price outcomes regardless of which specific mechanism predominates. The ambiguity
-interaction in P3 operates through a complementary mechanism: ambiguous
-filings widen the cross-group gap in perceived signal precision
-$|\kappa_D - \kappa_R|$, amplifying the subjective contribution to
-posterior dispersion even when the objective likelihood ratio $\ell$ is held
-fixed. A further implication is that standard disclosure-based remedies
-cannot fully eliminate polarization-driven disagreement, because the
-heterogeneity lies in how investors process signals, not in what the signals
-contain.
+(see Appendix~\ref{app:proofs} for formal statements and proofs). The core
+prediction is therefore channel-agnostic: polarization amplifies
+belief-dispersion-driven trading and price outcomes regardless of which
+specific mechanism predominates. A further implication is that standard
+disclosure-based remedies cannot fully eliminate polarization-driven
+disagreement, because the heterogeneity lies in how investors process
+signals, not in what the signals contain.
 
 % ── 4. Hypothesis Development ─────────────────────────────────────────────────
 
@@ -613,22 +598,6 @@ providing directional information about the nature of the separation even
 when the stated reason is sparse.
 We treat this as an auxiliary empirical exercise (Table~\ref{tab:event_type})
 rather than a core hypothesis.
-
-\begin{hyp}
-    \label{h2}
-    The polarization effect on post-event investor uncertainty is
-    stronger when the Item~4.01 filing is less informative about the
-    circumstances of the auditor change. We operationalize filing
-    informativeness with a text-based measure --- a filing specificity
-    index and a boilerplate-adjusted nonstandard word count,
-    residualized on materiality correlates --- that isolates interpretive
-    latitude from the economic materiality of the underlying event. Per
-    Section~\ref{sec:ambiguity}, when the filing provides less objective
-    content, investors rely more heavily on their subjective priors
-    about audit credibility, and polarization amplifies the dispersion
-    of those priors. This is the primary cross-sectional test of the
-    interpretation channel.
-\end{hyp}
 
 % ── 5. Empirical Design ───────────────────────────────────────────────────────
 
@@ -671,6 +640,10 @@ for missing Compustat controls or headquarters-state information
 CRSP--Compustat link key), and 6 are dropped by the financial and utility
 industry screens (SIC 4900--4999, 6000--6999). The attrition is therefore
 driven almost entirely by data availability, not researcher discretion.}
+Because CRSP/Compustat coverage is concentrated among exchange-listed
+firms, our results should be interpreted as applying to the listed-firm
+segment of auditor-change events rather than to the full population of
+Item~4.01 filings.
 
 \input{../Output/Tables/tab_sample_attrition}
 
@@ -819,7 +792,7 @@ is available only at biennial frequency.
 \subsection{Cross-Sectional Variables}
 
 \textbf{Signal ambiguity.} We construct a binary \texttt{high\_ambiguity}
-indicator to operationalize P3. An event is classified as high-ambiguity if the
+indicator for exploratory cross-sectional tests. An event is classified as high-ambiguity if the
 filing discloses no formal disagreement between the registrant and the
 departing auditor \emph{and} the auditor change does not involve a clear
 quality-tier transition (i.e., the change is lateral --- Big-4-to-Big-4 or
@@ -947,9 +920,10 @@ state fixed effects, which absorb the time-invariant component of clientele
 composition. \emph{Local media ecosystems}: more polarized states may have
 more polarized local media that amplifies any corporate news event, not just
 auditor changes. If so, the polarization effect should appear equally for
-non-audit events; the ambiguity heterogeneity results (Table~\ref{tab:ambiguity})
-partially address this by showing the effect is concentrated in events with
-audit-specific informational content. \emph{State business and regulatory environments}: states with
+non-audit events; the within-firm placebo tests
+(Sections~\ref{sec:placebo} and~\ref{sec:placebo_502}) address this
+directly by showing the effect is absent for earnings announcements and
+officer-change disclosures from the same firms. \emph{State business and regulatory environments}: states with
 more polarized electorates may also have different securities litigation
 climates or governance norms that independently affect how auditor changes
 are processed. State fixed effects absorb time-invariant components; the
@@ -1015,127 +989,108 @@ predict at least as strong a price effect as a volume effect.
 
 \input{../Output/Tables/tab02_main_results}
 
-\subsection{Filing Informativeness and Post-Event Uncertainty}
-\label{sec:informativeness}
+\subsection{Placebo Test: Earnings Announcements}
+\label{sec:placebo}
 
-The interpretation channel predicts that polarization effects should be
-larger for filings that provide less objective guidance, because investors
-with divergent priors have less objective anchor text to ground their
-interpretation. Testing this prediction requires a measure of filing
-informativeness that varies within the setting without being confounded
-with economic materiality. Our initial indicator --- \texttt{high\_ambiguity}
-(no disclosed disagreement plus a lateral quality-tier transition) ---
-fails this requirement: lateral Big-4-to-Big-4 switches are both less
-interpretively informative and less economically material, so the measure
-cannot separate the two effects. Results using that indicator do not
-produce the predicted monotonic pattern.\footnote{Using the binary
-\texttt{high\_ambiguity} indicator, the low-ambiguity subsample drives
-the volume result ($\beta = 0.114$, $p = 0.008$) while the
-high-ambiguity subsample is insignificant ($p = 0.422$). The $|CAR|$
-pattern is directionally consistent with P3 but underpowered at
-$N = 120$. These results are available upon request.}
+A natural concern is that headquarters-state polarization simply amplifies
+market reactions to any corporate news event, not specifically to disclosures
+that require interpretation. We address this with a within-firm placebo test.
+For the same 456 firms in our analysis sample, we identify all quarterly
+earnings announcement dates (Compustat \texttt{rdq}) over the same 2001--2023
+period, excluding any earnings announcement within 30 calendar days of an
+auditor-change event to avoid contamination. This yields 20,800 placebo events.
+We estimate a market model for each earnings event using the same methodology
+as the main analysis (estimation window $[-252, -46]$ trading days, CRSP
+value-weighted market return) and compute both $AbVol[-1,+1]$ and
+$|CAR[-1,+1]|$.
 
-We therefore construct two cleaner measures of filing informativeness
-that operate within the text of the filing itself, orthogonal to
-observable event features. First, we build a \emph{filing specificity
-index} that aggregates seven binary indicators identified from the text
-of the Item~4.01 section: whether the filing states an explicit cause of
-the change, names a concrete accounting or audit issue, identifies a
-specific domain of disagreement, describes a reportable event beyond the
-standard disclaimer, provides audit committee process detail beyond
-generic language, links the change to another corporate transaction, or
-contains non-generic causal language beyond statutory compliance
-phrasing. Second, we build a \emph{boilerplate-adjusted nonstandard word
-count}: we strip the standard Regulation S-K Item~304 disclaimer
-sentences from each filing and count the remaining words, then
-residualize the log of this count on dismissal, firm size, and year
-fixed effects to remove variation correlated with economic materiality.
-A binary \emph{Low Info} indicator equals one for filings in the bottom
-tercile of the residualized measure. The two measures capture different
-aspects of informativeness but give similar ordinal rankings of the
-sample.
+Table~\ref{tab:placebo_8k} reports the results. Columns~(1)--(3) use
+abnormal volume; columns~(4)--(6) use $|CAR|$. For AbVol, the
+auditor-change baseline is $\beta = 0.111$ ($p < 0.01$, column~1), while
+the earnings-announcement coefficient is $\beta = -0.010$ ($p > 0.10$,
+column~2) --- a clean null with over 20,000 observations. The pooled
+interaction (column~3) is $\beta = 0.141$ ($p < 0.01$), indicating that
+the polarization effect on trading volume is significantly and
+substantially larger for auditor-change disclosures than for earnings
+announcements. The pattern is identical for $|CAR|$: a null placebo
+coefficient ($\beta = -0.000$, $p > 0.10$, column~5) and a significant
+pooled interaction ($\beta = 0.008$, $p < 0.01$, column~6). In both
+cases, the base polarization coefficient in the pooled specification is
+indistinguishable from zero, indicating that the entire effect is
+concentrated in auditor changes.\footnote{The negative \textit{Auditor
+Change} main effects ($-0.384$ for AbVol, $-0.024$ for $|CAR|$, both
+$p < 0.01$) indicate that auditor-change events generate smaller average
+market reactions than earnings announcements, consistent with the former
+being less news-intensive than quarterly results.}
 
-\smallskip
-\noindent\textit{Validation via post-event uncertainty.}
-We validate the Low Info measure against six independent post-event
-uncertainty proxies, computed over trading days $[+2, +20]$ relative to
-the filing date: (i) the standard deviation of abnormal daily returns,
-(ii) the \citet{parkinson1980} high-low volatility estimator, (iii) the
-\citet{amihud2002} illiquidity ratio, (iv) the relative bid-ask spread,
-(v) abnormal volume persistence, and (vi) the \citet{roll1984} implied
-spread. For each measure, we compute the change from pre-event
-$[-20, -2]$ to post-event $[+2, +20]$ and regress it on the Low Info
-indicator, controlling for the pre-event level, firm characteristics,
-and year/industry fixed effects. Five of the six coefficients on
-Low Info are positive (theory-consistent); the sixth (volume
-persistence) is directionally ambiguous because the full volume reaction
-is absorbed by the pre-event control. No individual validation test is
-significant at $N \approx 720$, but the directional consistency is
-meaningful given that the six measures are only modestly correlated
-(mean pairwise $r = 0.22$).
+Earnings announcements carry unambiguous quantitative content --- the reported
+EPS figure --- leaving far less room for politically shaped interpretation than
+an auditor-change filing, which requires investors to evaluate auditor
+credibility and infer the nature of the separation from limited disclosure. The
+placebo null for both outcomes is consistent with the interpretation
+channel: politically heterogeneous investors disagree specifically when the
+signal is ambiguous, not when it is numerically precise.\footnote{%
+We also tested whether the polarization effect is amplified among
+firms where audit credibility is plausibly more salient --- financially
+distressed firms (below-median Altman Z-score), firms with high discretionary
+accruals (above-median Modified Jones model $|DA|$), and firms whose prior-year
+audit opinion included a going-concern modification. None of these firm-level
+interactions is statistically significant ($p > 0.35$ in all cases;
+see Table~\ref{tab:audit_credibility} in Appendix~\ref{app:tables}),
+consistent with the effect being driven by the state-level
+political-information environment rather than by firm-specific accounting
+quality concerns.}
 
-\smallskip
-\noindent\textit{Mechanism test: polarization $\times$ Low Info.}
-Table~\ref{tab:ambiguity} reports the mechanism test: does the
-polarization effect on each post-event uncertainty measure amplify when
-filings are less informative? The interpretation channel predicts a
-positive coefficient on \textit{Polarization} $\times$ \textit{Low Info}
-for every measure.
-The results are directionally consistent with the proposed mechanism: the
-Polarization $\times$ Low Info interaction is positive for
-\emph{all six measures}. Individual interactions are not significant
-(smallest $p = 0.163$ for Parkinson high-low volatility), reflecting
-limited power at $N \approx 720$ per specification. However, a one-sided
-binomial test on sign consistency --- with theory pre-specifying the
-positive direction --- yields $p = 0.016$: under a null of no mechanism,
-the probability of observing all six coefficients positive is
-$1/64 \approx 1.6\%$.
-A continuous composite uncertainty index, constructed as the
-equal-weighted average of the six standardized measures, produces the
-same directional result: the coefficient on \textit{Polarization}
-$\times$ (continuous nonstandard word count) is $-0.064$
-($p = 0.124$)---negative, meaning the polarization effect attenuates as
-filings become more informative, consistent with the mechanism but
-marginal at conventional significance.
+\input{../Output/Tables/tab10_placebo_8k}
 
-We interpret this pattern as directionally supportive but not
-dispositive evidence for the interpretation channel. Individual
-mechanism tests are underpowered; the joint sign consistency provides
-suggestive evidence consistent with the proposed mechanism,
-while the failure of any single measure to reach significance reflects
-the difficulty of identifying the mechanism with reduced-form
-cross-sectional variation at our sample size.
+\subsection{Placebo Test: Officer-Change Disclosures}
+\label{sec:placebo_502}
 
-\input{../Output/Tables/tab04_ambiguity}
+The earnings-announcement placebo is inconsistent with a generic salience explanation,
+but it leaves open a tighter alternative: that polarization amplifies
+reactions to \emph{any} mandatory 8-K filing requiring interpretation, not
+specifically to audit-related disclosures. Form~8-K Item~5.02 officer-change
+filings --- departures, elections, and appointments of directors and
+certain officers --- provide the cleanest test of this alternative. Like
+auditor-change filings, they are mandatory, standardized, and often require
+investors to infer the nature of the change from limited disclosure
+\citep{ghosh2015}. Unlike auditor-change filings, they do not involve
+institutional trust in auditors or the PCAOB. If polarization effects are
+driven by the institutional-trust channel that motivates our theory, they
+should be larger for auditor changes than for officer changes from the
+same firms.
 
-\subsection{Exploratory Heterogeneity by Event Type}
+We identify Item~5.02 filings by parsing the EDGAR full-text search index
+for the Item~5.02 title phrase and extracting the relevant 8-K sections
+with \texttt{edgarParser}. Restricting to the 456 firms in our analysis
+sample and excluding events within 30 calendar days of the same firm's
+auditor-change event yields 3,677 placebo events. We estimate a market
+model for each event using the same methodology as the main analysis and
+compute $AbVol[-1,+1]$ and $|CAR[-1,+1]|$.
 
-Table~\ref{tab:event_type} splits the sample by event type. The
-event-type heterogeneity yields a mixed pattern across the two outcomes.
-For $|CAR|$ (columns 3--4), the effect is concentrated in non-dismissal
-events (primarily auditor resignations): $\beta = 0.011$, $p = 0.043$.
-Among dismissals, the coefficient is statistically indistinguishable from
-zero ($\beta = 0.003$, $p = 0.189$). For abnormal volume (columns 1--2),
-the pattern reverses: polarization significantly predicts volume for
-dismissals ($\beta = 0.134$, $p = 0.006$) but not for non-dismissals
-($\beta = 0.122$, $p = 0.164$).
+Table~\ref{tab:placebo_502} reports the results in the same format as the
+earnings-announcement placebo (Table~\ref{tab:placebo_8k}). The pattern
+is consistent across both outcomes. For AbVol, the auditor-change baseline
+is $\beta = 0.111$ ($p < 0.01$, column~1), while the officer-change
+coefficient is $\beta = 0.016$ ($p > 0.10$, column~2). The pooled
+interaction (column~3) is $\beta = 0.110$ ($p = 0.011$). For $|CAR|$, the
+placebo coefficient is null ($\beta = -0.000$, $p > 0.10$, column~5) and
+the pooled interaction is $\beta = 0.006$ ($p = 0.006$, column~6). Both
+pooled interactions indicate that the polarization effect is significantly
+and substantially larger for auditor-change disclosures than for
+officer-change disclosures from the same firms --- a tighter specificity
+test than the earnings placebo, because both event types are mandatory
+8-K filings requiring interpretation from limited disclosure. The
+pattern is consistent with the interpretation channel operating
+specifically through institutional trust in auditors and regulatory
+oversight, not through generic responses to ambiguous mandatory
+disclosure.
 
-We do not view these splits as decisive evidence on the interpretation
-channel given the inconsistency across outcomes. One possible
-interpretation is that dismissals, while more transparent in their
-adversarial nature, still generate substantial disagreement about the
-\emph{consequences} of the change --- particularly whether the firm's
-audit quality will suffer --- and this disagreement manifests in trading
-volume rather than unsigned price movement. Non-dismissals, where the
-filing typically provides less explicit attribution
-\citep{beneish2005, boone2001}, show the stronger $|CAR|$ result,
-consistent with polarization effects on prices being amplified when
-investors must rely more on their own priors. We treat these event-type
-splits as descriptive rather than as decisive mechanism evidence; the
-primary specificity argument rests on the earnings-announcement placebo
-(Section~\ref{sec:placebo}).
+\input{../Output/Tables/tab_placebo_502}
 
-\input{../Output/Tables/tab03_event_type}
+We focus our interpretation on the baseline association and the placebo
+evidence, which together provide the clearest support for a
+disclosure-interpretation channel.
 
 \subsection{Robustness and Alternative Proxies}
 
@@ -1279,30 +1234,18 @@ $N = 421$, $p < 0.01$; Table~\ref{tab:event_type}, non-dismissal $|CAR|$
 with $N = 257$, $p < 0.05$).
 Table~\ref{tab:permutation} reports the full permutation test results.
 
-\textbf{Regulatory regime stability.}
-The sample spans several changes to the audit disclosure environment, most
-notably the Sarbanes-Oxley Act of 2002 --- which created the PCAOB --- and
-the SEC's 2004 overhaul of Form~8-K (Release No.~33-8400), which
-accelerated filing deadlines to four business days. Although the 2004
-reform expanded Form~8-K generally, the SEC stated that Item~4.01 was
-``substantively the same as former Item~4,'' with only limited textual
-reorganization; the substantive content requirements governing
-auditor-change disclosures were not materially altered. To test whether the
-polarization effect depends on the post-SOX institutional regime, we
-interact the polarization measure with an indicator for events occurring in
-2003 or later (Table~\ref{tab:supplementary}, columns~3--4). The interaction is
-insignificant for both $|CAR|$ ($p = 0.498$) and $AbVol$ ($p = 0.970$),
-and the polarization coefficient is directionally positive in both the
-pre-SOX and post-SOX subsamples (Table~\ref{tab:supplementary}, columns~5--8).
-The effect does not depend on the PCAOB's existence, consistent with the
-mechanism operating through institutional trust broadly rather than through
-any single institution.\footnote{The PCAOB's
-AS~3101, which introduced critical audit matter (CAM) disclosures effective
-2019--2020, represents a further change to the audit information
-environment. Only 40 sample events occur after 2019, precluding a
-well-powered test. Whether CAM disclosures attenuate polarization-driven
-disagreement by providing richer audit-specific information is an important
-question for future research as the post-CAM sample grows.}
+The polarization effect is stable across regulatory regimes: interacting
+polarization with a post-SOX indicator yields insignificant interactions
+for both outcomes ($p > 0.49$), and the coefficient is directionally
+positive in both the pre-SOX ($N = 317$) and post-SOX ($N = 361$)
+subsamples (Table~\ref{tab:supplementary}, columns~3--8).\footnote{The
+SEC's 2004 overhaul of Form~8-K (Release No.~33-8400) accelerated filing
+deadlines but did not materially alter the substantive content
+requirements for Item~4.01 auditor-change disclosures. Only 40 sample
+events occur after the PCAOB's introduction of critical audit matter
+(CAM) disclosures in 2019--2020, precluding a well-powered test of
+whether richer audit-specific information attenuates
+polarization-driven disagreement.}
 
 \input{../Output/Tables/tab05_robustness}
 
@@ -1322,104 +1265,43 @@ through time-varying partisan animus, though we note that the ANES series
 is coarse and a state- or investor-level affective measure could yield
 different conclusions.
 
-\subsection{Placebo Test: Earnings Announcements}
-\label{sec:placebo}
+\subsection{Exploratory Cross-Sectional Heterogeneity}
 
-A natural concern is that headquarters-state polarization simply amplifies
-market reactions to any corporate news event, not specifically to disclosures
-that require interpretation. We address this with a within-firm placebo test.
-For the same 456 firms in our analysis sample, we identify all quarterly
-earnings announcement dates (Compustat \texttt{rdq}) over the same 2001--2023
-period, excluding any earnings announcement within 30 calendar days of an
-auditor-change event to avoid contamination. This yields 20,800 placebo events.
-We estimate a market model for each earnings event using the same methodology
-as the main analysis (estimation window $[-252, -46]$ trading days, CRSP
-value-weighted market return) and compute both $AbVol[-1,+1]$ and
-$|CAR[-1,+1]|$.
+Table~\ref{tab:event_type} splits the sample by event type. The
+event-type heterogeneity yields a mixed pattern across the two outcomes.
+For $|CAR|$ (columns 3--4), the effect is concentrated in non-dismissal
+events (primarily auditor resignations): $\beta = 0.011$, $p = 0.043$.
+Among dismissals, the coefficient is statistically indistinguishable from
+zero ($\beta = 0.003$, $p = 0.189$). For abnormal volume (columns 1--2),
+the pattern reverses: polarization significantly predicts volume for
+dismissals ($\beta = 0.134$, $p = 0.006$) but not for non-dismissals
+($\beta = 0.122$, $p = 0.164$).
 
-Table~\ref{tab:placebo_8k} reports the results. Columns~(1)--(3) use
-abnormal volume; columns~(4)--(6) use $|CAR|$. For AbVol, the
-auditor-change baseline is $\beta = 0.111$ ($p < 0.01$, column~1), while
-the earnings-announcement coefficient is $\beta = -0.010$ ($p > 0.10$,
-column~2) --- a clean null with over 20,000 observations. The pooled
-interaction (column~3) is $\beta = 0.141$ ($p < 0.01$), indicating that
-the polarization effect on trading volume is significantly and
-substantially larger for auditor-change disclosures than for earnings
-announcements. The pattern is identical for $|CAR|$: a null placebo
-coefficient ($\beta = -0.000$, $p > 0.10$, column~5) and a significant
-pooled interaction ($\beta = 0.008$, $p < 0.01$, column~6). In both
-cases, the base polarization coefficient in the pooled specification is
-indistinguishable from zero, indicating that the entire effect is
-concentrated in auditor changes.\footnote{The negative \textit{Auditor
-Change} main effects ($-0.384$ for AbVol, $-0.024$ for $|CAR|$, both
-$p < 0.01$) indicate that auditor-change events generate smaller average
-market reactions than earnings announcements, consistent with the former
-being less news-intensive than quarterly results.}
+We do not view these splits as decisive evidence on the interpretation
+channel given the inconsistency across outcomes. One possible
+interpretation is that dismissals, while more transparent in their
+adversarial nature, still generate substantial disagreement about the
+\emph{consequences} of the change, manifesting in trading volume rather
+than unsigned price movement. Non-dismissals, where the filing typically
+provides less explicit attribution \citep{beneish2005, boone2001}, show
+the stronger $|CAR|$ result, consistent with polarization effects on
+prices being amplified when investors must rely more on their own priors.
 
-Earnings announcements carry unambiguous quantitative content --- the reported
-EPS figure --- leaving far less room for politically shaped interpretation than
-an auditor-change filing, which requires investors to evaluate auditor
-credibility and infer the nature of the separation from limited disclosure. The
-placebo null for both outcomes is consistent with the interpretation
-channel: politically heterogeneous investors disagree specifically when the
-signal is ambiguous, not when it is numerically precise.\footnote{%
-We also tested whether the polarization effect is amplified among
-firms where audit credibility is plausibly more salient --- financially
-distressed firms (below-median Altman Z-score), firms with high discretionary
-accruals (above-median Modified Jones model $|DA|$), and firms whose prior-year
-audit opinion included a going-concern modification. None of these firm-level
-interactions is statistically significant ($p > 0.35$ in all cases;
-see Table~\ref{tab:audit_credibility} in Appendix~\ref{app:tables}),
-consistent with the effect being driven by the state-level
-political-information environment rather than by firm-specific accounting
-quality concerns.}
+\input{../Output/Tables/tab03_event_type}
 
-\input{../Output/Tables/tab10_placebo_8k}
-
-\subsection{Placebo Test: Officer-Change Disclosures}
-\label{sec:placebo_502}
-
-The earnings-announcement placebo is inconsistent with a generic salience explanation,
-but it leaves open a tighter alternative: that polarization amplifies
-reactions to \emph{any} mandatory 8-K filing requiring interpretation, not
-specifically to audit-related disclosures. Form~8-K Item~5.02 officer-change
-filings --- departures, elections, and appointments of directors and
-certain officers --- provide the cleanest test of this alternative. Like
-auditor-change filings, they are mandatory, standardized, and often require
-investors to infer the nature of the change from limited disclosure
-\citep{ghosh2015}. Unlike auditor-change filings, they do not involve
-institutional trust in auditors or the PCAOB. If polarization effects are
-driven by the institutional-trust channel that motivates our theory, they
-should be larger for auditor changes than for officer changes from the
-same firms.
-
-We identify Item~5.02 filings by parsing the EDGAR full-text search index
-for the Item~5.02 title phrase and extracting the relevant 8-K sections
-with \texttt{edgarParser}. Restricting to the 456 firms in our analysis
-sample and excluding events within 30 calendar days of the same firm's
-auditor-change event yields 3,677 placebo events. We estimate a market
-model for each event using the same methodology as the main analysis and
-compute $AbVol[-1,+1]$ and $|CAR[-1,+1]|$.
-
-Table~\ref{tab:placebo_502} reports the results in the same format as the
-earnings-announcement placebo (Table~\ref{tab:placebo_8k}). The pattern
-is consistent across both outcomes. For AbVol, the auditor-change baseline
-is $\beta = 0.111$ ($p < 0.01$, column~1), while the officer-change
-coefficient is $\beta = 0.016$ ($p > 0.10$, column~2). The pooled
-interaction (column~3) is $\beta = 0.110$ ($p = 0.011$). For $|CAR|$, the
-placebo coefficient is null ($\beta = -0.000$, $p > 0.10$, column~5) and
-the pooled interaction is $\beta = 0.006$ ($p = 0.006$, column~6). Both
-pooled interactions confirm that the polarization effect is significantly
-and substantially larger for auditor-change disclosures than for
-officer-change disclosures from the same firms --- a tighter specificity
-test than the earnings placebo, because both event types are mandatory
-8-K filings requiring interpretation from limited disclosure. The
-pattern is consistent with the interpretation channel operating
-specifically through institutional trust in auditors and regulatory
-oversight, not through generic responses to ambiguous mandatory
-disclosure.
-
-\input{../Output/Tables/tab_placebo_502}
+\textbf{Filing informativeness.}
+We also explore whether the polarization effect is stronger when filings
+provide less objective guidance, using a text-based filing informativeness
+measure (a boilerplate-adjusted nonstandard word count, residualized on
+dismissal, firm size, and year). The interaction between polarization and
+a low-informativeness indicator is directionally positive for both $AbVol$
+and $|CAR|$ but statistically insignificant ($p = 0.806$ and $p = 0.416$,
+respectively). We do not interpret this as evidence against the
+interpretation channel; the test is likely underpowered at $N = 678$, and
+filing informativeness is difficult to measure cleanly in this setting
+because interpretive latitude is correlated with economic materiality.
+Appendix Table~\ref{tab:ambiguity} reports an extended analysis using
+six independent post-event uncertainty proxies.
 
 \subsection{Post-Event Price Persistence}
 \label{sec:reversal}
@@ -1484,9 +1366,12 @@ proxy for the political-information environment of a geographically
 dispersed investor base; measurement error of this kind attenuates
 coefficients, but sharper identification of which investors drive the
 pattern requires investor-level political data that we lack. The sample
-($N = 678$) limits power for interaction tests, and our ambiguity indicator
-conflates interpretive latitude with economic materiality, making it
-difficult to isolate the pure ambiguity channel.
+($N = 678$) limits power for interaction tests, and our filing
+informativeness measure conflates interpretive latitude with economic
+materiality, making it difficult to isolate the pure ambiguity channel.
+In addition, the analysis is necessarily limited to CRSP/Compustat-covered
+firms, so the findings may not generalize to the many micro-cap and OTC
+registrants that file Item~4.01 disclosures.
 
 The findings suggest one limit to disclosure-based regulation in
 credibility-sensitive settings: when investors differ in their assessments of
@@ -1517,6 +1402,8 @@ different conclusions and remain a promising direction for future work.
 \label{app:tables}
 
 \input{../Output/Tables/tab_supplementary}
+
+\input{../Output/Tables/tab04_ambiguity}
 
 \input{../Output/Tables/tab06_affective}
 
