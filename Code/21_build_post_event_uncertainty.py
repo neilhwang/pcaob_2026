@@ -113,6 +113,9 @@ def main():
     )
     params["event_date"] = pd.to_datetime(params["event_date"])
     params["permno"] = params["permno"].astype(int)
+    # Deduplicate params to prevent merge fan-out (crsp_event_window can have
+    # multiple rows per (permno, event_date) for different accession numbers).
+    params = params.drop_duplicates(subset=["permno", "event_date"], keep="first")
     sample = sample.merge(params, on=["permno", "event_date"], how="left")
 
     # Pull CRSP daily data (all needed fields in one query)
