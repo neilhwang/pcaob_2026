@@ -55,7 +55,11 @@
       "Bash(taskkill //PID 948 //F)",
       "Bash(kill -9 948)",
       "Bash(sort -k6)",
-      "Bash(tee /tmp/s05.log)"
+      "Bash(tee /tmp/s05.log)",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/neilh/documents/pcaob_2026/**)",
+      "Bash(done)"
     ]
   }
 }
