@@ -157,14 +157,19 @@ information environment --- an economically meaningful source of variation
 in the effectiveness of this specific mandatory disclosure regime that is
 not captured by existing firm-level or event-type moderators.
 Second, we isolate audit-credibility-based interpretation from generic
-attention effects. A within-firm placebo test shows that
-headquarters-state polarization has no effect on market reactions to
-the same firms' earnings-announcement returns ($N = 20{,}800$), and
-exploratory event-type splits show that the effect is concentrated in
-filings that provide less explicit guidance about the circumstances of
-the separation. Together, these patterns are difficult to reconcile with
-a story in which polarization merely amplifies attention to salient
-corporate news; they are consistent with the channel we propose ---
+attention effects. Two within-firm placebo tests show that
+headquarters-state polarization has no detectable effect on market
+reactions to the same firms' earnings announcements ($N = 20{,}800$) or
+officer-change (Item~5.02) disclosures ($N = 3{,}677$), while pooled
+specifications confirm that the polarization effect is significantly
+larger for auditor-change disclosures than for either placebo event
+type. The officer-change placebo is especially tight: both event types
+are mandatory 8-K filings requiring investors to infer the nature of the
+change from limited disclosure, but only auditor changes involve
+institutional trust in auditors and the PCAOB.
+Together, these patterns are difficult to reconcile with a story in
+which polarization merely amplifies attention to salient corporate
+news; they are consistent with the channel we propose ---
 heterogeneous interpretation of a credibility-sensitive audit signal.
 Third, our findings bear directly on disclosure-based regulation of
 auditing. The SEC and PCAOB rely heavily on mandatory disclosure as a
@@ -1379,6 +1384,51 @@ quality concerns.}
 
 \input{../Output/Tables/tab10_placebo_8k}
 
+\subsection{Placebo Test: Officer-Change Disclosures}
+\label{sec:placebo_502}
+
+The earnings-announcement placebo rules out a generic salience explanation,
+but it leaves open a tighter alternative: that polarization amplifies
+reactions to \emph{any} mandatory 8-K filing requiring interpretation, not
+specifically to audit-related disclosures. Form~8-K Item~5.02 officer-change
+filings --- departures, elections, and appointments of directors and
+certain officers --- provide the cleanest test of this alternative. Like
+auditor-change filings, they are mandatory, standardized, and often require
+investors to infer the nature of the change from limited disclosure
+\citep{ghosh2015}. Unlike auditor-change filings, they do not involve
+institutional trust in auditors or the PCAOB. If polarization effects are
+driven by the institutional-trust channel that motivates our theory, they
+should be larger for auditor changes than for officer changes from the
+same firms.
+
+We identify Item~5.02 filings by parsing the EDGAR full-text search index
+for the Item~5.02 title phrase and extracting the relevant 8-K sections
+with \texttt{edgarParser}. Restricting to the 456 firms in our analysis
+sample and excluding events within 30 calendar days of the same firm's
+auditor-change event yields 3,677 placebo events. We estimate a market
+model for each event using the same methodology as the main analysis and
+compute $AbVol[-1,+1]$ and $|CAR[-1,+1]|$.
+
+Table~\ref{tab:placebo_502} reports the results in the same format as the
+earnings-announcement placebo (Table~\ref{tab:placebo_8k}). The pattern
+is consistent across both outcomes. For AbVol, the auditor-change baseline
+is $\beta = 0.111$ ($p < 0.01$, column~1), while the officer-change
+coefficient is $\beta = 0.016$ ($p > 0.10$, column~2). The pooled
+interaction (column~3) is $\beta = 0.110$ ($p = 0.011$). For $|CAR|$, the
+placebo coefficient is null ($\beta = -0.000$, $p > 0.10$, column~5) and
+the pooled interaction is $\beta = 0.006$ ($p = 0.006$, column~6). Both
+pooled interactions confirm that the polarization effect is significantly
+and substantially larger for auditor-change disclosures than for
+officer-change disclosures from the same firms --- a tighter specificity
+test than the earnings placebo, because both event types are mandatory
+8-K filings requiring interpretation from limited disclosure. The
+pattern is consistent with the interpretation channel operating
+specifically through institutional trust in auditors and regulatory
+oversight, not through generic responses to ambiguous mandatory
+disclosure.
+
+\input{../Output/Tables/tab_placebo_502}
+
 \subsection{Post-Event Price Persistence}
 \label{sec:reversal}
 
@@ -1428,9 +1478,12 @@ disagreement around auditor-change disclosures: both abnormal trading volume and
 absolute returns increase with headquarters-state partisan division. The volume
 result is robust across alternative proxies and clustering structures; the return
 result is directionally consistent but more fragile, as the disagreement
-framework predicts. A within-firm placebo on earnings announcements confirms
-the effect is specific to disclosures requiring interpretation, and post-event
-returns show no reversal, ruling out transient overreaction.
+framework predicts. Two within-firm placebo tests --- on earnings announcements and on
+Item~5.02 officer-change disclosures from the same firms --- confirm
+that the effect is specific to audit-credibility-sensitive disclosures,
+not to any corporate news or any mandatory 8-K filing requiring
+interpretation. Post-event returns show no reversal, ruling out
+transient overreaction.
 
 Several limitations
 warrant emphasis. Headquarters-state polarization is a noisy reduced-form

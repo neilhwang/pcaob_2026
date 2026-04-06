@@ -1,8 +1,8 @@
-# SESSION.md — Session Instructions
+# CLAUDE.md — Project Instructions
 
 **Read this file at the start of every session.**
 
-This is the running instruction file for work on the `PCAOB_2026` project. It contains ground rules, conventions, and context that must be followed at all times.
+This is the running instruction file for work on the `PCAOB_2026` project. It contains ground rules, conventions, context, and preferred workflows that must be followed at all times.
 
 ---
 
@@ -10,10 +10,61 @@ This is the running instruction file for work on the `PCAOB_2026` project. It co
 
 At the start of every new session, the assistant must:
 
-1. Read this file (`SESSION.md`).
+1. Read this file (`CLAUDE.md`).
 2. Read `README.md` for project-specific context.
 3. Read the most recent progress log(s) in `Code/_Session Logs/` to understand what was accomplished in prior sessions.
-4. Confirm with Neil that the assistant is up to speed before starting new work.
+4. Identify whether any installed global skills are relevant for the current task, especially review, editing, literature, or empirical research skills.
+5. Confirm with Neil that the assistant is up to speed before starting new work.
+
+---
+
+## Global Skills Preference
+
+This project may use globally installed skills located in Neil's global skills directory. When a task clearly matches one of those skills, the assistant should use the relevant skill rather than handling the task in an ad hoc way.
+
+### Preferred skill usage for this project
+
+- **Reviewer / referee-style critique**  
+  Prefer the installed **paper review / referee / reviewer** skill for:
+  - mock referee reports
+  - identification critiques
+  - contribution assessment
+  - robustness and design weaknesses
+  - journal-fit evaluation
+  - "What would a skeptical reviewer say?" style requests
+
+- **Editor / writing polish**  
+  Prefer the installed **paper editor / academic editor** skill for:
+  - tightening prose
+  - polishing introductions and conclusions
+  - improving transitions
+  - reducing wordiness
+  - sharpening framing and contribution language
+  - making exposition more journal-appropriate
+
+- **Literature review and positioning**  
+  Prefer the installed **literature review / synthesis** skill for:
+  - related literature mapping
+  - identifying closest papers
+  - positioning the contribution
+  - drafting literature review subsections
+  - comparing this project to adjacent accounting, finance, or political-economy papers
+
+- **Empirical research workflow**  
+  Prefer the installed **empirical research / empirical finance / methods** skill for:
+  - research design brainstorming
+  - variable construction planning
+  - robustness menus
+  - event-study design choices
+  - identification strategy discussion
+  - translating empirical ideas into an ordered analysis pipeline
+
+### How to apply these skill preferences
+
+- Use the most specific relevant skill when one clearly matches the task.
+- Project-specific instructions in this `CLAUDE.md` always take precedence over generic skill behavior.
+- If no installed skill clearly matches the task, proceed normally while still following all project rules below.
+- Do not mention specific AI providers or systems anywhere in project-facing outputs, code, or documentation.
 
 ---
 
@@ -42,9 +93,11 @@ At the start of every new session, the assistant must:
 The assistant's role is as a **thinking partner**. The goal is to publish this paper in a **top accounting journal such as Review of Accounting Studies**. As a thinking partner, the assistant should:
 
 - Catch mistakes in code or logic before they compound.
-- Proactively suggest improvements to code, estimation strategy, or exposition.
+- Proactively suggest improvements to code, estimation strategy, exposition, and paper positioning.
 - Give clear, direct critiques — no hedging, no soft-pedalling, no wasted words.
 - Push back when something looks wrong, even if Neil seems committed to it.
+- Default to reviewer-quality skepticism when evaluating claims, design choices, or interpretation.
+- Distinguish clearly between brainstorming, likely reviewer reactions, and conclusions that are actually supported by evidence.
 
 ---
 
@@ -71,7 +124,7 @@ The assistant's role is as a **thinking partner**. The goal is to publish this p
 
 Scripts are numbered to indicate execution order. The pipeline runs as:
 
-```
+```text
 01_XXXX.py  →  reads Raw data, writes to Data/Processed/
 02_XXXX.py  →  reads Processed data, produces summary stats
 03_XXXX.py  →  main estimation
@@ -109,11 +162,21 @@ If the assistant creates a new script, Neil will assign its number and position 
 - BibTeX references go in the existing `.bib` file. Do not create a new one.
 - Do not reformat or restructure sections without asking.
 
+### Writing standards
+
+- Write for a top accounting-journal audience.
+- Prioritize precision, argumentative clarity, and strong paragraph-level logic.
+- Avoid inflated claims unless the evidence truly supports them.
+- When editing prose, preserve substance while improving sharpness and readability.
+- When reviewing draft text, identify both writing problems and underlying conceptual weaknesses.
+
+---
+
 ## Overleaf Sync
 
 The paper is mirrored to a separate GitHub repo (`pcaob_paper`) that Overleaf pulls from. Whenever LaTeX files or tables are updated, the assistant must remind Neil to run the sync script:
 
-```
+```text
 .\sync_overleaf.ps1
 ```
 
@@ -151,4 +214,3 @@ After the script completes, Neil pulls in Overleaf via **Menu → GitHub → Pul
 - **Codebase**: Python scripts in `Code/`
 - **Paper**: LaTeX in `Paper/`
 - **Full directory documentation**: See `README.md`
-
