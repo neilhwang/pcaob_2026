@@ -23,28 +23,24 @@
 
 \begin{abstract}
 We document that political polarization is associated with stronger
-investor reactions to mandatory audit-related disclosures. Auditor-change
-filings (Form~8-K Item~4.01) require the firm to disclose the circumstances
-of the separation, but the signal can be ambiguous --- investors must assess
-auditor credibility and infer the nature of the change, judgments that
-depend on trust in auditors and the PCAOB as regulatory institutions.
-Because trust in auditors and regulatory institutions may vary with
-political identity, political polarization may be associated with more
-heterogeneous interpretations of the same public filing. In a sample of
-678 auditor-change disclosures for CRSP/Compustat-listed firms
-(2001--2023), firms headquartered in more politically competitive
-states --- where the presidential electorate is more evenly divided,
-our proxy for political polarization --- experience significantly larger
-abnormal
-trading volume ($p = 0.010$) and absolute abnormal returns ($p = 0.039$)
-around the filing. The effect is absent for the same firms' earnings
-announcements (AbVol $p = 0.393$; $|CAR|$ $p = 0.918$; $N = 20{,}800$),
-consistent with the idea that polarization is associated with greater
-disagreement when the disclosure requires interpretation, not when the
-signal is numerically precise.
-These findings suggest a limit to disclosure-based regulation: when
-investors differ in their assessments of institutional credibility, the
-same mandatory disclosure can generate more, not less, disagreement.
+disagreement-sensitive market reactions to auditor-change disclosures.
+Auditor-change filings (Form~8-K Item~4.01) are standardized mandatory
+disclosures, yet they often contain qualitative causal explanations that
+investors must interpret. In a sample of 678 auditor-change disclosures
+for CRSP/Compustat-listed firms (2001--2023), firms headquartered in more
+politically competitive states --- where the presidential electorate is
+more evenly divided, our proxy for political polarization --- experience
+significantly larger abnormal trading volume ($p = 0.010$) and absolute
+abnormal returns ($p = 0.039$) around the filing. The effect is absent
+for the same firms' earnings announcements ($N = 20{,}800$) and
+officer-change disclosures ($N = 3{,}677$), and is concentrated in
+filings that provide explicit causal explanations for the auditor change
+--- consistent with disagreement arising when investors must interpret
+substantive disclosure content rather than process numerically precise
+signals. These findings suggest a limit to disclosure-based regulation:
+standardized mandatory disclosure may not eliminate disagreement when the
+filing is interpretation-intensive and investors process it through
+different priors.
 \end{abstract}
 
 % ── 1. Introduction ───────────────────────────────────────────────────────────
@@ -105,14 +101,13 @@ heterogeneous interpretation.
 
 Our theoretical framework builds on \citet{kandel1995}: investors observe the
 same public audit signal but may form different posteriors depending on their
-priors about firm quality, auditor credibility, and the reliability of
-regulatory oversight. If political polarization amplifies this heterogeneity
---- because polarized investors may diverge not only in their substantive
-interpretations of an auditor change but also in their assessments of whether
-auditors and the PCAOB are credible certifiers of financial reporting quality
---- then standard belief-driven trading models \citep{harris1993} predict
-that greater posterior dispersion translates into higher abnormal volume and
-larger absolute price movements around the disclosure.
+priors about firm quality and the interpretation of qualitative disclosure
+content. If political polarization amplifies this heterogeneity --- because
+polarized investors may process the same substantive filing content through
+different priors about what the auditor change portends --- then standard
+belief-driven trading models \citep{harris1993} predict that greater
+posterior dispersion translates into higher abnormal volume and larger
+absolute price movements around the disclosure.
 
 We examine this prediction using cross-state variation in partisan polarization,
 measured as one minus the absolute two-party presidential vote margin at the
@@ -143,14 +138,16 @@ fixed effects throughout.
 
 We find that firms headquartered in more politically competitive states experience
 significantly larger abnormal trading volume ($p = 0.010$) and absolute abnormal
-returns ($p = 0.039$) around auditor-change disclosures. A within-firm placebo
-test on the same firms' earnings announcements ($N = 20{,}800$) is
-inconsistent with a generic salience explanation. The volume result is robust to three alternative
+returns ($p = 0.039$) around auditor-change disclosures. Within-firm placebo
+tests on the same firms' earnings announcements ($N = 20{,}800$) and
+officer-change disclosures ($N = 3{,}677$) are inconsistent with a generic
+salience explanation. The volume effect is concentrated in filings that provide
+an explicit causal explanation for the auditor change ($p = 0.013$ for the
+interaction), consistent with disagreement arising from the interpretation of
+substantive disclosure content. The volume result is robust to three alternative
 polarization proxies, alternative clustering structures, and a small-firm
 subsample restriction; the absolute return result is more fragile across proxies,
-consistent with volume being the sharper formal prediction. Post-event returns
-show no reversal, indicating persistent belief heterogeneity rather than
-transient overreaction.
+consistent with volume being the sharper formal prediction.
 
 Our contribution is to the auditor-change disclosure literature
 specifically. A long literature establishes that auditor-change 8-Ks are
@@ -166,16 +163,15 @@ with the cleanest evidence in abnormal trading volume. Two within-firm
 placebo tests indicate that this pattern is specific to auditor-change
 disclosures: headquarters-state polarization has no detectable effect on
 the same firms' earnings announcements ($N = 20{,}800$) or
-officer-change (Item~5.02) disclosures ($N = 3{,}677$). The
-audit-credibility dimension of Item~4.01 --- where investors must assess
-institutional trustworthiness, not merely process quantitative
-information --- provides a theoretically motivated explanation for why
-auditor-change filings exhibit this pattern while other disclosure types
-do not, though the design does not definitively establish this channel.
-More broadly, the findings suggest a modest limitation of
-disclosure-based regulation: standardized disclosure may not eliminate
-disagreement when the disclosure is interpretation-intensive and
-investors process it through different priors.
+officer-change (Item~5.02) disclosures ($N = 3{,}677$). Within the
+auditor-change sample, the effect is concentrated in filings that
+provide explicit causal explanations for the change, consistent with
+disagreement arising from the interpretation of substantive disclosure
+content rather than from a generic state-level characteristic. More
+broadly, the findings suggest a modest limitation of disclosure-based
+regulation: standardized mandatory disclosure may not eliminate
+disagreement when the filing is interpretation-intensive and investors
+process it through different priors.
 
 The remainder of the paper proceeds as follows. Section~\ref{sec:lit} reviews
 the related literature. Section~\ref{sec:theory} develops the theoretical
@@ -511,9 +507,9 @@ mechanism.
     Equation~\eqref{eq:volume}, polarization increases posterior-belief
     variance, which increases disagreement-driven trading volume. This is
     the primary formal implication of the model. In the Item~4.01 setting,
-    this prediction arises because politically heterogeneous investors who
-    disagree about auditor credibility and PCAOB oversight form divergent
-    posteriors from the same filing, creating mutually beneficial trading
+    this prediction arises because politically heterogeneous investors
+    may interpret the same qualitative filing content differently, forming
+    divergent posteriors and creating mutually beneficial trading
     opportunities. We test P1 using abnormal
     trading volume ($AbVol$) as the outcome (defined in
     Section~\ref{sec:design}).
@@ -529,8 +525,8 @@ mechanism.
     as a complementary empirical outcome: evidence that polarization increases
     both $AbVol$ and $|CAR|$ is more informative than either alone, but $AbVol$
     is the cleaner formal prediction. In this setting, the price effect
-    captures the net impact on valuation when investors who trust the
-    regulated disclosure framework trade against those who discount it.
+    captures the net impact on valuation when investors with divergent
+    interpretations of the filing content trade against one another.
     We test P2 by regressing $|CAR[-1,+1]|$
     on the state-year polarization measure, with the same controls and fixed
     effects as P1.
@@ -600,7 +596,7 @@ filings, 5,628 cannot be linked to a CRSP/Compustat security --- primarily
 because the filers are micro-cap or OTC registrants not covered by
 CRSP. Panel B of Table~\ref{tab:attrition} compares observable
 characteristics of matched and unmatched filings. Disagreement rates are
-broadly similar (67\% vs.\ 60\%); the primary difference is firm size,
+broadly similar (4.6\% vs.\ 4.6\%); the primary difference is firm size,
 proxied by Big~4 auditor involvement (43\% vs.\ 14\%). The matched sample
 is therefore tilted toward larger, exchange-listed firms --- a standard
 feature of CRSP/Compustat-based research designs in the auditing literature
@@ -763,7 +759,7 @@ filing discloses no formal disagreement between the registrant and the
 departing auditor \emph{and} the auditor change does not involve a clear
 quality-tier transition (i.e., the change is lateral --- Big-4-to-Big-4 or
 non-Big-4-to-non-Big-4 --- or the quality direction is unclassified).
-High-ambiguity events comprise 120 of the 678 sample observations (17.7\%).
+High-ambiguity events comprise 395 of the 678 sample observations (58.3\%).
 
 \textbf{Event type.} We classify each event as a \emph{dismissal} (the client
 terminated the auditor) or \emph{non-dismissal} (the auditor resigned, declined
@@ -794,20 +790,22 @@ Headquarters-state polarization is a reduced-form proxy, not a direct
 measure of investor beliefs. The inferential chain from theory to
 empirics requires several links: state political competitiveness shapes
 the local political-information environment; the local environment
-shapes investor priors about auditors and the PCAOB; heterogeneous
-priors generate heterogeneous interpretations of Item~4.01 filings;
-and heterogeneous interpretations produce disagreement-sensitive market
-outcomes. What is directly observed is only the first and last elements
-of this chain: headquarters-state political competitiveness and market
-reactions. The intermediate links --- that specific investors hold
-politically shaped priors about audit credibility, and that these priors
-drive trading --- are consistent with the theory and the placebo
-evidence but are not individually identified. The paper therefore
-documents an association between the political environment surrounding
-the disclosure and disagreement-sensitive market outcomes, and shows
-that this association is specific to credibility-sensitive audit
-disclosures. It does not identify which investors trade or establish
-which precise psychological channel operates.
+shapes investor priors about firm quality and the interpretation of
+qualitative disclosure content; heterogeneous priors generate
+heterogeneous interpretations of Item~4.01 filings; and heterogeneous
+interpretations produce disagreement-sensitive market outcomes. What is
+directly observed is only the first and last elements of this chain:
+headquarters-state political competitiveness and market reactions. The
+intermediate links --- that specific investors hold politically shaped
+priors, and that these priors drive trading --- are consistent with the
+theory and the placebo evidence but are not individually identified.
+The paper therefore documents an association between the political
+environment surrounding the disclosure and disagreement-sensitive
+market outcomes, shows that this association is specific to
+auditor-change disclosures, and provides within-filing evidence that
+the effect is concentrated in filings with substantive causal content.
+It does not identify which investors trade or establish which precise
+psychological channel operates.
 
 The intended channel runs through the local information environment
 surrounding the firm, particularly retail investors, who are more
@@ -976,11 +974,11 @@ filings --- departures, elections, and appointments of directors and
 certain officers --- provide the cleanest test of this alternative. Like
 auditor-change filings, they are mandatory, standardized, and often require
 investors to infer the nature of the change from limited disclosure
-\citep{ghosh2015}. Unlike auditor-change filings, they do not involve
-institutional trust in auditors or the PCAOB. If polarization effects are
-driven by the institutional-trust channel that motivates our theory, they
-should be larger for auditor changes than for officer changes from the
-same firms.
+\citep{ghosh2015}. Unlike auditor-change filings, they do not involve the interpretation
+of audit-specific qualitative content. If the polarization effect is
+specific to audit disclosures rather than generic to any mandatory 8-K
+filing requiring interpretation, it should be larger for auditor changes
+than for officer changes from the same firms.
 
 We identify Item~5.02 filings by parsing the EDGAR full-text search index
 for the Item~5.02 title phrase and extracting the relevant 8-K sections
@@ -1003,16 +1001,16 @@ and substantially larger for auditor-change disclosures than for
 officer-change disclosures from the same firms --- a tighter specificity
 test than the earnings placebo, because both event types are mandatory
 8-K filings requiring interpretation from limited disclosure. The
-pattern is consistent with the interpretation channel operating through
-institutional trust in auditors and regulatory oversight rather than
-through generic responses to ambiguous mandatory disclosure. We note,
-however, that the officer-change placebo does not fully isolate the
-audit-credibility channel: it remains possible that polarization
-amplifies reactions to any qualitative governance disclosure, not
-specifically to disclosures involving trust in auditors and the PCAOB.
-Fully isolating the audit-credibility channel would require
-within-filing variation in audit-specific content that is exogenous to
-economic severity --- a test that is beyond the current data.
+pattern is consistent with the effect being specific to auditor-change
+disclosures rather than generic to any ambiguous mandatory filing. We
+note, however, that the officer-change placebo does not fully isolate
+why auditor-change filings exhibit this pattern: it remains possible
+that polarization amplifies reactions to any qualitative governance
+disclosure, not specifically to audit-related content. The within-filing
+evidence on explicit causal content (Section~\ref{sec:exploratory})
+provides additional specificity, but the precise channel through which
+auditor-change filings generate politically mediated disagreement is not
+identified.
 
 \input{../Output/Tables/tab_placebo_502}
 
@@ -1180,6 +1178,7 @@ is coarse and a state- or investor-level affective measure could yield
 different conclusions.
 
 \subsection{Exploratory Cross-Sectional Heterogeneity}
+\label{sec:exploratory}
 
 Table~\ref{tab:event_type} splits the sample by event type. The pattern
 is mixed: polarization significantly predicts volume for dismissals
@@ -1196,6 +1195,36 @@ provide less objective guidance, using a text-based filing informativeness
 measure. The interaction is statistically insignificant for both outcomes
 ($p = 0.806$ for AbVol; $p = 0.416$ for $|CAR|$).
 Appendix Table~\ref{tab:ambiguity} reports an extended analysis.
+
+\textbf{Filing content and the interpretation channel.}
+A more direct test of whether the polarization effect operates through
+the interpretation of substantive disclosure content uses within-filing
+variation in what the 8-K actually says. We construct an
+\texttt{explicit\_cause} indicator equal to one when the filing provides
+a causal explanation for the auditor change (e.g., ``due to,'' ``because
+of,'' ``decided to dismiss''), as opposed to generic Item~304 boilerplate
+(34\% of filings). The interaction between polarization and
+\texttt{explicit\_cause} is positive and significant for abnormal volume
+($\beta = 0.208$, $p = 0.013$): the polarization effect on volume is
+concentrated almost entirely in filings that provide substantive causal
+content ($\beta = 0.212$, $p = 0.022$ in the explicit-cause subsample
+vs.\ $\beta = 0.037$, $p = 0.482$ in the boilerplate subsample). The
+interaction is directionally positive but insignificant for $|CAR|$
+($\beta = 0.003$, $p = 0.557$). This pattern is consistent with
+disagreement arising when investors must interpret qualitatively rich
+filing content, not merely when they observe the fact of an auditor change.
+
+We also test whether the polarization effect is amplified in filings
+that disclose formal disagreements between the registrant and the
+departing auditor, using a corrected disagreement indicator that
+distinguishes affirmative disagreement disclosures from the negated
+boilerplate required by Item~304 (4.0\% of sample events). The
+interaction is null for both outcomes ($p = 0.689$ for AbVol,
+$p = 0.716$ for $|CAR|$), though power is limited with only 27
+disagreement events. These tests do not isolate audit credibility as
+the specific operative channel; the evidence is more consistent with a
+general interpretation-of-substantive-content mechanism than with a
+narrowly credibility-specific one.
 
 \subsection{Post-Event Price Persistence}
 \label{sec:reversal}
@@ -1234,27 +1263,26 @@ proxies and clustering structures; the absolute return result is
 directionally consistent but more fragile, as the disagreement framework
 predicts. Placebo tests on the same firms' earnings announcements and
 officer-change disclosures indicate that this pattern is specific to
-credibility-sensitive audit disclosures rather than generic corporate
-news. The absence of post-event price reversal is inconsistent with a
-purely short-lived overreaction account and is consistent with, though
-not unique to, more persistent heterogeneity in how the disclosure is
-priced.
+auditor-change disclosures rather than generic corporate news. Within the
+auditor-change sample, the effect is concentrated in filings that provide
+explicit causal explanations for the change, consistent with disagreement
+arising from the interpretation of substantive disclosure content.
 
 Several limitations warrant emphasis. Headquarters-state polarization is
 a noisy reduced-form proxy for the political-information environment of
 a geographically dispersed investor base; sharper identification of
 which investors drive the pattern requires investor-level political data
-that we lack. The sample ($N = 678$) limits power for interaction tests.
-The analysis is necessarily limited to CRSP/Compustat-covered firms, so
-the findings may not generalize to the many micro-cap and OTC
-registrants that file Item~4.01 disclosures. A supplementary test finds
-that national affective polarization does not add explanatory power
-beyond ideological polarization (Table~\ref{tab:affective}).
+that we lack. The sample ($N = 678$) limits power for interaction tests,
+and with only 27 filings disclosing formal disagreements, we cannot test
+whether the effect operates specifically through audit-credibility
+beliefs. The analysis is necessarily limited to CRSP/Compustat-covered
+firms, so the findings may not generalize to the many micro-cap and OTC
+registrants that file Item~4.01 disclosures.
 
 The evidence is consistent with a modest limitation of disclosure-based
-regulation in credibility-sensitive settings: standardized disclosure may
-not eliminate disagreement when investors process the same filing through
-different institutional-trust priors.
+regulation: standardized mandatory disclosure may not eliminate
+disagreement when the filing is interpretation-intensive and investors
+process it through different priors.
 
 \bibliographystyle{apalike}
 \bibliography{references}

@@ -358,7 +358,29 @@ def parse_item401_text(text: str) -> dict:
         reason = "unclassified"
 
     # Disagreements disclosed?
-    disagreements = bool(re.search(r"disagreement", text, re.IGNORECASE))
+    # Item 304 requires firms to state whether disagreements occurred.
+    # Most filings say "there were no disagreements" — boilerplate.
+    # We need to distinguish negated mentions from affirmative disclosures.
+    _no_disagree = re.compile(
+        r"(?:were|was|have\s+been|had)\s+no\s+disagreement"
+        r"|no\s+disagreements?\s+(?:with|between|on|regarding)"
+        r"|(?:not|never)\s+(?:had|have|been)\s+(?:any\s+)?disagreement"
+        r"|has\s+had\s+no\s+disagreement"
+        r"|there\s+(?:were|have\s+been|was)\s+no\s+disagreement"
+        r"|without\s+(?:any\s+)?disagreement",
+        re.IGNORECASE,
+    )
+    _yes_disagree = re.compile(
+        r"(?:had|have|were)\s+(?:the\s+following\s+)?disagreements?"
+        r"|following\s+disagreements?"
+        r"|certain\s+disagreements?"
+        r"|(?:a|the)\s+disagreement\s+(?:with|between|regarding|concerning|over|about)"
+        r"|disagreements?\s+(?:arose|existed|occurred|related|involved|concerned)"
+        r"|disagreements?\s+(?:as|described|set\s+forth|regarding)",
+        re.IGNORECASE,
+    )
+    has_affirmative = bool(_yes_disagree.search(text))
+    disagreements = has_affirmative
 
     # Auditor out: firm name near departure language
     out_match = re.search(
