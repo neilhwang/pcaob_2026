@@ -59,7 +59,9 @@
       "Bash(for f:*)",
       "Bash(do echo:*)",
       "Read(//c/Users/neilh/documents/pcaob_2026/**)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(rm \"C:/Users/neilh/.claude/projects/C--Users-neilh-documents-pcaob-2026/memory/project_dw_nominate_pipeline.md\")",
+      "Bash(rm \"C:/Users/neilh/.claude/projects/C--Users-neilh-documents-pcaob-2026/memory/project_ibes_pipeline.md\")"
     ]
   }
 }

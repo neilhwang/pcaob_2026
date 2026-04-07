@@ -50,11 +50,45 @@ Continuation of Session 10. Completed the Item 5.02 officer-change placebo test,
 - Confirmed Neil has access to: Call Reports (bank_all), Y-9C (holding company), TRACE Enhanced (435M+ trades)
 - Does NOT have: DealScan, full FISD (sample only)
 
-## Pending / Next Steps
+### 10. Language Audit (Causal → Associational)
+- Abstract: "shapes" → "is associated with"; "confirms" → "consistent with"
+- Introduction: "identifies" → "documents a previously unexplored correlate"; "rules out" → "is inconsistent with"
+- Conclusion: rewritten opening sentence to positioning sentence
+- Results: "striking" → "directionally consistent"; "meaningful statistical evidence" → "suggestive evidence"
+- Identification subheading: "is informative" → "may be informative"
 
-1. **Commit all changes** — script 05 dedup fix, script 09 bug fixes, new script 10, draft revisions, Goldman et al. citation
-2. **Run `.\sync_overleaf.ps1`** — done (per Neil)
-3. **Consider re-running script 21** to produce a clean `post_event_uncertainty.parquet` without duplicates (currently the fix is applied in script 05 at merge time)
+### 11. H2 Dropped and Table 4 Moved to Appendix
+- H2 (ambiguity amplification) removed as a formal hypothesis — direct interaction tests are null (p=0.806 for AbVol, p=0.416 for |CAR|)
+- Table 4 (filing informativeness mechanism test with 6 post-event uncertainty proxies) moved to appendix
+- P3 references removed throughout; informativeness reported as exploratory paragraph in §6.5
+- Theory section: P3 replaced with short paragraph noting exploratory exploration without confirming evidence
+
+### 12. Results Section Reordered
+- New order: Main Results → Placebos → Robustness → Exploratory → Reversal
+- Added transition sentence: "We focus our interpretation on the baseline association and the placebo evidence"
+
+### 13. Hypothesis Development Folded into Theory
+- §4 (Hypothesis Development) eliminated as standalone section
+- H1 and exploratory event-type prediction now appear as §3.6 "Hypothesis" subsection
+- Exploratory event-type paragraph compressed from 20 to 7 lines
+- Roadmap sentence updated
+
+### 14. Additional Trims
+- SOX/PCAOB stability: 24 lines → 11 lines (compressed to footnote)
+- Identification section: 117 lines → 51 lines (56% cut)
+- Conclusion: removed "may be growing" and "should operate wherever" extrapolation
+- "First evidence" → "We document"
+- AbVol formula rewritten with explicit notation
+- Sample selection limitation added (2 sentences)
+
+## Pending / Next Steps (for next session)
+
+1. **Theory section (§3):** Tie modeling choices to Item 4.01 institutional features — predecessor concurrence letters, regulated disclosure content, PCAOB credibility. Currently reads as generic disagreement finance.
+2. **Lit review (§2):** Rebuild around three accounting conversations: auditor-change informativeness, disclosure interpretation, credibility of audit signals. Currently reads as disconnected mini-bibliographies.
+3. **Footnotes:** Audit for argumentative work that belongs in main text or should be cut.
+4. **Compile PDF** via Overleaf and do visual pass.
+5. **Commit and push** remaining changes.
+6. **Run `.\sync_overleaf.ps1`**
 
 ## Decisions Made
 
