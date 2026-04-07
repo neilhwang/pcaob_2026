@@ -183,7 +183,7 @@ measured in standard audit-quality assessments.
 
 The remainder of the paper proceeds as follows. Section~\ref{sec:lit} reviews
 the related literature. Section~\ref{sec:theory} develops the theoretical
-framework. Section~\ref{sec:hypotheses} states the testable hypotheses.
+framework and states the hypothesis.
 Section~\ref{sec:design} describes the empirical design. Section~\ref{sec:results}
 presents the results. Section~\ref{sec:conclusion} concludes.
 
@@ -561,10 +561,10 @@ disclosure-based remedies cannot fully eliminate polarization-driven
 disagreement, because the heterogeneity lies in how investors process
 signals, not in what the signals contain.
 
-% ── 4. Hypothesis Development ─────────────────────────────────────────────────
-
-\section{Hypothesis Development}
+\subsection{Hypothesis}
 \label{sec:hypotheses}
+
+The theoretical framework yields one testable hypothesis:
 
 \begin{hyp}
     \label{h1}
@@ -577,29 +577,16 @@ signals, not in what the signals contain.
     empirical prediction.
 \end{hyp}
 
-\noindent\textbf{Exploratory Prediction (Event Type).}
-The formal model does not parameterize event type, so this prediction is not
-derived from the theoretical framework. We nonetheless examine whether the
-polarization effect differs between auditor resignations and client-initiated
-dismissals, motivated by the ambiguity logic of Section~\ref{sec:ambiguity}.
-Although the prior literature characterizes resignations as worse-news signals
-on average \citep{ghosh2015, beneish2005}, the relevant distinction for our
-purposes is \emph{per-filing} informational content. SEC rules require
-registrants to disclose specified disagreements and reportable events, but
-professional standards restrict the predecessor auditor from disclosing
-confidential client information without consent. Consequently,
-\citet{beneish2005} document that approximately three-quarters of resignation
-8-Ks carry no attribution to any accounting disagreement, and
-\citet{boone2001} find that the resignation announcement does not reduce
-information asymmetry --- investors must draw their own inferences,
-relying on priors about auditor credibility rather than on the filing's
-content. Dismissals, in contrast, assign initiative to the client,
-providing directional information about the nature of the separation even
-when the stated reason is sparse.
-We treat this as an auxiliary empirical exercise (Table~\ref{tab:event_type})
-rather than a core hypothesis.
+We also examine, on an exploratory basis, whether the polarization
+effect differs between auditor resignations and client-initiated
+dismissals. Although resignations are worse-news signals on average
+\citep{ghosh2015, beneish2005}, most resignation 8-Ks carry no
+attribution to any accounting disagreement \citep{beneish2005} and do
+not reduce information asymmetry \citep{boone2001}, leaving investors to
+rely on their own priors. We treat event-type splits as descriptive
+rather than as a core hypothesis.
 
-% ── 5. Empirical Design ───────────────────────────────────────────────────────
+% ── 4. Empirical Design ──────────────────────────────────────────────────────
 
 \section{Empirical Design}
 \label{sec:design}
@@ -652,9 +639,12 @@ Item~4.01 filings.
 \textbf{Abnormal trading volume ($AbVol$).} We measure trading-volume
 reactions over the $[-1, +1]$ event window, consistent with the short-run
 agreement-to-disagree framework of \citet{kandel1995} in which volume spikes
-at the moment beliefs diverge. $AbVol_e$ is the mean of
-$[\log(\mathrm{Vol}_{e,t}+1) - \overline{\log(\mathrm{Vol}_e)}]$ over the
-$[-1,+1]$ window, where the baseline is the estimation-window mean.
+at the moment beliefs diverge. Define $LV_{e,t} \equiv \log(\mathrm{Vol}_{e,t}+1)$
+and let $\overline{LV}_e$ denote its mean over the estimation window
+$[-252, -46]$. Then:
+\[
+    AbVol_e = \frac{1}{3}\sum_{t=-1}^{+1}\bigl(LV_{e,t} - \overline{LV}_e\bigr).
+\]
 
 \textbf{Absolute cumulative abnormal return ($|CAR|$).} Following standard
 event-study methodology \citep{mackinlay1997}, we estimate a market model
