@@ -61,7 +61,26 @@
       "Read(//c/Users/neilh/documents/pcaob_2026/**)",
       "Bash(done)",
       "Bash(rm \"C:/Users/neilh/.claude/projects/C--Users-neilh-documents-pcaob-2026/memory/project_dw_nominate_pipeline.md\")",
-      "Bash(rm \"C:/Users/neilh/.claude/projects/C--Users-neilh-documents-pcaob-2026/memory/project_ibes_pipeline.md\")"
+      "Bash(rm \"C:/Users/neilh/.claude/projects/C--Users-neilh-documents-pcaob-2026/memory/project_ibes_pipeline.md\")",
+      "Bash(/c/Users/neilh/anaconda3/python.exe -c \":*)",
+      "Bash(where python:*)",
+      "Bash(where conda:*)",
+      "Read(//c/Users/neilh/anaconda3/**)",
+      "Read(//c/Users/neilh/miniconda3/**)",
+      "Bash(cmd.exe /c \"where python\" 2>&1)",
+      "Bash(cmd.exe /c \"python -c \\\\\"import sys; print\\(sys.executable\\)\\\\\"\" 2>&1)",
+      "Read(//c/ProgramData/**)",
+      "Read(//c/Users/neilh/AppData/Local/Programs/Python//**)",
+      "Bash(awk -F'|' '{print NF}')",
+      "Bash(\"C:/Users/neilh/AppData/Local/Programs/Python/Python313/python.exe\" Code/23_build_investor_political_heterogeneity.py)",
+      "Bash(\"C:/Users/neilh/AppData/Local/Programs/Python/Python313/python.exe\" -c \"import pandas; import numpy; import rapidfuzz; import statsmodels; print\\('pandas, numpy, rapidfuzz, statsmodels: OK'\\)\" 2>&1)",
+      "Bash(\"C:/Users/neilh/AppData/Local/Programs/Python/Python313/python.exe\" -c \"import requests; print\\('requests OK'\\)\" 2>&1)",
+      "Bash(where python3:*)",
+      "Read(//c/Users/neilh/AppData/Local/Programs/Python/**)",
+      "Bash(py --version)",
+      "Bash(/c/Users/neilh/AppData/Local/Programs/Python/Python313/python.exe Code/23_build_investor_political_heterogeneity.py)",
+      "Bash(/c/Users/neilh/AppData/Local/Programs/Python/Python313/python.exe -c \":*)",
+      "Bash(/c/Users/neilh/AppData/Local/Programs/Python/Python313/python.exe Code/22_credibility_salience_test.py)"
     ]
   }
 }

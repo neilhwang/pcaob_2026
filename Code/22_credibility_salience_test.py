@@ -274,6 +274,106 @@ if "quality_down" in df.columns:
               f"p={m2.pvalues['pol_x_qup']:.3f}  (N_up={int((df['quality_up']==1).sum())})")
 
 
+# ── Test 6: Investor-base political heterogeneity (13F + FEC) ─────────────────
+print("\n" + "=" * 70)
+print("TEST 6: Investor-base political heterogeneity (13F + FEC)")
+print("=" * 70)
+print("  Source: institutional holdings matched to FEC employer contributions")
+print("  Coverage: post-2013Q2 SEC structured data; N_events ~ 65")
+print("  investor_het = 1 - |Dem_share - Rep_share| (higher = more mixed base)")
+print()
+
+iph_file = PROC / "investor_political_heterogeneity.parquet"
+if not iph_file.exists():
+    print("  investor_political_heterogeneity.parquet not found — skipping Test 6")
+else:
+    iph = pd.read_parquet(iph_file)
+    iph["event_date"] = pd.to_datetime(iph["event_date"])
+    df["event_date"]  = pd.to_datetime(df["event_date"])
+
+    df6 = df.merge(
+        iph[["permno", "event_date", "investor_het", "dem_share",
+             "rep_share", "matched_share", "n_matched_filers"]],
+        on=["permno", "event_date"], how="inner",
+    )
+    n6 = df6["investor_het"].notna().sum()
+    print(f"  Matched events: {len(df6)}  (with investor_het: {n6})")
+    df6 = df6[df6["investor_het"].notna()].copy()
+    print(f"  Analysis subsample N={len(df6)}")
+
+    if len(df6) < 20:
+        print("  Too few observations — skipping regressions")
+    else:
+        # Descriptive statistics
+        print(f"\n  investor_het:   mean={df6['investor_het'].mean():.3f}  "
+              f"sd={df6['investor_het'].std():.3f}  "
+              f"min={df6['investor_het'].min():.3f}  "
+              f"max={df6['investor_het'].max():.3f}")
+        print(f"  matched_share:  mean={df6['matched_share'].mean():.3f}  "
+              f"n_filers mean={df6['n_matched_filers'].mean():.1f}")
+
+        # Correlation with state-level polarization proxy
+        r_pol_het = df6["competitive_std"].corr(df6["investor_het"])
+        print(f"\n  Corr(competitive_std, investor_het) = {r_pol_het:.3f}")
+
+        # Standardize investor_het for comparability
+        df6["investor_het_std"] = (
+            (df6["investor_het"] - df6["investor_het"].mean())
+            / df6["investor_het"].std()
+        )
+
+        # Ensure FE vars exist
+        for col in ["year_str", "sic2_str"]:
+            if col not in df6.columns:
+                df6[col] = (df6["year"].astype(str) if col == "year_str"
+                            else df6["sic2"].astype(str))
+
+        ctrl6 = " + ".join([c for c in CONTROLS if c in df6.columns])
+        fe6   = "C(year_str) + C(sic2_str)"
+
+        print("\n--- Main: investor_het replacing competitive_std ---")
+        for outcome, label in [("abvol", "AbVol"), ("absCar", "|CAR|")]:
+            try:
+                m = run_ols(
+                    f"{outcome} ~ investor_het_std + {ctrl6} + {fe6}", df6)
+                b = m.params["investor_het_std"]
+                p = m.pvalues["investor_het_std"]
+                print(f"  {label}: beta(investor_het_std)={b:+.4f}  p={p:.3f}  N={int(m.nobs)}")
+            except Exception as e:
+                print(f"  {label}: ERROR — {e}")
+
+        print("\n--- Baseline: competitive_std in same subsample ---")
+        for outcome, label in [("abvol", "AbVol"), ("absCar", "|CAR|")]:
+            try:
+                m = run_ols(
+                    f"{outcome} ~ competitive_std + {ctrl6} + {fe6}", df6)
+                b = m.params["competitive_std"]
+                p = m.pvalues["competitive_std"]
+                print(f"  {label}: beta(competitive_std)={b:+.4f}  p={p:.3f}  N={int(m.nobs)}")
+            except Exception as e:
+                print(f"  {label}: ERROR — {e}")
+
+        print("\n--- Horse race: both measures jointly ---")
+        for outcome, label in [("abvol", "AbVol"), ("absCar", "|CAR|")]:
+            try:
+                m = run_ols(
+                    f"{outcome} ~ competitive_std + investor_het_std + {ctrl6} + {fe6}",
+                    df6)
+                b_pol = m.params["competitive_std"]
+                p_pol = m.pvalues["competitive_std"]
+                b_het = m.params["investor_het_std"]
+                p_het = m.pvalues["investor_het_std"]
+                print(f"  {label}: beta(competitive_std)={b_pol:+.4f} p={p_pol:.3f}  |  "
+                      f"beta(investor_het_std)={b_het:+.4f} p={p_het:.3f}  N={int(m.nobs)}")
+            except Exception as e:
+                print(f"  {label}: ERROR — {e}")
+
+        print()
+        print("  NOTE: N=65 subsample; post-2013Q2 only; interpret with caution.")
+        print("  matched_share ~0.95 indicates strong FEC coverage conditional on")
+        print("  having institutional holdings data.")
+
+
 print("\n" + "=" * 70)
 print("DONE")
 print("=" * 70)

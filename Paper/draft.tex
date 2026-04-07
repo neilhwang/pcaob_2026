@@ -1226,6 +1226,37 @@ the specific operative channel; the evidence is more consistent with a
 general interpretation-of-substantive-content mechanism than with a
 narrowly credibility-specific one.
 
+\textbf{Investor-base political heterogeneity.}
+As a partial test of whether the effect operates through the investor
+base rather than some other state-level channel, we construct a
+firm-event measure of investor-base political heterogeneity using 13F
+institutional holdings matched to Federal Election Commission individual
+contribution records. Following \citet{wintoki2019}, we identify the
+political lean of each 13F filer by matching its name to FEC employer
+contribution data using fuzzy string matching; for matched events, the
+matched institutional share averages 95\% of reported holdings. We
+define $\mathit{investor\_het} = 1 - |\mathit{Dem\,share} -
+\mathit{Rep\,share}|$, which is maximized when the institutional
+investor base is equally split between Democratic- and
+Republican-leaning filers (heterogeneous base) and minimized when it is
+politically one-sided. The measure is available for 65 post-2013 events,
+the period covered by the SEC's structured 13F data sets.
+
+The coefficient on $\mathit{investor\_het}$ is positive for abnormal
+volume ($\beta = 0.317$, $p = 0.190$, $N = 65$): events with more
+politically mixed institutional investor bases exhibit larger abnormal
+volume. The result is directionally consistent with the state-level
+evidence and with the theoretical prediction that disagreement scales
+with heterogeneity in investor priors, but is imprecisely estimated
+given the limited post-2013 subsample. In the same subsample, the
+state-level polarization proxy is flat ($\beta = 0.025$, $p = 0.913$),
+reflecting both the small sample and the post-2013 composition of these
+events. The correlation between the two measures is near zero
+($r = -0.003$), consistent with them capturing distinct dimensions of
+political heterogeneity---firm-level investor composition versus
+state-level electoral environment. We treat this as suggestive rather
+than independently significant.
+
 \subsection{Post-Event Price Persistence}
 \label{sec:reversal}
 
@@ -1270,9 +1301,14 @@ arising from the interpretation of substantive disclosure content.
 
 Several limitations warrant emphasis. Headquarters-state polarization is
 a noisy reduced-form proxy for the political-information environment of
-a geographically dispersed investor base; sharper identification of
-which investors drive the pattern requires investor-level political data
-that we lack. The sample ($N = 678$) limits power for interaction tests,
+a geographically dispersed investor base. A partial investor-level test
+using 13F institutional holdings matched to FEC contribution records
+finds a positive but imprecisely estimated association between
+firm-level investor-base heterogeneity and abnormal volume in the
+post-2013 subsample ($\beta = 0.317$, $p = 0.190$, $N = 65$);
+extending this measure to the full sample period requires parsing
+individual EDGAR 13F filings not covered by the SEC's structured data
+sets. The sample ($N = 678$) limits power for interaction tests,
 and with only 27 filings disclosing formal disagreements, we cannot test
 whether the effect operates specifically through audit-credibility
 beliefs. The analysis is necessarily limited to CRSP/Compustat-covered
