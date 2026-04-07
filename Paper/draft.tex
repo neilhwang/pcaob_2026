@@ -22,8 +22,8 @@
 % ── Abstract ─────────────────────────────────────────────────────────────────
 
 \begin{abstract}
-We provide the first evidence that political polarization is associated
-with stronger investor reactions to mandatory audit-related disclosures. Auditor-change
+We document that political polarization is associated with stronger
+investor reactions to mandatory audit-related disclosures. Auditor-change
 filings (Form~8-K Item~4.01) require the firm to disclose the circumstances
 of the separation, but the signal can be ambiguous --- investors must assess
 auditor credibility and infer the nature of the change, judgments that
@@ -824,121 +824,52 @@ level. The coefficient of interest is $\beta$.
 
 \subsection{Identification}
 
-As noted in the introduction, headquarters-state polarization is a
-reduced-form proxy, not a direct measure of investor beliefs. The paper
-identifies whether market reactions to auditor-change disclosures vary
-with the surrounding partisan environment --- not whether any specific
-type of investor trades more.
+Headquarters-state polarization is a reduced-form proxy, not a direct
+measure of investor beliefs. The paper tests whether market reactions to
+auditor-change disclosures are associated with the surrounding partisan
+environment --- not whether any specific type of investor trades more.
 
-\subsubsection*{Why headquarters-state polarization may be informative}
+The intended channel runs through the local information environment
+surrounding the firm, particularly retail investors, who are more
+geographically concentrated than institutional investors and more likely
+to anchor their beliefs to local political norms \citep{coval1999}.
+Consistent with this channel, \citet{boone2001} find that auditor
+resignation announcements generate significant abnormal trading activity
+among individual investors but not institutional investors. The
+small-firm subsample test (Table~\ref{tab:robustness}, column~8)
+provides a directional validation: the AbVol coefficient strengthens
+($\beta = 0.137$, $p < 0.05$) for below-median-size firms, where the
+headquarters-state proxy is better matched to the marginal investor
+base.\footnote{We also interact polarization with an above-median retail
+ownership indicator (one minus 13F institutional ownership). The
+interaction is directionally positive for both outcomes but
+statistically insignificant ($p = 0.201$ for $|CAR|$; $p = 0.552$ for
+AbVol). Combined with the small-firm result, these tests are suggestive
+but not conclusive.}
 
-The intended channel runs through the local stakeholder environment
-surrounding the firm: employees, customers, local media, and --- critically
---- retail investors, who are more geographically concentrated than
-institutional investors and more likely to anchor their beliefs to local
-political norms. A well-established local equity bias means that retail
-investors overweight geographically proximate firms in their portfolios
-\citep{coval1999}, so the headquarters state's political composition
-is a meaningful, if imperfect, proxy for the political composition of the
-firm's marginal retail investor base. Consistent with this channel,
-\citet{boone2001} find that auditor resignation announcements generate
-significant abnormal trading activity among individual investors but not
-among institutional investors, suggesting that it is retail investors ---
-who are more geographically concentrated and more dependent on SEC-mandated
-disclosure --- who respond to the informational content of the 8-K filing. For smaller and less nationally prominent firms, the
-marginal trader is more likely to be a local retail investor whose
-interpretation of an auditor change is shaped by the surrounding political
-environment. For larger firms with globally dispersed institutional ownership,
-the headquarters-state proxy is less well-matched to the actual investor base,
-and the effect should be attenuated. This cross-sectional prediction provides
-a validation test: we expect the polarization effect to be stronger for
-smaller firms, whose marginal investors are more likely to be local.
-Column~(8) of Table~\ref{tab:robustness} restricts the sample to
-below-median log-asset firms and tests this directly; the AbVol coefficient
-strengthens ($\beta = 0.137$, $p < 0.05$), consistent with polarization
-mattering more where the marginal investor is local.
-To test the retail channel directly, we construct the institutional
-ownership fraction for each event from quarterly Form 13F filings. We
-download 13F-HR filings from SEC EDGAR for each quarter in 2000--2023,
-parse the reported holdings tables, and aggregate total institutional
-shares across all filers per firm-quarter. Normalizing by CRSP shares
-outstanding gives the fraction of shares held by 13F institutional
-investors at the most recent quarter-end before each event (within 180
-days). We obtain matches for 674 of 678 events, with a mean institutional
-ownership of 52\% (median 43\%). We then interact polarization with an
-above-median \emph{high retail} indicator (one minus institutional
-ownership). The retail-ownership interaction is directionally positive
-for both $|CAR|$ ($\beta_{\text{interaction}} = 0.006$, $p = 0.201$) and
-$AbVol$ ($\beta_{\text{interaction}} = 0.051$, $p = 0.552$), consistent
-with the retail channel but statistically insignificant. Combined with
-the directional small-firm result, these tests weakly support the local
-retail channel but do not rule out alternative interpretations.
-
-We acknowledge the main limitation of the proxy directly: equity investors in
-publicly traded firms are not confined to the headquarters state. Institutional
-ownership is national, and many retail investors hold diversified portfolios
-regardless of geography. Headquarters-state polarization therefore captures
-the intended channel with error. We address this in five ways. First, we
-include rich firm-level controls to absorb observable firm characteristics
-that may correlate with both state polarization and event-window reactions.
-Second, state fixed effects (Table~\ref{tab:robustness}, column~4) absorb all
-time-invariant cross-state differences in investor clientele composition,
-local media environments, state regulatory environments, and industry
-clustering, identifying solely from within-state changes in polarization
-across election cycles. Third, the DW-NOMINATE specification uses an entirely different data source
-(congressional roll-call votes) and produces variation that is not driven by
-the headquarters-state aggregation choice; it significantly predicts
-abnormal volume ($\beta = 0.100$, $p < 0.10$), confirming that the volume
-result generalizes beyond electoral proxies.
-Fourth, a county-level polarization check using MIT Election Lab county
-presidential returns matched to firm headquarters counties via Compustat
-zip codes provides a finer-grained geographic alternative
-(Table~\ref{tab:robustness}, column~7). Fifth, the within-state standard
-deviation of county-level vote shares --- a direct measure of geographic
-partisan sorting that distinguishes genuinely polarized states from merely
-competitive ones \citep{fiorina2005} --- independently predicts $|CAR|$
-(column~9, $p = 0.056$), confirming that the result is not merely an
-artifact of electoral closeness.
-
-\subsubsection*{State-level confounds and inference}
-
-Identification rests on two sources of variation in $\textit{Pol}_{s(e),t(e)}$:
-cross-state differences in the partisan environment of presidential elections,
-and time-series changes in that environment across electoral cycles. Year
-fixed effects absorb aggregate macroeconomic and political conditions common
-to all firms. Industry fixed effects absorb sector-level differences in
-auditor-change frequency and investor base composition. The key identifying
-assumption is that, conditional on these controls, a firm's headquarters-state
-polarization at the time of the event is uncorrelated with unobserved
-determinants of the market's reaction to that specific auditor change.
-
-Four state-level confounds deserve explicit discussion. \emph{Local investor
-clientele}: politically polarized states may attract systematically different
-retail-investor populations whose risk tolerance or information processing
-differs for reasons unrelated to polarization per se. We address this through
-state fixed effects, which absorb the time-invariant component of clientele
-composition. \emph{Local media ecosystems}: more polarized states may have
-more polarized local media that amplifies any corporate news event, not just
-auditor changes. If so, the polarization effect should appear equally for
-non-audit events; the within-firm placebo tests
-(Sections~\ref{sec:placebo} and~\ref{sec:placebo_502}) address this
-directly by showing the effect is absent for earnings announcements and
-officer-change disclosures from the same firms. \emph{State business and regulatory environments}: states with
-more polarized electorates may also have different securities litigation
-climates or governance norms that independently affect how auditor changes
-are processed. State fixed effects absorb time-invariant components; the
-time-varying component is plausibly orthogonal to specific auditor-change
-timing within the state. \emph{Industry clustering}: some high-polarization
-states (e.g., Texas for energy, California for technology) have distinctive
-industry concentrations. Two-digit SIC industry fixed effects absorb this
-directly.
-
-Because the polarization regressor varies at the state$\times$year level,
-columns~(5) and~(6) of Table~\ref{tab:robustness} address this concern:
-column~(5) clusters at the state level and column~(6) implements two-way
-clustering by firm and state following \citet{cameron2011}; the baseline
-clusters at the firm level, which is conservative for event-level inference
-but potentially optimistic relative to the regressor's level of variation.
+The main limitation is that equity investors are not confined to the
+headquarters state. Institutional ownership is national, and
+headquarters-state polarization captures the intended channel with error,
+which attenuates estimated coefficients. Several robustness tests address
+specific concerns.
+State fixed effects (Table~\ref{tab:robustness}, column~4) absorb all
+time-invariant cross-state differences in investor composition, media
+environments, and regulatory climate. The DW-NOMINATE specification
+(column~3) uses congressional roll-call votes rather than electoral
+returns and still significantly predicts abnormal volume ($p < 0.10$).
+A county-level polarization measure (column~7) and the within-state
+standard deviation of county-level vote shares (column~9, $p = 0.056$)
+confirm that the result is not an artifact of geographic aggregation or
+electoral closeness \citep{fiorina2005}. The within-firm placebo tests
+(Sections~\ref{sec:placebo} and~\ref{sec:placebo_502}) address the
+concern that any state-level correlate --- including local media or
+regulatory environment --- could drive the result: the effect is absent
+for earnings announcements and officer-change disclosures from the same
+firms. Because the polarization regressor varies at the
+state$\times$election-cycle level, columns~(5)--(6) of
+Table~\ref{tab:robustness} cluster at the state level and implement
+two-way clustering by firm and state \citep{cameron2011}; results are
+unchanged.
 
 % ── 6. Results ────────────────────────────────────────────────────────────────
 
@@ -1375,14 +1306,12 @@ registrants that file Item~4.01 disclosures.
 
 The findings suggest one limit to disclosure-based regulation in
 credibility-sensitive settings: when investors differ in their assessments of
-institutional trustworthiness, more disclosure does not eliminate disagreement.
-As political polarization has increased persistently over the past two
-decades \citep{iyengar2019, boxell2024, bertrand2023}, its effect on audit signal
-interpretation may be growing. We study auditor changes as an
-initial tractable setting, but the mechanism should operate wherever disclosure
-interpretation depends on trust in regulated gatekeepers. Future research
-should examine whether these patterns extend to critical audit matters, going
-concern opinions, and internal control reports. Our supplementary test finds that national affective polarization
+institutional trustworthiness, the same disclosure may be associated with
+more, not less, disagreement. Whether similar patterns arise in other
+audit-related disclosures --- critical audit matters, going concern
+opinions, or internal control reports --- remains an open question that
+we cannot address with the current data. Our supplementary test finds
+that national affective polarization
 (ANES feeling-thermometer differential) does not add explanatory power
 beyond ideological polarization (Table~\ref{tab:affective}), suggesting
 the mechanism operates through the partisan composition of the local

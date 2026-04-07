@@ -1,0 +1,122 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+\setlength{\parskip}{0.6em}
+\setlength{\parindent}{0pt}
+\begin{document}
+
+\begin{center}
+{\LARGE Referee Report for TAR/JAR Submission}\\[0.5em]
+{\large Excluding Critical Issues Section}
+\end{center}
+
+This document contains the referee report excluding the ``Critical issues'' section, as requested.
+
+\section*{2. Theory--Empirics Gaps}
+
+\renewcommand{\arraystretch}{1.25}
+\small
+\begin{longtable}{>{\RaggedRight\arraybackslash}p{0.22\textwidth} >{\RaggedRight\arraybackslash}p{0.18\textwidth} >{\RaggedRight\arraybackslash}p{0.28\textwidth} >{\RaggedRight\arraybackslash}p{0.24\textwidth}}
+\toprule
+\textbf{Theoretical prediction} & \textbf{Empirical test} & \textbf{Gap/issue} & \textbf{Suggested fix} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Theoretical prediction} & \textbf{Empirical test} & \textbf{Gap/issue} & \textbf{Suggested fix} \\
+\midrule
+\endhead
+
+Proposition 1 / P1: polarization increases posterior dispersion, which increases trading volume. & Table 3, \textit{AbVol} regressions. & This is the cleanest mapping in the paper. But the proxy for ``polarization'' is state electoral competitiveness, not investor prior dispersion. The mapping from the theoretical primitive to the empirical regressor is weak. & Keep this as the main test, but explicitly relabel the regressor as a reduced-form proxy for the political information environment, not investor belief dispersion itself. \\
+
+P2: absolute returns increase with polarization as a secondary outcome under added frictions. & Table 3, $|CAR|$ regressions. & The model does not derive this result. The paper tests it anyway and headlines it. & Demote $|CAR|$ to secondary corroboration; or derive it formally and add tests for the friction channel. \\
+
+P3: ambiguity amplifies the polarization effect through perceived precision differences. & Table 4, Polarization $\times$ Low Info on six uncertainty proxies. & The original ambiguity measure fails; the replacement measure is ad hoc, not clearly tied to the model, and individual tests are null. & Replace with a single, validated filing-level informativeness construct tied directly to text content and pre-specified coding rules. \\
+
+Exploratory event-type difference is not formally derived. & Table 5 split by dismissals/non-dismissals. & The paper itself says this is not derived. The split gives mixed results across outcomes. & Move to appendix or shorten to one paragraph. It should not carry interpretive weight. \\
+
+Persistent disagreement rather than overreaction. & Post-event CAR ``no reversal'' test. & This prediction is not clearly derived from the formal model. Also the paper's Table 9 shows positive coefficients, one marginally significant, which is weak evidence for persistence rather than a formal validation. & Recast as a supplemental descriptive check, not a theory test. \\
+
+Local retail-investor channel. & Small-firm split and retail-ownership interaction in the identification section. & This is a mechanism layered on top of another mechanism. The direct retail interaction is insignificant. & Do not claim retail-channel support. Say evidence is suggestive at best. \\
+
+Unified-channel model in Appendix B. & Whole empirical design. & Proposition 2 makes the core prediction channel-agnostic, which weakens the distinctiveness of the paper's stated mechanism. If priors, trust, and precision all imply the same sign, the evidence cannot distinguish them. & Acknowledge directly that the empirical design identifies disagreement around credibility-sensitive disclosure, not the exact psychological channel. \\
+
+\bottomrule
+\end{longtable}
+\normalsize
+
+\section*{3. Presentation Issues for an Accounting Audience}
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item \textbf{The abstract overshoots the evidence.} It says political polarization ``shapes investor reactions'' and that findings ``confirm'' the interpretation mechanism. With the current design, neither claim is supportable.\\
+    \textbf{Fix:} Rewrite as ``we document'' and ``evidence is consistent with.''
+
+    \item \textbf{The paper is not anchored tightly enough in accounting institutions at the point of contribution.} The introduction does a decent job on Item 4.01 and PCAOB credibility, but the theory section quickly turns into generic disagreement finance.\\
+    \textbf{Fix:} In Section 3, tie every modeling choice back to the peculiar institutional features of auditor-change filings, predecessor concurrence letters, and regulated disclosure content.
+
+    \item \textbf{The literature review is still a scaffold, not a publishable literature section.} Too many placeholders remain, and several subsections read as disconnected mini-bibliographies rather than a narrative that narrows to the gap.\\
+    \textbf{Fix:} Rebuild Section 2 around three accounting conversations only: auditor-change informativeness, disclosure interpretation/ambiguity, and credibility of audit/regulatory signals.
+
+    \item \textbf{The tables are not yet at accounting-journal standard.} Table notes are decent, but variable naming is inconsistent, sample sizes differ between text and tables, and notation is rough. The text repeatedly says the sample is 678 events, while Tables 2--6 report $N=724$ or nearby counts.\\
+    \textbf{Fix:} Reconcile every $N$ in the manuscript and explain why descriptive and regression samples differ.
+
+    \item \textbf{Section 5.6 is too long and defensive.} The identification section reads like a referee-response memo inserted into the draft.\\
+    \textbf{Fix:} Cut by at least half. Keep the main concern, the main limitation, and the two strongest validation exercises.
+
+    \item \textbf{The manuscript does not yet sound like TAR/JAR prose.} Phrases such as ``the results are striking,'' ``meaningful statistical evidence,'' and ``difficult to reconcile'' are too argumentative given the design and mixed mechanism evidence.\\
+    \textbf{Fix:} Use restrained language throughout.
+\end{enumerate}
+
+\section*{4. Style Inconsistencies}
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item \textbf{Location: Abstract and Introduction}\\
+    \textbf{Current text:} ``confirming that polarization amplifies disagreement specifically when the disclosure requires interpretation''\\
+    \textbf{What a TAR/JAR paper would do:} ``consistent with the idea that polarization amplifies disagreement when the disclosure requires interpretation'' or ``we do not find similar patterns around earnings announcements.''
+
+    \item \textbf{Location: Section 3}\\
+    \textbf{Current text:} dense notation and multiple channels introduced at once, then unified again in Appendix B.\\
+    \textbf{What a TAR/JAR paper would do:} one compact benchmark model in the main text, all extensions in the appendix, with plain-English intuition before notation.
+
+    \item \textbf{Location: Section 6.3}\\
+    \textbf{Current text:} reliance on a one-sided binomial test on sign consistency after all individual tests are insignificant.\\
+    \textbf{What a TAR/JAR paper would do:} either report a single validated mechanism estimate or present this as exploratory appendix evidence, not a main-table mechanism result.
+
+    \item \textbf{Location: Section 6.5}\\
+    \textbf{Current text:} long interpretive defense of every robustness result, including why nulls are ``theoretically informative.''\\
+    \textbf{What a TAR/JAR paper would do:} report robustness crisply, let strong tests speak, and avoid converting nulls into wins.
+
+    \item \textbf{Location: Conclusion}\\
+    \textbf{Current text:} broad extrapolation to CAMs, going concern, and internal control reports, plus claims that the effect may be growing because polarization has risen.\\
+    \textbf{What a published paper would do:} stop at the studied setting unless supported by direct evidence.
+
+    \item \textbf{Location: Throughout}\\
+    \textbf{Current text:} unresolved citation placeholders and ``Internet Appendix Table ??'' references.\\
+    \textbf{What a TAR/JAR paper would do:} no placeholders, no broken cross-references, no incomplete bibliography.
+\end{enumerate}
+
+\section*{5. Minor Issues}
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item The paper says the final analysis sample is 678 events, but Tables 2 and 3 report $N=724$. This inconsistency must be fixed immediately.
+    \item The definition of \textit{AbVol} is written unclearly as ``mean of $[\log(Vol_{e,t}+1)-\log(Vol_e)]$'' in one place. Rewrite the formula precisely.
+    \item Table 9 appears to use the presidential Esteban--Ray index, while the main analysis emphasizes the baseline polarization measure; that switch is confusing and should be justified or removed.
+    \item The manuscript says the state-level clustering result leaves outcomes ``unchanged and significant,'' but the table presentation should make that directly visible rather than relying on text summary.
+    \item The footnotes are doing too much argumentative work, especially around measurement and sample selection. Move the main design logic into the text and trim the footnotes.
+    \item Section headings are fine structurally, but the paper would read better if ``Hypothesis Development'' were folded into theory or shortened; right now it repeats rather than sharpens.
+    \item The discussion of ``politically polarized states'' equates polarization with electoral closeness. That is contestable even within the paper's own measurement discussion. State this as a proxy choice, not a conceptual identity.
+    \item ``First evidence'' in the abstract is unnecessary and invites easy challenge.
+    \item The conclusion should not say ``confirming,'' ``ruling out,'' or ``supports interpreting'' when the evidence is reduced-form and the mechanism tests are mixed.
+    \item The manuscript is still not ready for journal review because of unresolved references throughout the paper and appendix.
+\end{enumerate}
+
+\end{document}
