@@ -31,7 +31,8 @@ depend on trust in auditors and the PCAOB as regulatory institutions.
 Because trust in auditors and regulatory institutions may vary with
 political identity, political polarization may be associated with more
 heterogeneous interpretations of the same public filing. In a sample of
-678 auditor-change disclosures (2001--2023), firms headquartered in more
+678 auditor-change disclosures for CRSP/Compustat-listed firms
+(2001--2023), firms headquartered in more
 politically polarized states experience significantly larger abnormal
 trading volume ($p = 0.010$) and absolute abnormal returns ($p = 0.039$)
 around the filing. The effect is absent for the same firms' earnings
@@ -145,41 +146,26 @@ consistent with volume being the sharper formal prediction. Post-event returns
 show no reversal, indicating persistent belief heterogeneity rather than
 transient overreaction.
 
-This paper makes three contributions to the auditing and audit-disclosure
-literatures. First, we document a new correlate of cross-sectional variation
-in market reactions to auditor-change disclosures. A long literature in
-accounting documents that auditor-change 8-Ks are informative events
+Our contribution to the auditing and audit-disclosure literatures is to
+document that market reactions to auditor-change disclosures among listed
+firms are systematically associated with the political composition of the
+local information environment, with the cleanest evidence in abnormal
+trading volume. A long literature establishes that auditor-change 8-Ks are
+informative events whose content matters for market reactions
 \citep{johnson1990, dodd1984, defond1998, shu2000, landsman2009,
-whisenant2003, hennes2014}, but that work focuses on whether the signal
-conveys information on average and how its content varies across event
-types. We show that market reactions to the same Item~4.01 filing
-are systematically associated with the political composition of the local
-information environment --- an economically meaningful source of variation
-in the effectiveness of this specific mandatory disclosure regime that is
-not captured by existing firm-level or event-type moderators.
-Second, we isolate audit-credibility-based interpretation from generic
-attention effects. Two within-firm placebo tests show that
-headquarters-state polarization has no detectable effect on market
-reactions to the same firms' earnings announcements ($N = 20{,}800$) or
-officer-change (Item~5.02) disclosures ($N = 3{,}677$), while pooled
-specifications confirm that the polarization effect is significantly
-larger for auditor-change disclosures than for either placebo event
-type. The officer-change placebo is especially tight: both event types
-are mandatory 8-K filings requiring investors to infer the nature of the
-change from limited disclosure, but only auditor changes involve
-institutional trust in auditors and the PCAOB.
-Together, these patterns are more consistent with heterogeneous
-interpretation of a credibility-sensitive audit signal than with a
-purely generic-attention account.
-Third, our findings bear directly on disclosure-based regulation of
-auditing. The SEC and PCAOB rely heavily on mandatory disclosure as a
-regulatory tool --- Item~4.01, critical audit matters under AS~3101,
-going-concern opinions, and internal control reports are all instances of
-the same regulatory model. Our results suggest that the effectiveness of
-this model in conveying information varies with the political-information
-environment in which investors interpret the disclosure, with the
-effect operating on a credibility dimension that is not typically
-measured in standard audit-quality assessments.
+whisenant2003, hennes2014}; we show that the \emph{interpretation} of the
+same Item~4.01 filing varies with a cross-sectional dimension --- state
+political competitiveness --- not captured by existing firm-level or
+event-type moderators. Two within-firm placebo tests indicate that this
+pattern is specific to credibility-sensitive audit disclosures: headquarters-state
+polarization has no detectable effect on the same firms' earnings
+announcements ($N = 20{,}800$) or officer-change (Item~5.02) disclosures
+($N = 3{,}677$), and pooled specifications indicate that the polarization
+effect is significantly larger for auditor-change filings than for either
+placebo event type. More broadly, the findings suggest a modest limitation
+of disclosure-based regulation in credibility-sensitive settings:
+standardized disclosure may not eliminate disagreement when investors
+interpret the same filing through different institutional-trust priors.
 
 The remainder of the paper proceeds as follows. Section~\ref{sec:lit} reviews
 the related literature. Section~\ref{sec:theory} develops the theoretical
@@ -875,8 +861,9 @@ environments, and regulatory climate. The DW-NOMINATE specification
 returns and still significantly predicts abnormal volume ($p < 0.10$).
 A county-level polarization measure (column~7) and the within-state
 standard deviation of county-level vote shares (column~9, $p = 0.056$)
-confirm that the result is not an artifact of geographic aggregation or
-electoral closeness \citep{fiorina2005}. The within-firm placebo tests
+are consistent with the result not being an artifact of geographic
+aggregation or electoral closeness \citep{fiorina2005}. The within-firm
+placebo tests
 (Sections~\ref{sec:placebo} and~\ref{sec:placebo_502}) address the
 concern that any state-level correlate --- including local media or
 regulatory environment --- could drive the result: the effect is absent
@@ -886,6 +873,14 @@ state$\times$election-cycle level, columns~(5)--(6) of
 Table~\ref{tab:robustness} cluster at the state level and implement
 two-way clustering by firm and state \citep{cameron2011}; results are
 unchanged.
+
+Finally, the theoretical framework is deliberately channel-agnostic:
+heterogeneous priors, heterogeneous institutional trust, and heterogeneous
+perceived signal precision all generate the same comparative static
+(Proposition~\ref{prop:unified}). The empirical design therefore identifies
+disagreement around credibility-sensitive disclosure in politically
+competitive environments, but it cannot distinguish the specific
+psychological channel through which polarization enters investor beliefs.
 
 % ── 6. Results ────────────────────────────────────────────────────────────────
 
@@ -1065,7 +1060,7 @@ additional price effects that require demand asymmetries. The $|CAR|$
 null for DW-NOMINATE is therefore consistent with the theoretical
 hierarchy in which volume is the sharper prediction and absolute returns
 follow only under additional market-friction conditions.\footnote{Pairwise
-correlations among the standardized proxies confirm that they capture
+correlations among the standardized proxies indicate that they capture
 distinct dimensions of the latent polarization concept: electoral
 polarization and the presidential ER index are highly correlated ($r = 0.87$), but
 both are weakly correlated with DW-NOMINATE ($r = 0.10$ and $0.16$,
@@ -1091,7 +1086,7 @@ clustering (column~5) and two-way clustering by firm and state following
 \citet{cameron2011} (column~6) leave both outcomes unchanged and
 significant: AbVol at $p < 0.001$ in both cases, $|CAR|$ at $p = 0.028$
 under state clustering,
-confirming that the baseline inference is not driven by the choice of
+indicating that the baseline inference is not driven by the choice of
 clustering level.
 
 \textbf{Geographic scale.}
@@ -1100,7 +1095,7 @@ constructed from the same MIT Election Lab presidential returns, matched
 to each firm's headquarters county via Compustat zip codes and the HUD
 ZIP-COUNTY crosswalk. For $|CAR|$, the coefficient is $\beta = 0.005$
 ($p = 0.036$, $N = 659$), virtually identical to the state-level
-baseline, confirming that the result is not an artifact of geographic
+baseline, indicating that the result is not an artifact of geographic
 aggregation. For AbVol, the county-level coefficient is near zero
 ($\beta = 0.022$, $p > 0.10$). The divergence across dependent variables
 is theoretically informative. Prices are set by marginal investors, and
@@ -1118,7 +1113,7 @@ heterogeneity; the state-level measure better captures the political
 environment that shapes the broader set of investors who generate
 disagreement-driven trade. A horse-race specification including both state
 and county competitiveness simultaneously (Table~\ref{tab:supplementary},
-columns~1--2) confirms that state-level variation dominates for AbVol
+columns~1--2) suggests that state-level variation dominates for AbVol
 ($\beta_{\text{state}} = 0.125$, $p = 0.012$;
 $\beta_{\text{county}} = -0.030$, $p = 0.535$), while neither measure
 dominates for $|CAR|$, where both capture overlapping variation in the
@@ -1131,7 +1126,13 @@ with the local-investor channel: smaller firms have more geographically
 concentrated retail investor bases, so headquarters-state polarization is
 a better-matched proxy. The $|CAR|$ coefficient is directionally
 consistent ($\beta = 0.005$, $p = 0.175$) but imprecise given the smaller
-subsample.
+subsample. This test also speaks to the sample-selection concern raised in
+Section~\ref{sec:design}: because the unmatched 8-K filers are
+predominantly smaller, non-Big-4 firms, the below-median subsample is the
+segment of our analysis sample most comparable to the unmatched universe.
+The fact that the effect strengthens rather than attenuates in this
+subsample suggests that sample selection on CRSP/Compustat coverage does
+not drive the baseline result.
 
 \textbf{Electoral polarization versus swing voters.}
 A natural concern is that electoral polarization captures moderate swing
@@ -1170,7 +1171,7 @@ the \textit{Polarization} variable across observations 5,000 times, holding
 all other variables fixed, and re-estimate $\beta$ each time. For AbVol, the
 actual coefficient falls at the 99.6th percentile of the null distribution,
 yielding a one-sided permutation $p$-value of 0.004. For $|CAR|$, the
-permutation $p$-value is 0.029. Both confirm that the baseline results are
+permutation $p$-value is 0.029. Both indicate that the baseline results are
 not artifacts of finite-sample distributional assumptions.
 More broadly, the fact that we detect effects at conventional significance
 levels despite the moderate sample size implies that the underlying effect
@@ -1214,78 +1215,43 @@ different conclusions.
 
 \subsection{Exploratory Cross-Sectional Heterogeneity}
 
-Table~\ref{tab:event_type} splits the sample by event type. The
-event-type heterogeneity yields a mixed pattern across the two outcomes.
-For $|CAR|$ (columns 3--4), the effect is concentrated in non-dismissal
-events (primarily auditor resignations): $\beta = 0.011$, $p = 0.043$.
-Among dismissals, the coefficient is statistically indistinguishable from
-zero ($\beta = 0.003$, $p = 0.189$). For abnormal volume (columns 1--2),
-the pattern reverses: polarization significantly predicts volume for
-dismissals ($\beta = 0.134$, $p = 0.006$) but not for non-dismissals
-($\beta = 0.122$, $p = 0.164$).
-
-We do not view these splits as decisive evidence on the interpretation
-channel given the inconsistency across outcomes. One possible
-interpretation is that dismissals, while more transparent in their
-adversarial nature, still generate substantial disagreement about the
-\emph{consequences} of the change, manifesting in trading volume rather
-than unsigned price movement. Non-dismissals, where the filing typically
-provides less explicit attribution \citep{beneish2005, boone2001}, show
-the stronger $|CAR|$ result, consistent with polarization effects on
-prices being amplified when investors must rely more on their own priors.
+Table~\ref{tab:event_type} splits the sample by event type. The pattern
+is mixed: polarization significantly predicts volume for dismissals
+($\beta = 0.134$, $p = 0.006$) but not non-dismissals, while the
+$|CAR|$ pattern reverses (non-dismissals: $\beta = 0.011$, $p = 0.043$;
+dismissals: $\beta = 0.003$, $p = 0.189$). Given the inconsistency
+across outcomes, we do not treat these splits as informative about the
+interpretation channel.
 
 \input{../Output/Tables/tab03_event_type}
 
-\textbf{Filing informativeness.}
 We also explore whether the polarization effect is stronger when filings
 provide less objective guidance, using a text-based filing informativeness
-measure (a boilerplate-adjusted nonstandard word count, residualized on
-dismissal, firm size, and year). The interaction between polarization and
-a low-informativeness indicator is directionally positive for both $AbVol$
-and $|CAR|$ but statistically insignificant ($p = 0.806$ and $p = 0.416$,
-respectively). We do not interpret this as evidence against the
-interpretation channel; the test is likely underpowered at $N = 678$, and
-filing informativeness is difficult to measure cleanly in this setting
-because interpretive latitude is correlated with economic materiality.
-Appendix Table~\ref{tab:ambiguity} reports an extended analysis using
-six independent post-event uncertainty proxies.
+measure. The interaction is statistically insignificant for both outcomes
+($p = 0.806$ for AbVol; $p = 0.416$ for $|CAR|$).
+Appendix Table~\ref{tab:ambiguity} reports an extended analysis.
 
 \subsection{Post-Event Price Persistence}
 \label{sec:reversal}
 
-If the polarization effect reflects short-lived overreaction --- noise
-trading or attention-driven volume that washes out quickly --- then
-post-event returns in high-polarization states should reverse. We test
-this by regressing signed post-event CARs on polarization, controlling
-for the event-window return. Specifically, we compute market-model CARs
-over trading days $[+2,+20]$ (approximately one month) and $[+2,+60]$
-(approximately three months) after the 8-K filing, using the same market
-model parameters as the main analysis. We control for either the signed
-$CAR(-1,+1)$ or $|CAR(-1,+1)|$ to partial out the mechanical tendency
-of large initial reactions to mean-revert. Under the overreaction
-hypothesis, the polarization coefficient should be negative: firms in
-high-polarization states experience larger initial reactions that
-subsequently unwind.
+As a descriptive check on whether the event-window effects reflect
+short-lived overreaction, we examine post-event returns. We regress
+signed market-model CARs over $[+2,+20]$ and $[+2,+60]$ trading days
+on polarization, controlling for the event-window return. If the
+polarization effect reflects noise trading that washes out, the
+coefficient should be negative.
 
 Table~\ref{tab:reversal} reports the results. In all four specifications,
 the polarization coefficient is positive --- the opposite sign from
 the overreaction prediction --- and not significant at conventional levels
 (columns~1--2: $\beta = 0.013$, $p = 0.103$ and $\beta = 0.019$,
-$p = 0.199$; columns~3--4 with $|CAR|$ control: $\beta = 0.014$,
-$p = 0.088$ and $\beta = 0.019$, $p = 0.187$). Column~(3) is
-marginally significant at the 10\% level, but the positive sign
-indicates continuation rather than reversal. There is no evidence
-of post-event price reversal in high-polarization states at either horizon.
-
-This result is more consistent with persistent disagreement than with
-transient overreaction. Under \citet{kandel1995}-style belief models,
-investors who form different posteriors about firm quality after an
-auditor change need not converge quickly, because their disagreement
-stems from different priors about institutional credibility rather than
-from a failure to process publicly available information. The absence of
-reversal supports interpreting the main results as reflecting genuinely
-heterogeneous valuations that persist beyond the event window, not
-attention-driven noise that dissipates.
+$p = 0.199$; columns~3--4: $\beta = 0.014$,
+$p = 0.088$ and $\beta = 0.019$, $p = 0.187$). There is no evidence
+of post-event price reversal in high-polarization states at either
+horizon. The absence of reversal is descriptively consistent with
+persistent disagreement rather than transient overreaction, though the
+coefficients are imprecisely estimated and we do not interpret them as
+strong evidence for any specific persistence mechanism.
 
 \input{../Output/Tables/tab09_reversal}
 
@@ -1294,47 +1260,33 @@ attention-driven noise that dissipates.
 \section{Conclusion}
 \label{sec:conclusion}
 
-This paper documents that auditor-change disclosures elicit stronger
-disagreement-sensitive market reactions for firms headquartered in more
-politically polarized states, consistent with heterogeneous interpretation
-of credibility-sensitive audit disclosures. The volume
-result is robust across alternative proxies and clustering structures; the return
-result is directionally consistent but more fragile, as the disagreement
-framework predicts. Two within-firm placebo tests --- on earnings announcements and on
-Item~5.02 officer-change disclosures from the same firms --- suggest
-that the association is specific to audit-credibility-sensitive disclosures,
-not to any corporate news or any mandatory 8-K filing requiring
-interpretation. Post-event returns show no reversal, consistent with
-persistent disagreement rather than transient overreaction.
+We document that auditor-change disclosures elicit stronger
+disagreement-sensitive market reactions --- particularly abnormal trading
+volume --- for listed firms headquartered in more politically competitive
+states. The volume result is robust across alternative polarization
+proxies and clustering structures; the absolute return result is
+directionally consistent but more fragile, as the disagreement framework
+predicts. Placebo tests on the same firms' earnings announcements and
+officer-change disclosures indicate that this pattern is specific to
+credibility-sensitive audit disclosures rather than generic corporate
+news. Post-event returns show no reversal, consistent with persistent
+disagreement rather than transient overreaction.
 
-Several limitations
-warrant emphasis. Headquarters-state polarization is a noisy reduced-form
-proxy for the political-information environment of a geographically
-dispersed investor base; measurement error of this kind attenuates
-coefficients, but sharper identification of which investors drive the
-pattern requires investor-level political data that we lack. The sample
-($N = 678$) limits power for interaction tests, and our filing
-informativeness measure conflates interpretive latitude with economic
-materiality, making it difficult to isolate the pure ambiguity channel.
-In addition, the analysis is necessarily limited to CRSP/Compustat-covered
-firms, so the findings may not generalize to the many micro-cap and OTC
-registrants that file Item~4.01 disclosures.
+Several limitations warrant emphasis. Headquarters-state polarization is
+a noisy reduced-form proxy for the political-information environment of
+a geographically dispersed investor base; sharper identification of
+which investors drive the pattern requires investor-level political data
+that we lack. The sample ($N = 678$) limits power for interaction tests.
+The analysis is necessarily limited to CRSP/Compustat-covered firms, so
+the findings may not generalize to the many micro-cap and OTC
+registrants that file Item~4.01 disclosures. A supplementary test finds
+that national affective polarization does not add explanatory power
+beyond ideological polarization (Table~\ref{tab:affective}).
 
-The findings suggest one limit to disclosure-based regulation in
-credibility-sensitive settings: when investors differ in their assessments of
-institutional trustworthiness, the same disclosure may be associated with
-more, not less, disagreement. Whether similar patterns arise in other
-audit-related disclosures --- critical audit matters, going concern
-opinions, or internal control reports --- remains an open question that
-we cannot address with the current data. Our supplementary test finds
-that national affective polarization
-(ANES feeling-thermometer differential) does not add explanatory power
-beyond ideological polarization (Table~\ref{tab:affective}), suggesting
-the mechanism operates through the partisan composition of the local
-electorate rather than time-varying partisan animus. However, the
-national ANES measure is coarse; state- or investor-level measures of
-affective polarization \citep{mason2015, druckmanlevy2021} could yield
-different conclusions and remain a promising direction for future work.
+The evidence is consistent with a modest limitation of disclosure-based
+regulation in credibility-sensitive settings: standardized disclosure may
+not eliminate disagreement when investors process the same filing through
+different institutional-trust priors.
 
 \bibliographystyle{apalike}
 \bibliography{references}
